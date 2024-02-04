@@ -19,7 +19,7 @@ jobs:
       - name: Execute Gradle build
         run: ./gradlew clean build
       - name: Build the Docker image
-        run: docker build --build-arg JAR_FILE=build/libs/\*.jar -t integer-adder .
+        run: docker build --build-arg JAR_FILE=build/libs/\*.jar -t vl4ds4m/integer-adder .
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -28,7 +28,9 @@ jobs:
       - id: commit
         uses: prompt/actions-commit-hash@v3
       - name: Push the Docker image
-        run: docker push integer-adder:${{ github.ref_name }}-${{ steps.commit.outputs.short }}
+        run: |
+          docker tag vl4ds4m/integer-adder vl4ds4m/integer-adder:${{ github.ref_name }}-${{ steps.commit.outputs.short }}
+          docker push vl4ds4m/integer-adder:${{ github.ref_name }}-${{ steps.commit.outputs.short }}
       - name: Push the latest Docker image
         if: ${{ github.ref_name }} == 'main'
-        run: docker push integer-adder:latest
+        run: docker push vl4ds4m/integer-adder # pushed with default tag 'latest'
