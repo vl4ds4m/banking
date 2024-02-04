@@ -28,7 +28,7 @@ jobs:
       - id: commit
         uses: prompt/actions-commit-hash@v3
       - name: Push the Docker image
-        run: docker push integer-adder:${{ env.GITHUB_REF_NAME }}-${{ steps.commit.outputs.short }}
+        run: docker push integer-adder:${{ github.ref_name }}-${{ steps.commit.outputs.short }}
       - name: Push the latest Docker image
-        if: ${{ env.GITHUB_REF_NAME }} == 'main'
+        if: ${{ github.ref_name }} == 'main'
         run: docker push integer-adder:latest
