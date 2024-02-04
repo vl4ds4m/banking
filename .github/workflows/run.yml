@@ -22,4 +22,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run the Docker container
-        run: docker run vl4ds4m/integer-adder:{{ inputs.image_tag }} {{ inputs.arg1 }} {{ inputs.arg2 }}
+        run: docker run vl4ds4m/integer-adder:${{ inputs.image_tag }} ${{ inputs.arg1 }} ${{ inputs.arg2 }}
