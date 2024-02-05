@@ -22,13 +22,10 @@ jobs:
           echo "TAG_NAME=$GITHUB_HEAD_REF" >> "$GITHUB_ENV"
       - name: Print Docker tag name
         run: |
-          echo "Answer is $TAG_NAME"
-          echo $GITHUB_EVENT_NAME
-          echo '$TAG_NAME'
-          echo $tag_name
-          echo ${{ env.TAG_NAME }}
-          echo "And ${{ env.TAG_NAME }}"
-          echo ${{ env.tag_name }}
+          echo ${{ github.REF_NAME }}
+          echo ${{ github.ref_name }}
+          echo $GITHUB_REF_NAME
+          
 
       - uses: actions/setup-java@v4
         with:
