@@ -19,7 +19,9 @@ jobs:
         if: ${{ github.event_name }} == 'pull_request'
         run: echo "TAG_NAME=$GITHUB_HEAD_REF" >> "$GITHUB_ENV"
       - name: Print Docker tag name
-        run: echo "Answer is $TAG_NAME"
+        run: |
+          echo "Answer is $TAG_NAME"
+          echo $GITHUB_EVENT_NAME
 
       - uses: actions/setup-java@v4
         with:
