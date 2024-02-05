@@ -16,7 +16,7 @@ jobs:
       - name: Set Docker tag name
         run: echo "TAG_NAME=$GITHUB_REF_NAME" >> "$GITHUB_ENV"
       - name: Set Docker tag name on PR trigger
-        if: ${{ github.event_name }} == 'pull_request'
+        if: ${{ github.event_name == 'pull_request' }}
         run: |
           echo "It is PR"
           echo "TAG_NAME=$GITHUB_HEAD_REF" >> "$GITHUB_ENV"
