@@ -13,10 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Print vars
-        env:
-          tag_prefix: ${{ github.event_name == 'pull_request' && ${{ github.head_ref }} || ${{ github.ref_name }} }}
-        run: echo 'Answer is $tag_prefix'
+      - name: Set Docker tag name on PR trigger
+        if: ${{ github.event_name }} == 'pull_request'
+        run: echo "TAG_NAME=$GITHUB_HEAD_REF" >> "$GITHUB_ENV"
+      - name: Set Docker tag name on other triggers
+        if: ${{ github.event_name }} != 'pull_request'
+        run: echo "TAG_NAME=$GITHUB_REF_NAME" >> "$GITHUB_ENV"
+      - name: Print Docker tag name
+        run: echo "Answer is $TAG_NAME"
 
       - uses: actions/setup-java@v4
         with:
