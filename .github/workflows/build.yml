@@ -15,7 +15,7 @@ jobs:
 
       - name: Print vars
         env:
-          tag_prefix: ${{ github.event_name == "pull_request" && ${{ github.head_ref }} || ${{ github.ref_name }} }}
+          tag_prefix: ${{ github.event_name == 'pull_request' && ${{ github.head_ref }} || ${{ github.ref_name }} }}
         run: echo 'Answer is $tag_prefix'
 
       - uses: actions/setup-java@v4
