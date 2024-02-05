@@ -24,6 +24,11 @@ jobs:
         run: |
           echo "Answer is $TAG_NAME"
           echo $GITHUB_EVENT_NAME
+          echo '$TAG_NAME'
+          echo $tag_name
+          echo ${{ env.TAG_NAME }}
+          echo "And ${{ env.TAG_NAME }}"
+          echo ${{ env.tag_name }}
 
       - uses: actions/setup-java@v4
         with:
@@ -47,5 +52,5 @@ jobs:
           docker tag vl4ds4m/integer-adder vl4ds4m/integer-adder:${{ github.ref_name }}-${{ steps.commit.outputs.short }}
           docker push vl4ds4m/integer-adder:${{ github.ref_name }}-${{ steps.commit.outputs.short }}
       - name: Push the latest Docker image
-        if: ${{ github.ref_name }} == 'main'
+        if: ${{ github.ref_name == 'main' }}
         run: docker push vl4ds4m/integer-adder # pushed with default tag 'latest'
