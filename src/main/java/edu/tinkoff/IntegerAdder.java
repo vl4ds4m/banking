@@ -17,6 +17,7 @@ public class IntegerAdder {
             return;
         }
 
-        System.out.println(a + b);
+        int sum = a + b;
+        System.out.println(a + " + " + b + " = " + sum);
     }
 }
