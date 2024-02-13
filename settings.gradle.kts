@@ -1,2 +1,2 @@
-rootProject.name = "hw1"
+rootProject.name = "hw1to2"
 
