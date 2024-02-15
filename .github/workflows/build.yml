@@ -20,24 +20,27 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
       - name: Execute Gradle build
         run: ./gradlew clean build
+      - name: Set branch name
+        run: echo "BRANCH_NAME=${{ github.ref_name }}" >> "$GITHUB_ENV"
+      - name: Set branch name on PR trigger
+        if: ${{ github.event_name == 'pull_request' }}
+        run: echo "BRANCH_NAME=${{ github.head_ref }}" >> "$GITHUB_ENV"
+      - name: Set Docker image name and image tag
+        run: |
+          echo "IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/ci-cd" >> "$GITHUB_ENV"
+          SHA=${{ github.sha }}
+          echo "IMAGE_TAG=${BRANCH_NAME}-${SHA:0:7}" >> "$GITHUB_ENV"
       - name: Build the Docker image
-        run: docker build --build-arg JAR_FILE=build/libs/\*.jar -t vl4ds4m/integer-adder .
+        run: docker build -t "${IMAGE_NAME}:${IMAGE_TAG}" .
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-      - name: Set Docker tag name
-        run: echo "TAG_NAME=$GITHUB_REF_NAME" >> "$GITHUB_ENV"
-      - name: Set Docker tag name on PR trigger
-        if: ${{ github.event_name == 'pull_request' }}
-        run: echo "TAG_NAME=$GITHUB_HEAD_REF" >> "$GITHUB_ENV"
-      - id: commit
-        uses: prompt/actions-commit-hash@v3
       - name: Push the Docker image
-        run: |
-          docker tag vl4ds4m/integer-adder vl4ds4m/integer-adder:${{ env.TAG_NAME }}-${{ steps.commit.outputs.short }}
-          docker push vl4ds4m/integer-adder:${{ env.TAG_NAME }}-${{ steps.commit.outputs.short }}
+        run: docker push "${IMAGE_NAME}:${IMAGE_TAG}"
       - name: Push the latest Docker image
         if: ${{ github.ref_name == 'main' }}
-        run: docker push vl4ds4m/integer-adder # pushed with default tag 'latest'
+        run: |
+          docker tag "${IMAGE_NAME}:${IMAGE_TAG}" "${IMAGE_NAME}:latest"
+          docker push "${IMAGE_NAME}:latest"
