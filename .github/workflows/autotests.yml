@@ -34,7 +34,7 @@ jobs:
             --set image.repository=miraclewisp/hse-rates \
             --set image.tag=amd64 \
             --set replicaCount=1 \
-            --wait --timeout 60s
+            --wait --timeout 180s
 
       - name: Deploy converter
         run: |
@@ -43,7 +43,7 @@ jobs:
             --set image.repository=${{ inputs.image-name }} \
             --set image.tag=${{ inputs.image-tag }} \
             --set replicaCount=2 \
-            --wait --timeout 60s
+            --wait --timeout 180s
 
       - name: Run tests
         run: |
@@ -52,14 +52,18 @@ jobs:
             --set image.tag=amd64 \
             --set backoffLimit=0 \
             --set 'args={\"test\"\, \"http://converter:8080\"}' \
-            --wait --wait-for-jobs --timeout 60s
+            --wait --wait-for-jobs --timeout 180s
+
+      - name: Debug k8s entities
+        run: |
+          kubectl get deployments
+          kubectl get pods
+          kubectl get services
+          
 
       - name: Debug logs
         run: |
-          echo "Rate logs:"
-          kubectl logs --selector app.kubernetes.io/instance=rates --tail=-1  
-          echo "Converter logs:"
-          kubectl logs --selector app.kubernetes.io/instance=converter --tail=-1  
+          kubectl get pods -n default|grep -v NAME|awk '{print $1}'|while read pods;do kubectl logs $pods;echo;done      
 
       - name: Get test logs
         run: |
