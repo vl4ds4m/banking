@@ -6,7 +6,7 @@ replicaCount: 2
 
 image:
   repository: vl4ds4m/ci-cd
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
 
@@ -45,7 +45,7 @@ service:
 
 deployment:
   probe:
-    httpGetPath: /random/num
+    httpGetPath: /actuator/health
     initDelaySec: 20
 
 ingress:
