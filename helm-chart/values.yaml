@@ -46,7 +46,8 @@ service:
 deployment:
   probe:
     httpGetPath: /actuator/health
-    initDelaySec: 20
+    initDelaySec: 10
+    failureThresholdCount: 6
 
 ingress:
   enabled: false

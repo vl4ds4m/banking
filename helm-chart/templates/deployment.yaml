@@ -45,11 +45,13 @@ spec:
               path: {{ .Values.deployment.probe.httpGetPath }}
               port: http
             initialDelaySeconds: {{ .Values.deployment.probe.initDelaySec }}
+            failureThreshold: {{ .Values.deployment.probe.failureThresholdCount }}
           readinessProbe:
             httpGet:
               path: {{ .Values.deployment.probe.httpGetPath }}
               port: http
             initialDelaySeconds: {{ .Values.deployment.probe.initDelaySec }}
+            failureThreshold: {{ .Values.deployment.probe.failureThresholdCount }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
