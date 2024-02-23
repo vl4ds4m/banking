@@ -1,0 +1,23 @@
+replicaCount: 1
+
+extraEnv:
+  - name: KEYCLOAK_URL
+    value: http://keycloak-keycloakx-http
+  - name: KEYCLOAK_REALM
+    value: hse
+  - name: CONVERTER_URL
+    value: http://converter:8080
+  - name: CLIENT_ID
+    value: hse_converter
+  - name: CLIENT_SECRET
+    value: ZLM7AmkwCGsVknmqvbRSJYllwJi4zcGf
+  - name: DB_HOST
+    value: postgresql
+  - name: DB_PORT
+    value: 5432
+  - name: DB_NAME
+    value: accounts
+  - name: DB_USER
+    value: accounts
+  - name: DB_PASSWORD
+    value: accounts
