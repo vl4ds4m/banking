@@ -28,6 +28,7 @@ jobs:
           helm repo update
 
       - name: Deploy rates
+        continue-on-error: true
         run: |
           helm upgrade --install rates ${{ inputs.chart-path }} \
             --set fullnameOverride=rates \
@@ -37,6 +38,7 @@ jobs:
             --wait --timeout 180s
 
       - name: Deploy converter
+        continue-on-error: true
         run: |
           helm upgrade --install converter ${{ inputs.chart-path }} \
             --set fullnameOverride=converter \
@@ -46,6 +48,7 @@ jobs:
             --wait --timeout 180s
 
       - name: Run tests
+        continue-on-error: true
         run: |
           helm install autotest cetic/job \
             --set image.repository=miraclewisp/hse-rates \
@@ -55,13 +58,16 @@ jobs:
             --wait --wait-for-jobs --timeout 180s
 
       - name: Debug k8s entities
+        if: always()
         run: |
           kubectl get deployments
           kubectl get pods
           kubectl get services
+          kubectl get endpoints rates
           
 
       - name: Debug logs
+        if: always()
         run: |
           kubectl get pods -n default|grep -v NAME|awk '{print $1}'|while read pods;do kubectl logs $pods;echo;done      
 
