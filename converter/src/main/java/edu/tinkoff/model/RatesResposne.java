@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-package edu.tinkoff.spring.models;
+package edu.tinkoff.model;
 
 import java.util.Objects;
 import java.math.BigDecimal;

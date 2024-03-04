@@ -1,11 +1,11 @@
-package edu.tinkoff.spring;
+package edu.tinkoff;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Application {
+public class RandomNumberApp {
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(RandomNumberApp.class, args);
     }
 }

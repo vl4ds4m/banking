@@ -1,7 +1,7 @@
-package edu.tinkoff.spring.controllers;
+package edu.tinkoff.controller;
 
-import edu.tinkoff.spring.models.Currency;
-import edu.tinkoff.spring.models.RatesResposne;
+import edu.tinkoff.model.Currency;
+import edu.tinkoff.model.RatesResposne;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

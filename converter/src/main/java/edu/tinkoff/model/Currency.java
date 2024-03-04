@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-package edu.tinkoff.spring.models;
+package edu.tinkoff.model;
 
 /**
  * Gets or Sets Currency
