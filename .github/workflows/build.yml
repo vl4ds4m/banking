@@ -11,8 +11,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      image_name: ${{ steps.image_attrs.outputs.name }}
-      image_tag: ${{ steps.image_attrs.outputs.tag }}
+      image_name: ${{ steps.image_converter_attrs.outputs.name }}
+      image_tag: ${{ steps.image_converter_attrs.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
 
@@ -21,7 +21,7 @@ jobs:
           distribution: 'oracle'
           java-version: '21'
 
-      - name: Build app
+      - name: Build apps
         run: mvn clean package
 
       - name: Set branch name
@@ -31,34 +31,53 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         run: echo "BRANCH_NAME=${{ github.head_ref }}" >> "$GITHUB_ENV"
 
-      - name: Set Docker image name and image tag
-        run: |
-          echo "IMAGE_NAME=${{ vars.DOCKERHUB_USERNAME }}/ci-cd" >> "$GITHUB_ENV"
-          SHA=${{ github.sha }}
-          echo "IMAGE_TAG=${BRANCH_NAME}-${SHA:0:7}" >> "$GITHUB_ENV"
-
-      - id: image_attrs
-        run: |
-          echo "name=$IMAGE_NAME" >> "$GITHUB_OUTPUT"
-          echo "tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
-
-      - name: Build the Docker image
-        run: docker build -t "${IMAGE_NAME}:${IMAGE_TAG}" .
-
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Push the Docker image
-        run: docker push "${IMAGE_NAME}:${IMAGE_TAG}"
+      - name: Set Docker image names and tags
+        run: |
+          IMAGE_NAME_PREFIX="${{ vars.DOCKERHUB_USERNAME }}/ci_cd"
+          echo "IMAGE_INTEGER_ADDER=${IMAGE_NAME_PREFIX}-integer_adder" >> "$GITHUB_ENV"
+          echo "IMAGE_RANDOM_NUMBER=${IMAGE_NAME_PREFIX}-random_number" >> "$GITHUB_ENV"
+          echo "IMAGE_CONVERTER=${IMAGE_NAME_PREFIX}-converter" >> "$GITHUB_ENV"
+          SHA=${{ github.sha }}
+          echo "IMAGE_TAG=${BRANCH_NAME}-${SHA:0:7}" >> "$GITHUB_ENV"
 
-      - name: Push the latest Docker image
+      - id: image_converter_attrs
+        run: |
+          echo "name=${IMAGE_CONVERTER}" >> "$GITHUB_OUTPUT"
+          echo "tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Build the Docker images
+        run: |
+          docker build \
+          --build-arg JAR_FILE=integer-adder/target/integer-adder.jar \
+          -t "${IMAGE_INTEGER_ADDER}:${IMAGE_TAG}" .
+          docker build \
+          --build-arg JAR_FILE=random-number/target/random-number.jar \
+          -t "${IMAGE_RANDOM_NUMBER}:${IMAGE_TAG}" .
+          docker build \
+          --build-arg JAR_FILE=converter/target/converter.jar \
+          -t "${IMAGE_CONVERTER}:${IMAGE_TAG}" .
+
+      - name: Push the Docker images
+        run: |
+          docker push "${IMAGE_INTEGER_ADDER}:${IMAGE_TAG}"
+          docker push "${IMAGE_RANDOM_NUMBER}:${IMAGE_TAG}"
+          docker push "${IMAGE_CONVERTER}:${IMAGE_TAG}"
+
+      - name: Push the latest Docker images
         if: ${{ github.ref_name == 'main' }}
         run: |
-          docker tag "${IMAGE_NAME}:${IMAGE_TAG}" "${IMAGE_NAME}:latest"
-          docker push "${IMAGE_NAME}:latest"
+          docker tag "${IMAGE_INTEGER_ADDER}:${IMAGE_TAG}" "${IMAGE_INTEGER_ADDER}:latest"
+          docker push "${IMAGE_INTEGER_ADDER}:latest"
+          docker tag "${IMAGE_RANDOM_NUMBER}:${IMAGE_TAG}" "${IMAGE_RANDOM_NUMBER}:latest"
+          docker push "${IMAGE_RANDOM_NUMBER}:latest"
+          docker tag "${IMAGE_CONVERTER}:${IMAGE_TAG}" "${IMAGE_CONVERTER}:latest"
+          docker push "${IMAGE_CONVERTER}:latest"
 
   autotest:
     needs: build
