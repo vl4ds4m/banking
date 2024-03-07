@@ -11,7 +11,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      image_name: ${{ steps.image_converter_attrs.outputs.name }}
+      converter_image_name: ${{ steps.image_attrs.outputs.converter_name }}
+      accounts_image_name: ${{ steps.image_attrs.outputs.accounts_name }}
       image_tag: ${{ steps.image_converter_attrs.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
@@ -43,12 +44,15 @@ jobs:
           echo "IMAGE_INTEGER_ADDER=${IMAGE_NAME_PREFIX}-integer_adder" >> "$GITHUB_ENV"
           echo "IMAGE_RANDOM_NUMBER=${IMAGE_NAME_PREFIX}-random_number" >> "$GITHUB_ENV"
           echo "IMAGE_CONVERTER=${IMAGE_NAME_PREFIX}-converter" >> "$GITHUB_ENV"
+          echo "IMAGE_ACCOUNTS=${IMAGE_NAME_PREFIX}-accounts" >> "$GITHUB_ENV"
           SHA=${{ github.sha }}
           echo "IMAGE_TAG=${BRANCH_NAME}-${SHA:0:7}" >> "$GITHUB_ENV"
 
-      - id: image_converter_attrs
+      - name: Set outputs of image attributes
+        id: image_attrs
         run: |
-          echo "name=${IMAGE_CONVERTER}" >> "$GITHUB_OUTPUT"
+          echo "converter_name=${IMAGE_CONVERTER}" >> "$GITHUB_OUTPUT"
+          echo "accounts_name=${IMAGE_ACCOUNTS}" >> "$GITHUB_OUTPUT"
           echo "tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
 
       - name: Build the Docker images
@@ -62,12 +66,16 @@ jobs:
           docker build \
           --build-arg JAR_FILE=converter/target/converter.jar \
           -t "${IMAGE_CONVERTER}:${IMAGE_TAG}" .
+          docker build \
+          --build-arg JAR_FILE=accounts/target/accounts.jar \
+          -t "${IMAGE_ACCOUNTS}:${IMAGE_TAG}" .
 
       - name: Push the Docker images
         run: |
           docker push "${IMAGE_INTEGER_ADDER}:${IMAGE_TAG}"
           docker push "${IMAGE_RANDOM_NUMBER}:${IMAGE_TAG}"
           docker push "${IMAGE_CONVERTER}:${IMAGE_TAG}"
+          docker push "${IMAGE_ACCOUNTS}:${IMAGE_TAG}"
 
       - name: Push the latest Docker images
         if: ${{ github.ref_name == 'main' }}
@@ -78,6 +86,8 @@ jobs:
           docker push "${IMAGE_RANDOM_NUMBER}:latest"
           docker tag "${IMAGE_CONVERTER}:${IMAGE_TAG}" "${IMAGE_CONVERTER}:latest"
           docker push "${IMAGE_CONVERTER}:latest"
+          docker tag "${IMAGE_ACCOUNTS}:${IMAGE_TAG}" "${IMAGE_ACCOUNTS}:latest"
+          docker push "${IMAGE_ACCOUNTS}:latest"
 
   autotest:
     needs: build
@@ -85,4 +95,13 @@ jobs:
     with:
       chart-path: ./helm-chart
       image-name: ${{ needs.build.outputs.image_name }}
+      image-tag: ${{ needs.build.outputs.image_tag }}
+
+  autotest-hw4:
+    needs: build
+    uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests-hw4.yml@main
+    with:
+      chart-path: ./helm-chart
+      converter-image-name: ${{ needs.build.outputs.converter_image_name }}
+      accounts-image-name: ${{ needs.build.outputs.accounts_image_name }}
       image-tag: ${{ needs.build.outputs.image_tag }}
