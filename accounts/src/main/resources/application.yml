@@ -1,0 +1,19 @@
+server:
+  port: 8081
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true
+
+  datasource:
+    url: jdbc:postgresql://localhost:9876/postgres
+    username: postgres
+    password: 1234
+    driver-class-name: org.postgresql.Driver
+
+services:
+  converter:
+    url: "http://localhost:8080/convert"

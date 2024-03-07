@@ -39,11 +39,11 @@ public class CurrencyController {
             return invalidAmountErrorResponse();
         }
 
-        BigDecimal convertedAmount = convertCurrencyAmount(from, to, amount);
+        String convertedAmount = convertCurrencyAmount(from, to, amount).toString();
         String responseBody = String.format("""
                 {
                   "currency": "%s",
-                  "amount": %.2f
+                  "amount": %s
                 }
                 """, to, convertedAmount);
         return ResponseEntity.ok()
@@ -100,8 +100,21 @@ public class CurrencyController {
         return convertedAmount;
     }
 
-    private RatesResposne getRatesResponse() {
+    private RatesResposne getRatesResponse_ORIGIN() {
         RestTemplate restTemplate = new RestTemplate();
         return restTemplate.getForObject(currencyRatesUrl, RatesResposne.class);
+    }
+
+    private RatesResposne getRatesResponse() {
+        RatesResposne rates = new RatesResposne();
+        rates.setBase(Currency.RUB);
+        rates.setRates(Map.of(
+                Currency.RUB.getValue(), BigDecimal.ONE,
+                Currency.USD.getValue(), BigDecimal.valueOf(2.0),
+                Currency.EUR.getValue(), BigDecimal.valueOf(3.0),
+                Currency.GBP.getValue(), BigDecimal.valueOf(4.0),
+                Currency.CNY.getValue(), BigDecimal.valueOf(5.0)
+        ));
+        return rates;
     }
 }
