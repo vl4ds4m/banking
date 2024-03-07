@@ -2,6 +2,7 @@ package edu.tinkoff.controller;
 
 import edu.tinkoff.model.Currency;
 import edu.tinkoff.model.RatesResposne;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,9 @@ import java.util.Map;
 public class CurrencyController {
     @Value("${services.currency-rates.url}")
     private String currencyRatesUrl;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @GetMapping("/convert")
     public ResponseEntity<String> convert(
@@ -100,12 +104,11 @@ public class CurrencyController {
         return convertedAmount;
     }
 
-    private RatesResposne getRatesResponse_ORIGIN() {
-        RestTemplate restTemplate = new RestTemplate();
+    private RatesResposne getRatesResponse() {
         return restTemplate.getForObject(currencyRatesUrl, RatesResposne.class);
     }
 
-    private RatesResposne getRatesResponse() {
+    private RatesResposne get_RatesResponse() {
         RatesResposne rates = new RatesResposne();
         rates.setBase(Currency.RUB);
         rates.setRates(Map.of(

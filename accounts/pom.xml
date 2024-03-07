@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>edu.tinkoff</groupId>
-            <artifactId>models</artifactId>
+            <artifactId>common</artifactId>
         </dependency>
 
         <dependency>
