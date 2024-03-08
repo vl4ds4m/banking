@@ -10,6 +10,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      image_name: ${{ steps.image_attrs.outputs.name }}
+      image_tag: ${{ steps.image_attrs.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
 
@@ -37,6 +40,11 @@ jobs:
           SHA=${{ github.sha }}
           echo "IMAGE_TAG=${BRANCH_NAME}-${SHA:0:7}" >> "$GITHUB_ENV"
 
+      - id: image_attrs
+        run: |
+          echo "name=$IMAGE_NAME" >> "$GITHUB_OUTPUT"
+          echo "tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
+
       - name: Build the Docker image
         run: docker build -t "${IMAGE_NAME}:${IMAGE_TAG}" .
 
@@ -54,3 +62,11 @@ jobs:
         run: |
           docker tag "${IMAGE_NAME}:${IMAGE_TAG}" "${IMAGE_NAME}:latest"
           docker push "${IMAGE_NAME}:latest"
+
+  autotest:
+    needs: build
+    uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests.yml@main
+    with:
+      chart-path: ./helm-chart
+      image-name: ${{ needs.build.outputs.image_name }}
+      image-tag: ${{ needs.build.outputs.image_tag }}
