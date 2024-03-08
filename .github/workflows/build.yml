@@ -13,6 +13,7 @@ jobs:
     outputs:
       image_name: ${{ steps.image_converter_attrs.outputs.name }}
       image_tag: ${{ steps.image_converter_attrs.outputs.tag }}
+
     steps:
       - uses: actions/checkout@v4
 
