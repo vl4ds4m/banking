@@ -15,12 +15,12 @@ services:
   timeout: 5
 
   converter:
-    url: ${CONVERTER_URL:http://localhost:8080/convert}
+    url: ${CONVERTER_URL:http://localhost:8080}/convert?from={from}&to={to}&amount={amount}
 
   keycloak:
     url:
-      get: ${KEYCLOAK_URL:none}/realms/${KEYCLOAK_REALM:none}/protocol/openid-connect/token
-      validate: ${KEYCLOAK_URL:none}/realms/${KEYCLOAK_REALM:none}/protocol/openid-connect/certs
+      get: ${KEYCLOAK_URL:}/realms/${KEYCLOAK_REALM:}/protocol/openid-connect/token
+      validate: ${KEYCLOAK_URL:}/realms/${KEYCLOAK_REALM:}/protocol/openid-connect/certs
     client:
-      id: ${CLIENT_ID:none}
-      secret: ${CLIENT_SECRET:none}
+      id: ${CLIENT_ID:}
+      secret: ${CLIENT_SECRET:}

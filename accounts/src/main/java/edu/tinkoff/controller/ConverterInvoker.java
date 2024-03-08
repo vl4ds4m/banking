@@ -18,7 +18,7 @@ class ConverterInvoker {
 
     Map<String, Object> convert(String from, String to, double amount) {
         return restTemplate.getForObject(
-                converterUrl + "?from={a}&to={b}&amount={c}",
+                converterUrl,
                 Map.class,
                 from, to, amount
         );

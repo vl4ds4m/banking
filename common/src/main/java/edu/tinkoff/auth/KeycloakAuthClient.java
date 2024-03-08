@@ -25,6 +25,10 @@ public class KeycloakAuthClient {
     private String clientSecret;
 
     public String getToken() {
+        if (clientId.isEmpty()) {
+            return null;
+        }
+
         Map<String, String> requestBody = Map.of(
                 "client_id", clientId,
                 "client_secret", clientSecret,
