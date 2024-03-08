@@ -90,13 +90,13 @@ public class CurrencyController {
         BigDecimal convertedAmount;
 
         if (from == to) {
-            convertedAmount = amount;
+            convertedAmount = amount.setScale(scale, roundingMode);
         } else if (from == ratesResposne.getBase()) {
             BigDecimal currencyValue = rates.get(to.getValue());
             convertedAmount = amount.divide(currencyValue, scale, roundingMode);
         } else if (to == ratesResposne.getBase()) {
             BigDecimal currencyValue = rates.get(from.getValue());
-            convertedAmount = amount.multiply(currencyValue);
+            convertedAmount = amount.multiply(currencyValue).setScale(scale, roundingMode);
         } else {
             BigDecimal currencyValue = rates.get(from.getValue());
             convertedAmount = amount.multiply(currencyValue);
