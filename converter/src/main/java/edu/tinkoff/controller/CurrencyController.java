@@ -1,11 +1,11 @@
 package edu.tinkoff.controller;
 
+import edu.tinkoff.auth.KeycloakAuthClient;
 import edu.tinkoff.model.Currency;
 import edu.tinkoff.model.RatesResposne;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +22,9 @@ public class CurrencyController {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private KeycloakAuthClient tokenGetter;
 
     @GetMapping("/convert")
     public ResponseEntity<String> convert(
@@ -105,7 +108,19 @@ public class CurrencyController {
     }
 
     private RatesResposne getRatesResponse() {
-        return restTemplate.getForObject(currencyRatesUrl, RatesResposne.class);
+        String token = tokenGetter.getToken();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(token);
+        ResponseEntity<RatesResposne> response = restTemplate.exchange(
+                currencyRatesUrl,
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                RatesResposne.class
+        );
+
+        return response.getBody();
     }
 
     private RatesResposne get_RatesResponse() {
