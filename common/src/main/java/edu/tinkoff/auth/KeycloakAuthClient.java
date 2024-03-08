@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
@@ -29,27 +31,25 @@ public class KeycloakAuthClient {
             return null;
         }
 
-        Map<String, String> requestBody = Map.of(
-                "client_id", clientId,
-                "client_secret", clientSecret,
-                "grant_type", "client_credentials"
-        );
+        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        requestBody.add("client_id", clientId);
+        requestBody.add("client_secret", clientSecret);
+        requestBody.add("grant_type", "client_credentials");
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
-        ParameterizedTypeReference<Map<String, Object>> typeRef = new ParameterizedTypeReference<>() {};
 
-        ResponseEntity<Map<String, Object>> responseEntity = restTemplate.exchange(
+        ResponseEntity<Map<String, String>> responseEntity = restTemplate.exchange(
                 url,
                 HttpMethod.POST,
-                requestEntity,
-                typeRef
+                new HttpEntity<>(requestBody, headers),
+                new ParameterizedTypeReference<>() {}
         );
 
-        Map<String, Object> responseBody = responseEntity.getBody();
+        Map<String, String> responseBody = responseEntity.getBody();
         if (responseBody == null) {
             return null;
         }
-        return responseBody.get("access_token").toString();
+        return responseBody.get("access_token");
     }
 }
