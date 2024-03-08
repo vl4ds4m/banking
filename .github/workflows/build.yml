@@ -13,7 +13,7 @@ jobs:
     outputs:
       converter_image_name: ${{ steps.image_attrs.outputs.converter_name }}
       accounts_image_name: ${{ steps.image_attrs.outputs.accounts_name }}
-      image_tag: ${{ steps.image_converter_attrs.outputs.tag }}
+      image_tag: ${{ steps.image_attrs.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
 
@@ -94,7 +94,7 @@ jobs:
     uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests.yml@main
     with:
       chart-path: ./helm-chart
-      image-name: ${{ needs.build.outputs.image_name }}
+      image-name: ${{ needs.build.outputs.converter_image_name }}
       image-tag: ${{ needs.build.outputs.image_tag }}
 
   autotest-hw4:
