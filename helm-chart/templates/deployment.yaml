@@ -43,7 +43,7 @@ spec:
           env:
           {{- range .Values.extraEnv }}
             - name: {{ .name }}
-              value: {{ .value }}
+              value: "{{ .value }}"
           {{- end }}
           livenessProbe:
             httpGet:
