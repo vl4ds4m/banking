@@ -11,8 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
+import java.time.*;
 import java.util.*;
 
 @RestController
@@ -29,18 +28,18 @@ public class CustomersController {
     private AccountRepository accountRepository;
 
     @PostMapping
-    public ResponseEntity<Object> createCustomer(
-            @RequestBody Map<String, String> requestBody
-    ) {
+    public ResponseEntity<Object> createCustomer(@RequestBody Map<String, Object> requestBody) {
         try {
             String firstName;
             String lastName;
             LocalDate birthDate;
             try {
-                firstName = Objects.requireNonNull(requestBody.get("firstName"));
-                lastName = Objects.requireNonNull(requestBody.get("lastName"));
-                birthDate = LocalDate.parse(requestBody.get("birthDay"));
-            } catch (NullPointerException | DateTimeParseException e) {
+                firstName = Objects.requireNonNull(requestBody.get("firstName")).toString();
+                lastName = Objects.requireNonNull(requestBody.get("lastName")).toString();
+
+                var dateUnits = (List<Integer>) requestBody.get("birthDay");
+                birthDate = LocalDate.of(dateUnits.get(0), dateUnits.get(1), dateUnits.get(2));
+            } catch (NullPointerException | DateTimeException e) {
                 return ResponseEntity.status(400).build();
             }
 
