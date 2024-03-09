@@ -78,8 +78,10 @@ public class AccountsController {
             }
 
             Account account = optionalAccount.get();
+            BigDecimal amount = BigDecimal.valueOf(account.getAmount())
+                    .setScale(2, RoundingMode.HALF_EVEN);
             Map<String, Object> responseBody = Map.of(
-                    "amount", account.getAmount(),
+                    "amount", amount.toString(),
                     "currency", account.getCurrency()
             );
             return ResponseEntity.status(200).body(responseBody);

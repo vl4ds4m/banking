@@ -16,7 +16,7 @@ import java.util.Optional;
 public class TransfersController {
 
     @Autowired
-    private ConverterInvoker invoker;
+    private ConverterInvoker converterInvoker;
 
     @Autowired
     private AccountRepository accountRepository;
@@ -62,7 +62,7 @@ public class TransfersController {
             String senderCurrency = sender.getCurrency();
 
             if (!senderCurrency.equals(receiverCurrency)) {
-                Map<String, Object> responseBody = invoker.convert(
+                Map<String, Object> responseBody = converterInvoker.convert(
                         senderCurrency,
                         receiverCurrency,
                         amount

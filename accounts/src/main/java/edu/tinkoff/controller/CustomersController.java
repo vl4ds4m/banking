@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.*;
 import java.util.*;
 
@@ -19,7 +20,7 @@ import java.util.*;
 public class CustomersController {
 
     @Autowired
-    private ConverterInvoker utils;
+    private ConverterInvoker converterInvoker;
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -79,11 +80,11 @@ public class CustomersController {
 
             List<Account> accounts = accountRepository.findAllByCustomerId(customerId);
 
-            BigDecimal balance = BigDecimal.ZERO;
+            BigDecimal balance = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN);
 
             for (Account account : accounts) {
                 if (account.getAmount() > 0) {
-                    Map<String, Object> responseBody = utils.convert(
+                    Map<String, Object> responseBody = converterInvoker.convert(
                             account.getCurrency(),
                             currency,
                             account.getAmount()
@@ -94,7 +95,7 @@ public class CustomersController {
             }
 
             Map<String, Object> responseBody = Map.of(
-                    "balance", balance.doubleValue(),
+                    "balance", balance.toString(),
                     "currency", currency
             );
             return ResponseEntity.status(200).body(responseBody);
