@@ -1,18 +1,18 @@
 package edu.tinkoff.controller;
 
 import edu.tinkoff.auth.KeycloakAuthClient;
+import edu.tinkoff.auth.KeycloakAuthValidator;
 import edu.tinkoff.model.Currency;
 import edu.tinkoff.model.RatesResposne;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,14 +24,24 @@ public class CurrencyController {
     private RestTemplate restTemplate;
 
     @Autowired
-    private KeycloakAuthClient tokenGetter;
+    private KeycloakAuthClient keycloakAuthClient;
+
+    @Autowired
+    private KeycloakAuthValidator keycloakAuthValidator;
 
     @GetMapping("/convert")
     public ResponseEntity<String> convert(
             @RequestParam("from") String fromName,
             @RequestParam("to") String toName,
-            @RequestParam("amount") BigDecimal amount
+            @RequestParam("amount") BigDecimal amount,
+            @RequestHeader HttpHeaders headers
     ) {
+        List<String> tokens = headers.get(HttpHeaders.AUTHORIZATION);
+
+        if (!keycloakAuthValidator.validateTokens(tokens)) {
+            return ResponseEntity.badRequest().body("Not allowed");
+        }
+
         Currency from = Currency.fromValue(fromName);
         if (from == null) {
             return currencyErrorResponse(fromName);
@@ -108,7 +118,7 @@ public class CurrencyController {
     }
 
     private RatesResposne getRatesResponse() {
-        String token = tokenGetter.getToken();
+        String token = keycloakAuthClient.getToken();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

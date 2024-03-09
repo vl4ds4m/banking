@@ -1,7 +1,10 @@
 package edu.tinkoff.controller;
 
+import edu.tinkoff.auth.KeycloakAuthClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,11 +19,23 @@ class ConverterInvoker {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private KeycloakAuthClient keycloakAuthClient;
+
     Map<String, Object> convert(String from, String to, double amount) {
-        return restTemplate.getForObject(
+        String token = keycloakAuthClient.getToken();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(token);
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                 converterUrl,
-                Map.class,
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                new ParameterizedTypeReference<>() {},
                 from, to, amount
         );
+
+        return response.getBody();
     }
 }
