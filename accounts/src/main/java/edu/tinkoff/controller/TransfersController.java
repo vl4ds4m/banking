@@ -2,6 +2,7 @@ package edu.tinkoff.controller;
 
 import edu.tinkoff.dao.AccountRepository;
 import edu.tinkoff.model.Account;
+import edu.tinkoff.service.TransferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,13 +17,13 @@ import java.util.Optional;
 public class TransfersController {
 
     @Autowired
-    private ConverterInvoker converterInvoker;
-
-    @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private TransferService transferService;
+
     @PostMapping
-    public ResponseEntity<Object> transfer(@RequestBody Map<String, Number> requestBody) {
+    public ResponseEntity<Object> transfer(@RequestBody Map<String, Object> requestBody) {
         try {
             int receiverAccount;
             int senderAccount;
@@ -57,26 +58,7 @@ public class TransfersController {
                 return ResponseEntity.status(400).build();
             }
 
-            double convertedAmount;
-            String receiverCurrency = receiver.getCurrency();
-            String senderCurrency = sender.getCurrency();
-
-            if (!senderCurrency.equals(receiverCurrency)) {
-                Map<String, Object> responseBody = converterInvoker.convert(
-                        senderCurrency,
-                        receiverCurrency,
-                        amount
-                );
-                convertedAmount = (double) responseBody.get("amount");
-            } else {
-                convertedAmount = amount;
-            }
-
-            receiver.setAmount(receiver.getAmount() + convertedAmount);
-            sender.setAmount(sender.getAmount() - amount);
-
-            accountRepository.save(receiver);
-            accountRepository.save(sender);
+            transferService.transfer(receiver, sender, amount);
 
             return ResponseEntity.status(200).build();
 
