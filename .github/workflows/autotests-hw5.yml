@@ -109,7 +109,7 @@ jobs:
       - name: Get test logs
         run: |
           kubectl logs jobs/autotest-job
-          ERROR_LOGS=$(kubectl logs jobs/autotest-job | grep 'ERROR |' || true)
+          ERROR_LOGS=$(kubectl logs jobs/autotest-job | grep 'ERROR |\|Exception' || true)
           echo "JOB_ERRORS<<EOF" >> $GITHUB_ENV
           echo "$ERROR_LOGS" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
