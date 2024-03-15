@@ -91,7 +91,7 @@ jobs:
             --set image.tag=amd64 \
             --set backoffLimit=0 \
             --set image.pullPolicy=Always \
-            --set 'args={\"-ws\"}' \
+            --set 'args={\"-ws\"\, \"-fail\"}' \
             -f tests/hw5/test-values.yml \
             --wait --wait-for-jobs --timeout 180s
 
