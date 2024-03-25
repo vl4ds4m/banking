@@ -1,9 +1,9 @@
 package edu.tinkoff.model;
 
+import edu.tinkoff.util.Conversions;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"customer_id", "currency"}))
@@ -24,7 +24,7 @@ public class Account {
     private BigDecimal amount;
 
     public Account() {
-        amount = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN);
+        amount = Conversions.setScale(BigDecimal.ZERO);
     }
 
     public Account(Customer customer, Currency currency) {
