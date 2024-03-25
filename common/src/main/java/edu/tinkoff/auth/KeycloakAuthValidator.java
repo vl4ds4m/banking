@@ -33,7 +33,7 @@ public class KeycloakAuthValidator {
         this.clientId = clientId;
     }
 
-    public boolean validateTokens(List<String> tokens) {
+    public boolean validateTokens(String token) {
         if (clientId.isEmpty()) {
             return true;
         }
@@ -46,7 +46,7 @@ public class KeycloakAuthValidator {
         ).getBody().get("keys");
 
         String jwtHeader = new String(Base64.getDecoder().decode(
-                tokens.getFirst().split(" ")[1].split("\\.")[0]
+                token.split(" ")[1].split("\\.")[0]
         ));
 
         for (JWK jwk : jwkList) {

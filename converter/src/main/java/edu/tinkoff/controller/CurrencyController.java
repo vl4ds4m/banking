@@ -8,7 +8,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(path = "convert", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -28,9 +28,9 @@ public class CurrencyController {
             @RequestParam("amount") BigDecimal amount,
             @RequestHeader HttpHeaders headers
     ) {
-        List<String> tokens = headers.get(HttpHeaders.AUTHORIZATION);
+        String token = Objects.requireNonNull(headers.get(HttpHeaders.AUTHORIZATION)).getFirst();
 
-        if (!keycloakAuthValidator.validateTokens(tokens)) {
+        if (!keycloakAuthValidator.validateTokens(token)) {
             return ResponseEntity.badRequest().body(new CurrencyMessage(null, null, null));
         }
 
