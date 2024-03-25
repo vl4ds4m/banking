@@ -1,7 +1,6 @@
 package edu.tinkoff.auth;
 
 import org.keycloak.jose.jwk.JWK;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -15,15 +14,24 @@ import java.util.Map;
 
 @Component
 public class KeycloakAuthValidator {
+    private final RestTemplate restTemplate;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private String url;
+    private String clientId;
+
+    public KeycloakAuthValidator(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Value("${services.keycloak.url.validate}")
-    private String url;
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     @Value("${services.keycloak.client.id}")
-    private String clientId;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
 
     public boolean validateTokens(List<String> tokens) {
         if (clientId.isEmpty()) {

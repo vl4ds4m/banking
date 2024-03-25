@@ -5,8 +5,7 @@ import edu.tinkoff.dao.CustomerRepository;
 import edu.tinkoff.model.Account;
 import edu.tinkoff.model.Currency;
 import edu.tinkoff.model.Customer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import edu.tinkoff.service.AccountService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,15 +17,19 @@ import java.util.*;
 @RestController
 @RequestMapping(path = "accounts", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AccountsController {
+    private final CustomerRepository customerRepository;
+    private final AccountRepository accountRepository;
+    private final AccountService accountService;
 
-    @Value("${services.converter.url}")
-    private String converterUrl;
-
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private AccountRepository accountRepository;
+    public AccountsController(
+            CustomerRepository customerRepository,
+            AccountRepository accountRepository,
+            AccountService accountService
+    ) {
+        this.customerRepository = customerRepository;
+        this.accountRepository = accountRepository;
+        this.accountService = accountService;
+    }
 
     @PostMapping
     public ResponseEntity<Object> createAccount(@RequestBody Map<String, Object> requestBody) {
@@ -55,11 +58,9 @@ public class AccountsController {
                 return ResponseEntity.status(400).build();
             }
 
-            Account account = new Account(optionalCustomer.get(), currency);
-            account = accountRepository.save(account);
-
             Map<String, Integer> responseBody = Collections.singletonMap(
-                    "accountNumber", account.getNumber()
+                    "accountNumber",
+                    accountService.createAccount(optionalCustomer.get(), currency).getNumber()
             );
             return ResponseEntity.status(200).body(responseBody);
 
@@ -78,13 +79,10 @@ public class AccountsController {
             }
 
             Account account = optionalAccount.get();
-            BigDecimal amount = BigDecimal.valueOf(account.getAmount())
-                    .setScale(2, RoundingMode.HALF_EVEN);
-            Map<String, Object> responseBody = Map.of(
-                    "amount", amount.toString(),
+            return ResponseEntity.status(200).body(Map.of(
+                    "amount", accountService.getBalance(account).toString(),
                     "currency", account.getCurrency()
-            );
-            return ResponseEntity.status(200).body(responseBody);
+            ));
 
         } catch (RuntimeException e) {
             return ResponseEntity.status(500).build();
@@ -94,10 +92,10 @@ public class AccountsController {
     @PostMapping("/{accountNumber}/top-up")
     public ResponseEntity<Object> topUpAccount(
             @PathVariable int accountNumber,
-            @RequestBody Map<String, Double> requestBody
+            @RequestBody Map<String, Object> requestBody
     ) {
         try {
-            Double exactAmount = requestBody.get("amount");
+            Double exactAmount = (Double) requestBody.get("amount");
             if (exactAmount == null) {
                 return ResponseEntity.status(400).build();
             }
@@ -116,9 +114,7 @@ public class AccountsController {
                 return ResponseEntity.status(400).build();
             }
 
-            Account account = optionalAccount.get();
-            account.setAmount(account.getAmount() + amount);
-            accountRepository.save(account);
+            accountService.topUpAccount(optionalAccount.get(), amount);
 
             return ResponseEntity.status(200).build();
 

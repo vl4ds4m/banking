@@ -1,6 +1,5 @@
 package edu.tinkoff.auth;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -13,18 +12,30 @@ import java.util.Map;
 
 @Component
 public class KeycloakAuthClient {
+    private final RestTemplate restTemplate;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private String url;
+    private String clientId;
+    private String clientSecret;
+
+    public KeycloakAuthClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Value("${services.keycloak.url.get}")
-    private String url;
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     @Value("${services.keycloak.client.id}")
-    private String clientId;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
 
     @Value("${services.keycloak.client.secret}")
-    private String clientSecret;
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
 
     public String getToken() {
         if (clientId.isEmpty()) {
