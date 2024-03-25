@@ -49,7 +49,7 @@ public class CurrencyController {
         }
 
         BigDecimal convertedAmount = converterService.convert(from, to, amount);
-        return ResponseEntity.ok().body(new CurrencyMessage(to, convertedAmount, "Ок"));
+        return ResponseEntity.ok().body(new CurrencyMessage(to, convertedAmount, null));
     }
 
     private ResponseEntity<CurrencyMessage> currencyErrorResponse(String currencyName) {
