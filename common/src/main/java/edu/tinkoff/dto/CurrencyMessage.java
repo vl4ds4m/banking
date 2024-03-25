@@ -1,6 +1,7 @@
 package edu.tinkoff.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.tinkoff.model.Currency;
 
 import java.math.BigDecimal;
@@ -9,6 +10,6 @@ import java.math.BigDecimal;
 public record CurrencyMessage(
         Currency currency,
         BigDecimal amount,
-        String message
+        @JsonProperty("message") String errorMessage
 ) {
 }

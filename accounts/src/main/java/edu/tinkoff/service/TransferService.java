@@ -1,41 +1,62 @@
 package edu.tinkoff.service;
 
-import edu.tinkoff.dao.AccountRepository;
 import edu.tinkoff.model.Account;
+import edu.tinkoff.model.Currency;
+import edu.tinkoff.model.TransferMessage;
+import edu.tinkoff.util.Conversions;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.Optional;
 
 @Service
 public class TransferService {
     private final ConverterService converterService;
-    private final AccountRepository accountRepository;
+    private final AccountService accountService;
 
-    public TransferService(ConverterService converterService, AccountRepository accountRepository) {
+    public TransferService(ConverterService converterService, AccountService accountService) {
         this.converterService = converterService;
-        this.accountRepository = accountRepository;
+        this.accountService = accountService;
     }
 
-    public void transfer(Account receiver, Account sender, double amount) {
-        double convertedAmount;
-        String receiverCurrency = receiver.getCurrency();
-        String senderCurrency = sender.getCurrency();
-
-        if (!senderCurrency.equals(receiverCurrency)) {
-            Map<String, Object> responseBody = converterService.convert(
-                    senderCurrency,
-                    receiverCurrency,
-                    amount
-            );
-            convertedAmount = (double) responseBody.get("amount");
-        } else {
-            convertedAmount = amount;
+    public boolean transfer(TransferMessage message) {
+        if (
+                message.receiverAccount() == null ||
+                message.senderAccount() == null ||
+                message.amountInSenderCurrency() == null
+        ) {
+            return false;
         }
 
-        receiver.setAmount(receiver.getAmount() + convertedAmount);
-        sender.setAmount(sender.getAmount() - amount);
+        BigDecimal amount = Conversions.setScale(message.amountInSenderCurrency());
+        if (BigDecimal.ZERO.compareTo(amount) >= 0) {
+            return false;
+        }
 
-        accountRepository.save(receiver);
-        accountRepository.save(sender);
+        Optional<Account> optionalReceiver = accountService.findById(message.receiverAccount());
+        Optional<Account> optionalSender = accountService.findById(message.senderAccount());
+        if (optionalReceiver.isEmpty() || optionalSender.isEmpty()) {
+            return false;
+        }
+
+        Account receiver = optionalReceiver.get();
+        Account sender = optionalSender.get();
+        if (sender.getAmount().compareTo(amount) < 0) {
+            return false;
+        }
+
+        Currency receiverCurrency = receiver.getCurrency();
+        Currency senderCurrency = sender.getCurrency();
+        BigDecimal convertedAmount = !senderCurrency.equals(receiverCurrency) ?
+                converterService.convert(senderCurrency, receiverCurrency, amount) :
+                amount;
+
+        receiver.setAmount(receiver.getAmount().add(convertedAmount));
+        sender.setAmount(sender.getAmount().subtract(amount));
+
+        accountService.save(receiver);
+        accountService.save(sender);
+
+        return true;
     }
 }

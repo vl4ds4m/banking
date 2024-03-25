@@ -1,55 +1,71 @@
 package edu.tinkoff.service;
 
-import edu.tinkoff.dao.AccountRepository;
 import edu.tinkoff.dao.CustomerRepository;
-import edu.tinkoff.model.Account;
-import edu.tinkoff.model.Customer;
+import edu.tinkoff.model.*;
+import edu.tinkoff.util.Conversions;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class CustomerService {
     private final CustomerRepository customerRepository;
-    private final AccountRepository accountRepository;
     private final ConverterService converterService;
 
-    public CustomerService(
-            CustomerRepository customerRepository,
-            AccountRepository accountRepository,
-            ConverterService converterService
-    ) {
+    public CustomerService(CustomerRepository customerRepository, ConverterService converterService) {
         this.customerRepository = customerRepository;
-        this.accountRepository = accountRepository;
         this.converterService = converterService;
     }
 
-    public Customer createCustomer(String firstName, String lastName, LocalDate birthDate) {
-        Customer customer = new Customer(firstName, lastName, birthDate);
-        return customerRepository.save(customer);
+    public Optional<Customer> createCustomer(Customer customer) {
+        if (
+                customer.getFirstName() == null ||
+                customer.getLastName() == null ||
+                customer.getBirthDate() == null
+        ) {
+            return Optional.empty();
+        }
+
+        int roughCustomerAge = LocalDate.now().getYear() - customer.getBirthDate().getYear();
+        if (roughCustomerAge < 14 || roughCustomerAge > 120) {
+            return Optional.empty();
+        }
+
+        Customer savedCustomer = customerRepository.save(customer);
+
+        customer = new Customer();
+        customer.setId(savedCustomer.getId());
+        return Optional.of(customer);
     }
 
-    public BigDecimal getBalance(int customerId, String currency) {
-        List<Account> accounts = accountRepository.findAllByCustomerId(customerId);
+    public Optional<Customer> findById(int id) {
+        return customerRepository.findById(id);
+    }
 
-        BigDecimal balance = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN);
+    public Optional<CustomerBalance> getBalance(int id, Currency currency) {
+        Optional<Customer> customer = customerRepository.findById(id);
+        if (customer.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Set<Account> accounts = customer.get().getAccounts();
+        BigDecimal balance = Conversions.setScale(BigDecimal.ZERO);
 
         for (Account account : accounts) {
-            if (account.getAmount() > 0) {
-                Map<String, Object> responseBody = converterService.convert(
+            BigDecimal amount = account.getAmount();
+            if (BigDecimal.ZERO.compareTo(amount) < 0) {
+                BigDecimal convertedAmount = converterService.convert(
                         account.getCurrency(),
                         currency,
-                        account.getAmount()
+                        amount
                 );
-                BigDecimal amount = BigDecimal.valueOf((double) responseBody.get("amount"));
-                balance = balance.add(amount);
+                balance = balance.add(convertedAmount);
             }
         }
 
-        return balance;
+        return Optional.of(new CustomerBalance(balance, currency));
     }
 }

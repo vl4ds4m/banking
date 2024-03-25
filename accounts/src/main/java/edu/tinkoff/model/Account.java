@@ -2,6 +2,9 @@ package edu.tinkoff.model;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"customer_id", "currency"}))
 public class Account {
@@ -10,18 +13,21 @@ public class Account {
     @GeneratedValue
     private int number;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    private String currency;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "currency")
+    private Currency currency;
 
-    private double amount;
+    private BigDecimal amount;
 
     public Account() {
-        amount = 0.0;
+        amount = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN);
     }
 
-    public Account(Customer customer, String currency) {
+    public Account(Customer customer, Currency currency) {
         this();
         this.customer = customer;
         this.currency = currency;
@@ -43,19 +49,19 @@ public class Account {
         this.customer = customer;
     }
 
-    public String getCurrency() {
+    public Currency getCurrency() {
         return currency;
     }
 
-    public void setCurrency(String currency) {
+    public void setCurrency(Currency currency) {
         this.currency = currency;
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 }

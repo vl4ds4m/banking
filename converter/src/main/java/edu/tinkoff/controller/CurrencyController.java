@@ -2,13 +2,12 @@ package edu.tinkoff.controller;
 
 import edu.tinkoff.auth.KeycloakAuthValidator;
 import edu.tinkoff.dto.CurrencyMessage;
-import edu.tinkoff.model.Currency;
 import edu.tinkoff.service.ConverterService;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.Objects;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "convert", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -28,43 +27,16 @@ public class CurrencyController {
             @RequestParam("amount") BigDecimal amount,
             @RequestHeader HttpHeaders headers
     ) {
-        String token = Objects.requireNonNull(headers.get(HttpHeaders.AUTHORIZATION)).getFirst();
+        List<String> tokens = headers.get(HttpHeaders.AUTHORIZATION);
+        String token = tokens != null ? tokens.getFirst() : null;
 
         if (!keycloakAuthValidator.validateTokens(token)) {
-            return ResponseEntity.badRequest().body(new CurrencyMessage(null, null, null));
+            return ResponseEntity.badRequest().build();
         }
 
-        Currency from = Currency.fromValue(fromName);
-        if (from == null) {
-            return currencyErrorResponse(fromName);
-        }
-
-        Currency to = Currency.fromValue(toName);
-        if (to == null) {
-            return currencyErrorResponse(toName);
-        }
-
-        if (BigDecimal.ZERO.compareTo(amount) >= 0) {
-            return invalidAmountErrorResponse();
-        }
-
-        BigDecimal convertedAmount = converterService.convert(from, to, amount);
-        return ResponseEntity.ok().body(new CurrencyMessage(to, convertedAmount, null));
-    }
-
-    private ResponseEntity<CurrencyMessage> currencyErrorResponse(String currencyName) {
-        return ResponseEntity.badRequest().body(new CurrencyMessage(
-                null,
-                null,
-                "Валюта " + currencyName + " недоступна"
-        ));
-    }
-
-    private ResponseEntity<CurrencyMessage> invalidAmountErrorResponse() {
-        return ResponseEntity.badRequest().body(new CurrencyMessage(
-                null,
-                null,
-                "Отрицательная сумма"
-        ));
+        CurrencyMessage message = converterService.convert(fromName, toName, amount);
+        return message.errorMessage() == null ?
+                ResponseEntity.ok(message) :
+                ResponseEntity.badRequest().body(message);
     }
 }

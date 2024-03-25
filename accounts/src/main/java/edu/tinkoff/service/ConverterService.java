@@ -1,13 +1,15 @@
 package edu.tinkoff.service;
 
 import edu.tinkoff.auth.KeycloakAuthClient;
+import edu.tinkoff.dto.CurrencyMessage;
+import edu.tinkoff.model.Currency;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.Objects;
 
 @Service
 public class ConverterService {
@@ -26,20 +28,21 @@ public class ConverterService {
         this.converterUrl = converterUrl;
     }
 
-    public Map<String, Object> convert(String from, String to, double amount) {
+    public BigDecimal convert(Currency from, Currency to, BigDecimal amount) {
         String token = keycloakAuthClient.getToken();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(token);
-        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+
+        ResponseEntity<CurrencyMessage> response = restTemplate.exchange(
                 converterUrl,
                 HttpMethod.GET,
                 new HttpEntity<>(headers),
-                new ParameterizedTypeReference<>() {},
+                CurrencyMessage.class,
                 from, to, amount
         );
 
-        return response.getBody();
+        return Objects.requireNonNull(response.getBody()).amount();
     }
 }
