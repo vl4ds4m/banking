@@ -1,8 +1,7 @@
 package edu.tinkoff.controller;
 
 import edu.tinkoff.auth.KeycloakAuthValidator;
-import edu.tinkoff.dto.ConvertedCurrency;
-import edu.tinkoff.dto.InvalidCurrencyMessage;
+import edu.tinkoff.dto.CurrencyMessage;
 import edu.tinkoff.model.Currency;
 import edu.tinkoff.service.ConverterService;
 import org.springframework.http.*;
@@ -23,7 +22,7 @@ public class CurrencyController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> convert(
+    public ResponseEntity<CurrencyMessage> convert(
             @RequestParam("from") String fromName,
             @RequestParam("to") String toName,
             @RequestParam("amount") BigDecimal amount,
@@ -32,7 +31,7 @@ public class CurrencyController {
         List<String> tokens = headers.get(HttpHeaders.AUTHORIZATION);
 
         if (!keycloakAuthValidator.validateTokens(tokens)) {
-            return ResponseEntity.badRequest().body("Not allowed");
+            return ResponseEntity.badRequest().body(new CurrencyMessage(null, null, null));
         }
 
         Currency from = Currency.fromValue(fromName);
@@ -50,16 +49,22 @@ public class CurrencyController {
         }
 
         BigDecimal convertedAmount = converterService.convert(from, to, amount);
-        return ResponseEntity.ok().body(new ConvertedCurrency(to, convertedAmount));
+        return ResponseEntity.ok().body(new CurrencyMessage(to, convertedAmount, "Ок"));
     }
 
-    private ResponseEntity<Object> currencyErrorResponse(String currencyName) {
-        return ResponseEntity.badRequest()
-                .body(new InvalidCurrencyMessage("Валюта " + currencyName + " недоступна"));
+    private ResponseEntity<CurrencyMessage> currencyErrorResponse(String currencyName) {
+        return ResponseEntity.badRequest().body(new CurrencyMessage(
+                null,
+                null,
+                "Валюта " + currencyName + " недоступна"
+        ));
     }
 
-    private ResponseEntity<Object> invalidAmountErrorResponse() {
-        return ResponseEntity.badRequest()
-                .body(new InvalidCurrencyMessage("Отрицательная сумма"));
+    private ResponseEntity<CurrencyMessage> invalidAmountErrorResponse() {
+        return ResponseEntity.badRequest().body(new CurrencyMessage(
+                null,
+                null,
+                "Отрицательная сумма"
+        ));
     }
 }
