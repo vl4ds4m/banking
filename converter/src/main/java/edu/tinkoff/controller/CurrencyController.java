@@ -1,6 +1,8 @@
 package edu.tinkoff.controller;
 
 import edu.tinkoff.auth.KeycloakAuthValidator;
+import edu.tinkoff.dto.ConvertedCurrency;
+import edu.tinkoff.dto.InvalidCurrencyMessage;
 import edu.tinkoff.model.Currency;
 import edu.tinkoff.service.ConverterService;
 import org.springframework.http.*;
@@ -8,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(path = "convert", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -48,22 +49,17 @@ public class CurrencyController {
             return invalidAmountErrorResponse();
         }
 
-        return ResponseEntity.ok().body(Map.of(
-                "currency", to,
-                "amount", converterService.convert(from, to, amount)
-        ));
+        BigDecimal convertedAmount = converterService.convert(from, to, amount);
+        return ResponseEntity.ok().body(new ConvertedCurrency(to, convertedAmount));
     }
 
     private ResponseEntity<Object> currencyErrorResponse(String currencyName) {
-        return ResponseEntity.status(400).body(Map.of(
-                "message",
-                "Валюта " + currencyName + " недоступна"
-        ));
+        return ResponseEntity.status(400)
+                .body(new InvalidCurrencyMessage("Валюта " + currencyName + " недоступна"));
     }
 
     private ResponseEntity<Object> invalidAmountErrorResponse() {
-        return ResponseEntity.status(400).body(Map.of(
-                "message", "Отрицательная сумма"
-        ));
+        return ResponseEntity.status(400)
+                .body(new InvalidCurrencyMessage("Отрицательная сумма"));
     }
 }
