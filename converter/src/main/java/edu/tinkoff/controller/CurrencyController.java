@@ -54,12 +54,12 @@ public class CurrencyController {
     }
 
     private ResponseEntity<Object> currencyErrorResponse(String currencyName) {
-        return ResponseEntity.status(400)
+        return ResponseEntity.badRequest()
                 .body(new InvalidCurrencyMessage("Валюта " + currencyName + " недоступна"));
     }
 
     private ResponseEntity<Object> invalidAmountErrorResponse() {
-        return ResponseEntity.status(400)
+        return ResponseEntity.badRequest()
                 .body(new InvalidCurrencyMessage("Отрицательная сумма"));
     }
 }
