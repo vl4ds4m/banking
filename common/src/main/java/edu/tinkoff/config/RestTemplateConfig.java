@@ -10,9 +10,12 @@ import java.time.Duration;
 
 @Configuration
 public class RestTemplateConfig {
+    private long timeout;
 
     @Value("${services.timeout:0}")
-    private long timeout;
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
+    }
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {

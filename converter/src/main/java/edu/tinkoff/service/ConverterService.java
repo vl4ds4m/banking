@@ -2,7 +2,6 @@ package edu.tinkoff.service;
 
 import edu.tinkoff.model.Currency;
 import edu.tinkoff.model.RatesResposne;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -11,9 +10,11 @@ import java.util.Map;
 
 @Service
 public class ConverterService {
+    private final RatesService ratesService;
 
-    @Autowired
-    private RatesService ratesService;
+    public ConverterService(RatesService ratesService) {
+        this.ratesService = ratesService;
+    }
 
     public BigDecimal convert(Currency from, Currency to, BigDecimal amount) {
         RatesResposne ratesResposne = ratesService.getRatesResponse();

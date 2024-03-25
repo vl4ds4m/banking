@@ -2,19 +2,19 @@ package edu.tinkoff.service;
 
 import edu.tinkoff.dao.AccountRepository;
 import edu.tinkoff.model.Account;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Service
 public class TransferService {
+    private final ConverterService converterService;
+    private final AccountRepository accountRepository;
 
-    @Autowired
-    private ConverterService converterService;
-
-    @Autowired
-    private AccountRepository accountRepository;
+    public TransferService(ConverterService converterService, AccountRepository accountRepository) {
+        this.converterService = converterService;
+        this.accountRepository = accountRepository;
+    }
 
     public void transfer(Account receiver, Account sender, double amount) {
         double convertedAmount;

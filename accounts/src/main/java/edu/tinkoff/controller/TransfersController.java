@@ -15,12 +15,13 @@ import java.util.Optional;
 @RestController
 @RequestMapping("transfers")
 public class TransfersController {
+    private final AccountRepository accountRepository;
+    private final TransferService transferService;
 
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
-    private TransferService transferService;
+    public TransfersController(AccountRepository accountRepository, TransferService transferService) {
+        this.accountRepository = accountRepository;
+        this.transferService = transferService;
+    }
 
     @PostMapping
     public ResponseEntity<Object> transfer(@RequestBody Map<String, Object> requestBody) {

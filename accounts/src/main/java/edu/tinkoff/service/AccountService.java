@@ -3,7 +3,6 @@ package edu.tinkoff.service;
 import edu.tinkoff.dao.AccountRepository;
 import edu.tinkoff.model.Account;
 import edu.tinkoff.model.Customer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -11,9 +10,11 @@ import java.math.RoundingMode;
 
 @Service
 public class AccountService {
+    private final AccountRepository accountRepository;
 
-    @Autowired
-    private AccountRepository accountRepository;
+    public AccountService(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
 
     public Account createAccount(Customer customer, String currency) {
         Account account = new Account(customer, currency);

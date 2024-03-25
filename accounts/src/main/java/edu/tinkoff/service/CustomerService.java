@@ -4,7 +4,6 @@ import edu.tinkoff.dao.AccountRepository;
 import edu.tinkoff.dao.CustomerRepository;
 import edu.tinkoff.model.Account;
 import edu.tinkoff.model.Customer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -15,15 +14,19 @@ import java.util.Map;
 
 @Service
 public class CustomerService {
+    private final CustomerRepository customerRepository;
+    private final AccountRepository accountRepository;
+    private final ConverterService converterService;
 
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
-    private ConverterService converterService;
+    public CustomerService(
+            CustomerRepository customerRepository,
+            AccountRepository accountRepository,
+            ConverterService converterService
+    ) {
+        this.customerRepository = customerRepository;
+        this.accountRepository = accountRepository;
+        this.converterService = converterService;
+    }
 
     public Customer createCustomer(String firstName, String lastName, LocalDate birthDate) {
         Customer customer = new Customer(firstName, lastName, birthDate);

@@ -1,7 +1,6 @@
 package edu.tinkoff.service;
 
 import edu.tinkoff.auth.KeycloakAuthClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -12,15 +11,20 @@ import java.util.Map;
 
 @Service
 public class ConverterService {
+    private final RestTemplate restTemplate;
+    private final KeycloakAuthClient keycloakAuthClient;
 
-    @Value("${services.converter.url}")
     private String converterUrl;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    public ConverterService(RestTemplate restTemplate, KeycloakAuthClient keycloakAuthClient) {
+        this.restTemplate = restTemplate;
+        this.keycloakAuthClient = keycloakAuthClient;
+    }
 
-    @Autowired
-    private KeycloakAuthClient keycloakAuthClient;
+    @Value("${services.converter.url}")
+    public void setConverterUrl(String converterUrl) {
+        this.converterUrl = converterUrl;
+    }
 
     public Map<String, Object> convert(String from, String to, double amount) {
         String token = keycloakAuthClient.getToken();

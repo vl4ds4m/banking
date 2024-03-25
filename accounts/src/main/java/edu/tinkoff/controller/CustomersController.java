@@ -4,7 +4,6 @@ import edu.tinkoff.dao.CustomerRepository;
 import edu.tinkoff.model.Currency;
 import edu.tinkoff.model.Customer;
 import edu.tinkoff.service.CustomerService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +14,13 @@ import java.util.*;
 @RestController
 @RequestMapping(path = "customers", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CustomersController {
+    private final CustomerRepository customerRepository;
+    private final CustomerService customerService;
 
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private CustomerService customerService;
+    public CustomersController(CustomerRepository customerRepository, CustomerService customerService) {
+        this.customerRepository = customerRepository;
+        this.customerService = customerService;
+    }
 
     @PostMapping
     public ResponseEntity<Object> createCustomer(@RequestBody Map<String, Object> requestBody) {

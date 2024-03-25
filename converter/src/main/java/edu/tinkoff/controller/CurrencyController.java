@@ -3,7 +3,6 @@ package edu.tinkoff.controller;
 import edu.tinkoff.auth.KeycloakAuthValidator;
 import edu.tinkoff.model.Currency;
 import edu.tinkoff.service.ConverterService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,12 +13,13 @@ import java.util.Map;
 @RestController
 @RequestMapping(path = "convert", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CurrencyController {
+    private final ConverterService converterService;
+    private final KeycloakAuthValidator keycloakAuthValidator;
 
-    @Autowired
-    private ConverterService converterService;
-
-    @Autowired
-    private KeycloakAuthValidator keycloakAuthValidator;
+    public CurrencyController(ConverterService converterService, KeycloakAuthValidator keycloakAuthValidator) {
+        this.converterService = converterService;
+        this.keycloakAuthValidator = keycloakAuthValidator;
+    }
 
     @GetMapping
     public ResponseEntity<Object> convert(

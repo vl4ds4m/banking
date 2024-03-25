@@ -6,7 +6,6 @@ import edu.tinkoff.model.Account;
 import edu.tinkoff.model.Currency;
 import edu.tinkoff.model.Customer;
 import edu.tinkoff.service.AccountService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,15 +17,19 @@ import java.util.*;
 @RestController
 @RequestMapping(path = "accounts", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AccountsController {
+    private final CustomerRepository customerRepository;
+    private final AccountRepository accountRepository;
+    private final AccountService accountService;
 
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
-    private AccountService accountService;
+    public AccountsController(
+            CustomerRepository customerRepository,
+            AccountRepository accountRepository,
+            AccountService accountService
+    ) {
+        this.customerRepository = customerRepository;
+        this.accountRepository = accountRepository;
+        this.accountService = accountService;
+    }
 
     @PostMapping
     public ResponseEntity<Object> createAccount(@RequestBody Map<String, Object> requestBody) {
