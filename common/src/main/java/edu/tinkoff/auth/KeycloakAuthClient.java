@@ -9,6 +9,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class KeycloakAuthClient {
@@ -37,9 +38,9 @@ public class KeycloakAuthClient {
         this.clientSecret = clientSecret;
     }
 
-    public String getToken() {
+    public Optional<String> getToken() {
         if (clientId.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
 
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
@@ -59,8 +60,8 @@ public class KeycloakAuthClient {
 
         Map<String, String> responseBody = responseEntity.getBody();
         if (responseBody == null) {
-            return null;
+            return Optional.empty();
         }
-        return responseBody.get("access_token");
+        return Optional.of(responseBody.get("access_token"));
     }
 }
