@@ -6,21 +6,21 @@ spring:
     show-sql: true
 
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:9876}/${DB_NAME:postgres}
-    username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:1234}
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
 services:
   timeout: 5
 
   converter:
-    url: ${CONVERTER_URL:http://localhost:8080}/convert?from={from}&to={to}&amount={amount}
+    url: ${CONVERTER_URL}/convert?from={from}&to={to}&amount={amount}
 
   keycloak:
     url:
-      get: ${KEYCLOAK_URL:}/realms/${KEYCLOAK_REALM:}/protocol/openid-connect/token
-      validate: ${KEYCLOAK_URL:}/realms/${KEYCLOAK_REALM:}/protocol/openid-connect/certs
+      get: ${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token
+      validate: ${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/certs
     client:
-      id: ${CLIENT_ID:}
-      secret: ${CLIENT_SECRET:}
+      id: ${CLIENT_ID}
+      secret: ${CLIENT_SECRET}
