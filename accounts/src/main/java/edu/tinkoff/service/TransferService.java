@@ -1,8 +1,8 @@
 package edu.tinkoff.service;
 
-import edu.tinkoff.model.Account;
-import edu.tinkoff.model.Currency;
-import edu.tinkoff.model.TransferMessage;
+import edu.tinkoff.dto.Account;
+import edu.tinkoff.dto.Currency;
+import edu.tinkoff.dto.TransferMessage;
 import edu.tinkoff.util.Conversions;
 import org.springframework.stereotype.Service;
 

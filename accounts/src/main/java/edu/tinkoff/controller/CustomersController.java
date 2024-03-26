@@ -1,8 +1,8 @@
 package edu.tinkoff.controller;
 
-import edu.tinkoff.model.Currency;
-import edu.tinkoff.model.Customer;
-import edu.tinkoff.model.CustomerBalance;
+import edu.tinkoff.dto.Currency;
+import edu.tinkoff.dto.Customer;
+import edu.tinkoff.dto.CustomerBalance;
 import edu.tinkoff.service.CustomerService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

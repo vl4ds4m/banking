@@ -1,7 +1,7 @@
 package edu.tinkoff.service;
 
 import edu.tinkoff.dto.CurrencyMessage;
-import edu.tinkoff.model.Currency;
+import edu.tinkoff.dto.Currency;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
 package edu.tinkoff.service;
 
 import edu.tinkoff.dao.AccountRepository;
-import edu.tinkoff.model.*;
+import edu.tinkoff.dto.*;
 import edu.tinkoff.util.Conversions;
 import org.springframework.stereotype.Service;
 

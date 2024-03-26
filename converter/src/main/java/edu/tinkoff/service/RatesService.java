@@ -1,6 +1,6 @@
 package edu.tinkoff.service;
 
-import edu.tinkoff.model.RatesResposne;
+import edu.tinkoff.dto.RatesResposne;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

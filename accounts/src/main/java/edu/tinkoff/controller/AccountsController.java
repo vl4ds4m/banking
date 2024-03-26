@@ -1,7 +1,7 @@
 package edu.tinkoff.controller;
 
-import edu.tinkoff.model.AccountBalance;
-import edu.tinkoff.model.AccountMessage;
+import edu.tinkoff.dto.AccountBalance;
+import edu.tinkoff.dto.AccountMessage;
 import edu.tinkoff.service.AccountService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

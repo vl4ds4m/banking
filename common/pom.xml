@@ -56,7 +56,7 @@
                             <language>java</language>
                             <generateApis>false</generateApis>
                             <generateSupportingFiles>false</generateSupportingFiles>
-                            <modelPackage>edu.tinkoff.model</modelPackage>
+                            <modelPackage>edu.tinkoff.dto</modelPackage>
                             <configOptions>
                                 <sourceFolder>src/gen/java/main</sourceFolder>
                             </configOptions>

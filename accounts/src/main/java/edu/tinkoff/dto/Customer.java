@@ -1,4 +1,4 @@
-package edu.tinkoff.model;
+package edu.tinkoff.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

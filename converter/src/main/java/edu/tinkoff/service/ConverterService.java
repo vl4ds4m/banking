@@ -1,8 +1,8 @@
 package edu.tinkoff.service;
 
 import edu.tinkoff.dto.CurrencyMessage;
-import edu.tinkoff.model.Currency;
-import edu.tinkoff.model.RatesResposne;
+import edu.tinkoff.dto.Currency;
+import edu.tinkoff.dto.RatesResposne;
 import org.springframework.stereotype.Service;
 
 import static edu.tinkoff.util.Conversions.SCALE;

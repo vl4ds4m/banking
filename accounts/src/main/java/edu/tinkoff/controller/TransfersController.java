@@ -1,6 +1,6 @@
 package edu.tinkoff.controller;
 
-import edu.tinkoff.model.TransferMessage;
+import edu.tinkoff.dto.TransferMessage;
 import edu.tinkoff.service.TransferService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

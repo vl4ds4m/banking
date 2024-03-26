@@ -1,4 +1,4 @@
-package edu.tinkoff.model;
+package edu.tinkoff.dto;
 
 import java.math.BigDecimal;
 

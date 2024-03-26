@@ -1,4 +1,4 @@
-package edu.tinkoff.model;
+package edu.tinkoff.dto;
 
 import edu.tinkoff.util.Conversions;
 import jakarta.persistence.*;
