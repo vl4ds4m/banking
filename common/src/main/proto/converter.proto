@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package edu.tinkoff;
+
+option java_multiple_files = true;
+option java_package = "edu.tinkoff.grpc";
+option java_outer_classname = "ConverterProto";
+
+service ConverterService {
+  rpc Convert (ConversionRequest) returns (ConversionReply) {
+  }
+}
+
+message ConversionRequest {
+  string from = 1;
+  string to = 2;
+  double amount = 3;
+}
+
+message ConversionReply {
+  string currency = 1;
+  double amount = 2;
+}

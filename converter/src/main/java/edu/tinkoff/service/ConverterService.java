@@ -3,7 +3,11 @@ package edu.tinkoff.service;
 import edu.tinkoff.dto.CurrencyMessage;
 import edu.tinkoff.dto.Currency;
 import edu.tinkoff.dto.RatesResposne;
-import org.springframework.stereotype.Service;
+import edu.tinkoff.grpc.ConversionReply;
+import edu.tinkoff.grpc.ConversionRequest;
+import edu.tinkoff.grpc.ConverterServiceGrpc.ConverterServiceImplBase;
+import io.grpc.stub.StreamObserver;
+import net.devh.boot.grpc.server.service.GrpcService;
 
 import static edu.tinkoff.util.Conversions.SCALE;
 import static edu.tinkoff.util.Conversions.ROUNDING_MODE;
@@ -12,12 +16,27 @@ import static edu.tinkoff.util.Conversions.setScale;
 import java.math.BigDecimal;
 import java.util.Map;
 
-@Service
-public class ConverterService {
+@GrpcService
+public class ConverterService extends ConverterServiceImplBase {
     private final RatesService ratesService;
 
     public ConverterService(RatesService ratesService) {
         this.ratesService = ratesService;
+    }
+
+    @Override
+    public void convert(ConversionRequest request, StreamObserver<ConversionReply> responseObserver) {
+        CurrencyMessage message = convert(
+                request.getFrom(),
+                request.getTo(),
+                BigDecimal.valueOf(request.getAmount())
+        );
+        ConversionReply reply = ConversionReply.newBuilder()
+                .setCurrency(message.currency().toString())
+                .setAmount(message.amount().doubleValue())
+                .build();
+        responseObserver.onNext(reply);
+        responseObserver.onCompleted();
     }
 
     public CurrencyMessage convert(String fromName, String toName, BigDecimal amount) {
