@@ -32,3 +32,10 @@ grpc:
       enableKeepAlive: true
       keepAliveWithoutCalls: true
       negotiation-type: plaintext
+
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          socket: TRACE
