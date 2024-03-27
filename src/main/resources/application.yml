@@ -1,3 +1,0 @@
-services:
-  currency-rates:
-    url: "http://rates:8080/rates"
