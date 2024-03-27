@@ -39,12 +39,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-core</artifactId>
-            <version>24.0.1</version>
-        </dependency>
-
-        <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-stub</artifactId>
         </dependency>
@@ -79,7 +73,7 @@
                             <generateSupportingFiles>false</generateSupportingFiles>
                             <modelPackage>edu.tinkoff.dto</modelPackage>
                             <configOptions>
-                                <sourceFolder>src/gen/java/main</sourceFolder>
+                                <sourceFolder>src/gen/java</sourceFolder>
                             </configOptions>
                         </configuration>
                     </execution>
