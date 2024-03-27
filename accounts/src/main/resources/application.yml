@@ -2,7 +2,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-
     show-sql: true
 
   datasource:
@@ -11,16 +10,17 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
-services:
-  timeout: 5
+grpc:
+  client:
+    accounts:
+      address: ${CONVERTER_URL}
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiation-type: plaintext
 
-  converter:
-    url: ${CONVERTER_URL}/convert?from={from}&to={to}&amount={amount}
-
-  keycloak:
-    url:
-      get: ${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token
-      validate: ${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/certs
-    client:
-      id: ${CLIENT_ID}
-      secret: ${CLIENT_SECRET}
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          socket: TRACE

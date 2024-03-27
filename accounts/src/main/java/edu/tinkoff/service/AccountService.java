@@ -3,6 +3,7 @@ package edu.tinkoff.service;
 import edu.tinkoff.dao.AccountRepository;
 import edu.tinkoff.dto.*;
 import edu.tinkoff.util.Conversions;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -12,10 +13,16 @@ import java.util.Optional;
 public class AccountService {
     private final AccountRepository accountRepository;
     private final CustomerService customerService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
-    public AccountService(AccountRepository accountRepository, CustomerService customerService) {
+    public AccountService(
+            AccountRepository accountRepository,
+            CustomerService customerService,
+            SimpMessagingTemplate simpMessagingTemplate
+    ) {
         this.accountRepository = accountRepository;
         this.customerService = customerService;
+        this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
     public Optional<AccountMessage> createAccount(AccountMessage message) {
@@ -37,6 +44,14 @@ public class AccountService {
         }
 
         Account savedAccount = accountRepository.save(new Account(customer.get(), message.currency()));
+
+        AccountBrokerMessage brokerMessage = new AccountBrokerMessage(
+                savedAccount.getNumber(),
+                message.currency(),
+                Conversions.setScale(savedAccount.getAmount())
+        );
+        simpMessagingTemplate.convertAndSend(AccountBrokerMessage.DESTINATION, brokerMessage);
+
         return Optional.of(new AccountMessage(null, null, savedAccount.getNumber()));
     }
 
@@ -64,7 +79,14 @@ public class AccountService {
 
         Account account = optionalAccount.get();
         account.setAmount(account.getAmount().add(amount));
-        accountRepository.save(account);
+        account = accountRepository.save(account);
+
+        AccountBrokerMessage brokerMessage = new AccountBrokerMessage(
+                account.getNumber(),
+                account.getCurrency(),
+                Conversions.setScale(account.getAmount())
+        );
+        simpMessagingTemplate.convertAndSend(AccountBrokerMessage.DESTINATION, brokerMessage);
 
         return true;
     }
@@ -73,7 +95,7 @@ public class AccountService {
         return accountRepository.findById(id);
     }
 
-    public void save(Account account) {
-        accountRepository.save(account);
+    public Account save(Account account) {
+        return accountRepository.save(account);
     }
 }

@@ -1,9 +1,11 @@
 package edu.tinkoff.service;
 
 import edu.tinkoff.dto.Account;
+import edu.tinkoff.dto.AccountBrokerMessage;
 import edu.tinkoff.dto.Currency;
 import edu.tinkoff.dto.TransferMessage;
 import edu.tinkoff.util.Conversions;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -13,10 +15,16 @@ import java.util.Optional;
 public class TransferService {
     private final ConverterService converterService;
     private final AccountService accountService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
-    public TransferService(ConverterService converterService, AccountService accountService) {
+    public TransferService(
+            ConverterService converterService,
+            AccountService accountService,
+            SimpMessagingTemplate simpMessagingTemplate
+    ) {
         this.converterService = converterService;
         this.accountService = accountService;
+        this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
     public boolean transfer(TransferMessage message) {
@@ -54,8 +62,22 @@ public class TransferService {
         receiver.setAmount(receiver.getAmount().add(convertedAmount));
         sender.setAmount(sender.getAmount().subtract(amount));
 
-        accountService.save(receiver);
-        accountService.save(sender);
+        receiver = accountService.save(receiver);
+        sender = accountService.save(sender);
+
+        AccountBrokerMessage senderMessage = new AccountBrokerMessage(
+                sender.getNumber(),
+                sender.getCurrency(),
+                Conversions.setScale(sender.getAmount())
+        );
+        AccountBrokerMessage receiverMessage = new AccountBrokerMessage(
+                receiver.getNumber(),
+                receiver.getCurrency(),
+                Conversions.setScale(receiver.getAmount())
+        );
+
+        simpMessagingTemplate.convertAndSend(AccountBrokerMessage.DESTINATION, senderMessage);
+        simpMessagingTemplate.convertAndSend(AccountBrokerMessage.DESTINATION, receiverMessage);
 
         return true;
     }

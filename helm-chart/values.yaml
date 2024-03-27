@@ -43,11 +43,20 @@ service:
   type: NodePort
   port: 8080
 
-deployment:
-  probe:
-    httpGetPath: /actuator/health
-    initDelaySec: 10
-    failureThresholdCount: 6
+livenessProbe:
+  httpGet:
+    path: /actuator/health
+    port: http
+  initialDelaySeconds: 10
+  timeoutSeconds: 2
+  failureThreshold: 6
+readinessProbe:
+  httpGet:
+    path: /actuator/health
+    port: http
+  initialDelaySeconds: 10
+  timeoutSeconds: 2
+  failureThreshold: 6
 
 ingress:
   enabled: false

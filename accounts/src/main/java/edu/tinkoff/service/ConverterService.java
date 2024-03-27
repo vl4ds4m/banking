@@ -1,35 +1,28 @@
 package edu.tinkoff.service;
 
-import edu.tinkoff.dto.CurrencyMessage;
 import edu.tinkoff.dto.Currency;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
+import edu.tinkoff.grpc.ConversionReply;
+import edu.tinkoff.grpc.ConversionRequest;
+import edu.tinkoff.grpc.ConverterServiceGrpc.ConverterServiceBlockingStub;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 @Service
 public class ConverterService {
-    private final RestTemplate restTemplate;
-    private String converterUrl;
+    private final ConverterServiceBlockingStub grpcStub;
 
-    public ConverterService(@Qualifier("auth") RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
-
-    @Value("${services.converter.url}")
-    public void setConverterUrl(String converterUrl) {
-        this.converterUrl = converterUrl;
+    public ConverterService(ConverterServiceBlockingStub grpcStub) {
+        this.grpcStub = grpcStub;
     }
 
     public BigDecimal convert(Currency from, Currency to, BigDecimal amount) {
-        CurrencyMessage message = restTemplate.getForObject(
-                converterUrl,
-                CurrencyMessage.class,
-                from, to, amount
-        );
-        return Objects.requireNonNull(message).amount();
+        ConversionRequest request = ConversionRequest.newBuilder()
+                .setFrom(from.toString())
+                .setTo(to.toString())
+                .setAmount(amount.doubleValue())
+                .build();
+        ConversionReply reply = grpcStub.convert(request);
+        return BigDecimal.valueOf(reply.getAmount());
     }
 }
