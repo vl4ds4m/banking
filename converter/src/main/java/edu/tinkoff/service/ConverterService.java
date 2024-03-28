@@ -6,8 +6,11 @@ import edu.tinkoff.dto.RatesResposne;
 import edu.tinkoff.grpc.ConversionReply;
 import edu.tinkoff.grpc.ConversionRequest;
 import edu.tinkoff.grpc.ConverterServiceGrpc.ConverterServiceImplBase;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static edu.tinkoff.util.Conversions.SCALE;
 import static edu.tinkoff.util.Conversions.ROUNDING_MODE;
@@ -18,6 +21,8 @@ import java.util.Map;
 
 @GrpcService
 public class ConverterService extends ConverterServiceImplBase {
+    private static final Logger logger = LoggerFactory.getLogger(ConverterService.class);
+
     private final RatesService ratesService;
 
     public ConverterService(RatesService ratesService) {
@@ -26,17 +31,24 @@ public class ConverterService extends ConverterServiceImplBase {
 
     @Override
     public void convert(ConversionRequest request, StreamObserver<ConversionReply> responseObserver) {
-        CurrencyMessage message = convert(
-                request.getFrom(),
-                request.getTo(),
-                BigDecimal.valueOf(request.getAmount())
-        );
-        ConversionReply reply = ConversionReply.newBuilder()
-                .setCurrency(message.currency().toString())
-                .setAmount(message.amount().doubleValue())
-                .build();
-        responseObserver.onNext(reply);
-        responseObserver.onCompleted();
+        try {
+            CurrencyMessage message = convert(
+                    request.getFrom(),
+                    request.getTo(),
+                    BigDecimal.valueOf(request.getAmount())
+            );
+
+            ConversionReply reply = ConversionReply.newBuilder()
+                    .setCurrency(message.currency().toString())
+                    .setAmount(message.amount().doubleValue())
+                    .build();
+
+            responseObserver.onNext(reply);
+            responseObserver.onCompleted();
+        } catch (RuntimeException e) {
+            logger.error("Conversion exception: {}", e.getMessage());
+            responseObserver.onError(Status.INTERNAL.asException());
+        }
     }
 
     public CurrencyMessage convert(String fromName, String toName, BigDecimal amount) {
