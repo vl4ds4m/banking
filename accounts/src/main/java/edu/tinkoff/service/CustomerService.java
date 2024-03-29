@@ -3,8 +3,11 @@ package edu.tinkoff.service;
 import com.giffing.bucket4j.spring.boot.starter.context.RateLimiting;
 import edu.tinkoff.dao.CustomerRepository;
 import edu.tinkoff.dto.*;
+import edu.tinkoff.exception.InvalidDataException;
 import edu.tinkoff.util.Conversions;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,6 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
+@Validated
 public class CustomerService {
     private final CustomerRepository customerRepository;
     private final ConverterService converterService;
@@ -21,25 +25,20 @@ public class CustomerService {
         this.converterService = converterService;
     }
 
-    public Optional<Customer> createCustomer(Customer customer) {
-        if (
-                customer.getFirstName() == null ||
-                customer.getLastName() == null ||
-                customer.getBirthDate() == null
-        ) {
-            return Optional.empty();
-        }
-
-        int roughCustomerAge = LocalDate.now().getYear() - customer.getBirthDate().getYear();
+    public CustomerCreationResponse createCustomer(@Valid CustomerCreationRequest request) {
+        int roughCustomerAge = LocalDate.now().getYear() - request.birthDate().getYear();
         if (roughCustomerAge < 14 || roughCustomerAge > 120) {
-            return Optional.empty();
+            throw new InvalidDataException("Customer age must be between 14 and 120");
         }
 
-        Customer savedCustomer = customerRepository.save(customer);
+        Customer customer = new Customer();
+        customer.setFirstName(request.firstName());
+        customer.setLastName(request.lastName());
+        customer.setBirthDate(request.birthDate());
 
-        customer = new Customer();
-        customer.setId(savedCustomer.getId());
-        return Optional.of(customer);
+        int customerId = customerRepository.save(customer).getId();
+
+        return new CustomerCreationResponse(customerId);
     }
 
     public Optional<Customer> findById(int id) {
@@ -51,10 +50,10 @@ public class CustomerService {
             cacheKey = "#id",
             ratePerMethod = true
     )
-    public Optional<CustomerBalance> getBalance(int id, Currency currency) {
+    public CustomerBalanceResponse getBalance(int id, Currency currency) {
         Optional<Customer> customer = customerRepository.findById(id);
         if (customer.isEmpty()) {
-            return Optional.empty();
+            throw new InvalidDataException("Customer [id=" + id + "] isn't found");
         }
 
         Set<Account> accounts = customer.get().getAccounts();
@@ -72,6 +71,6 @@ public class CustomerService {
             }
         }
 
-        return Optional.of(new CustomerBalance(balance, currency));
+        return new CustomerBalanceResponse(balance, currency);
     }
 }

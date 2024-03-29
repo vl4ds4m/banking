@@ -3,15 +3,20 @@ package edu.tinkoff.service;
 import edu.tinkoff.dto.Account;
 import edu.tinkoff.dto.AccountBrokerMessage;
 import edu.tinkoff.dto.Currency;
-import edu.tinkoff.dto.TransferMessage;
+import edu.tinkoff.dto.TransferRequest;
+import edu.tinkoff.exception.InvalidDataException;
 import edu.tinkoff.util.Conversions;
+import jakarta.validation.Valid;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
+@Validated
 public class TransferService {
     private final ConverterService converterService;
     private final AccountService accountService;
@@ -27,58 +32,57 @@ public class TransferService {
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
-    public boolean transfer(TransferMessage message) {
-        if (
-                message.receiverAccount() == null ||
-                message.senderAccount() == null ||
-                message.amountInSenderCurrency() == null
-        ) {
-            return false;
+    public void transfer(@Valid TransferRequest request) {
+        Optional<Account> optionalReceiver = accountService.findById(request.receiverNumber());
+        if (optionalReceiver.isEmpty()) {
+            throw new InvalidDataException(
+                    "Account [number=" + request.receiverNumber() + "] isn't found");
         }
 
-        BigDecimal amount = Conversions.setScale(message.amountInSenderCurrency());
-        if (BigDecimal.ZERO.compareTo(amount) >= 0) {
-            return false;
-        }
-
-        Optional<Account> optionalReceiver = accountService.findById(message.receiverAccount());
-        Optional<Account> optionalSender = accountService.findById(message.senderAccount());
-        if (optionalReceiver.isEmpty() || optionalSender.isEmpty()) {
-            return false;
+        Optional<Account> optionalSender = accountService.findById(request.senderNumber());
+        if (optionalSender.isEmpty()) {
+            throw new InvalidDataException(
+                    "Account [number=" + request.senderNumber() + "] isn't found");
         }
 
         Account receiver = optionalReceiver.get();
         Account sender = optionalSender.get();
+        BigDecimal amount = Conversions.setScale(request.amount());
+
         if (sender.getAmount().compareTo(amount) < 0) {
-            return false;
+            throw new InvalidDataException(
+                    "Insufficient funds in the sender account: " +
+                    "amount=" + sender.getAmount());
         }
 
-        Currency receiverCurrency = receiver.getCurrency();
+        transfer(sender, receiver, amount);
+    }
+
+    @Transactional
+    private void transfer(Account sender, Account receiver, BigDecimal amount) {
         Currency senderCurrency = sender.getCurrency();
+        Currency receiverCurrency = receiver.getCurrency();
+
         BigDecimal convertedAmount = !senderCurrency.equals(receiverCurrency) ?
                 converterService.convert(senderCurrency, receiverCurrency, amount) :
                 amount;
 
-        receiver.setAmount(receiver.getAmount().add(convertedAmount));
         sender.setAmount(sender.getAmount().subtract(amount));
+        receiver.setAmount(receiver.getAmount().add(convertedAmount));
 
-        receiver = accountService.save(receiver);
         sender = accountService.save(sender);
+        receiver = accountService.save(receiver);
 
-        AccountBrokerMessage senderMessage = new AccountBrokerMessage(
-                sender.getNumber(),
-                sender.getCurrency(),
-                Conversions.setScale(sender.getAmount())
+        sendMessage(sender);
+        sendMessage(receiver);
+    }
+
+    private void sendMessage(Account account) {
+        AccountBrokerMessage message = new AccountBrokerMessage(
+                account.getNumber(),
+                account.getCurrency(),
+                Conversions.setScale(account.getAmount())
         );
-        AccountBrokerMessage receiverMessage = new AccountBrokerMessage(
-                receiver.getNumber(),
-                receiver.getCurrency(),
-                Conversions.setScale(receiver.getAmount())
-        );
-
-        simpMessagingTemplate.convertAndSend(AccountBrokerMessage.DESTINATION, senderMessage);
-        simpMessagingTemplate.convertAndSend(AccountBrokerMessage.DESTINATION, receiverMessage);
-
-        return true;
+        simpMessagingTemplate.convertAndSend(AccountBrokerMessage.DESTINATION, message);
     }
 }
