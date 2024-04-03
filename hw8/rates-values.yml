@@ -1,0 +1,11 @@
+image:
+  repository: miraclewisp/hse-rates
+  tag: auth-m1
+
+replicaCount: 1
+
+extraEnv:
+  - name: KEYCLOAK_URL
+    value: http://keycloak-keycloakx-http
+  - name: KEYCLOAK_REALM
+    value: hse

@@ -1,0 +1,6 @@
+auth:
+  enablePostgresUser: true
+  postgresPassword: "StrongPassword"
+  username: "accounts"
+  password: "accounts"
+  database: "accounts"
