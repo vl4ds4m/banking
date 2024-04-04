@@ -96,7 +96,7 @@ jobs:
             --set image.tag=amd64 \
             --set backoffLimit=0 \
             --set image.pullPolicy=Always \
-            --set 'args={\"-ws\"\, \"-fail\"}' \
+            --set 'args={\"-ws\"\, \"-fail\", \"-idmp\"}' \
             -f tests/hw8/test-values.yml \
             --wait --wait-for-jobs --timeout 180s
 
@@ -114,24 +114,18 @@ jobs:
       - name: Get test logs
         run: |
           kubectl logs jobs/autotest-job
-          ERROR_LOGS=$(kubectl logs jobs/autotest-job | grep 'ERROR |\|Exception' || true)
-          echo "JOB_ERRORS<<EOF" >> $GITHUB_ENV
-          echo "$ERROR_LOGS" >> $GITHUB_ENV
+          TEST_RESULT=$(kubectl logs jobs/autotest-job | sed -n '/--- TEST RESULTS BEGIN ---/, /--- TEST RESULTS END ---/p' || true)
+          echo "TEST_RESULTS<<EOF" >> $GITHUB_ENV
+          echo "$TEST_RESULT" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
       - uses: actions/github-script@v7
         with:
           script: |
-            const errors = process.env.JOB_ERRORS
-            let body = ""
-            if (errors) {
-              body = `### ❌ Ошибки \n\n ${errors}`
-            } else {
-              body = `### ✅ Тесты пройдены`
-            }
+            const results = process.env.TEST_RESULTS
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: body
+              body: results
             })
