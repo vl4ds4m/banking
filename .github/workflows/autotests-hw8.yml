@@ -96,9 +96,9 @@ jobs:
             --set image.tag=amd64 \
             --set backoffLimit=0 \
             --set image.pullPolicy=Always \
-            --set 'args={\"-ws\"\, \"-fail\", \"-idmp\"}' \
+            --set 'args={\"-ws\"\, \"-fail\"\, \"-idmp\"}' \
             -f tests/hw8/test-values.yml \
-            --wait --wait-for-jobs --timeout 180s
+            --wait --wait-for-jobs --timeout 600s
 
       - name: Debug k8s entities
         run: |
