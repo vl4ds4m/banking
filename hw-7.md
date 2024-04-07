@@ -46,6 +46,5 @@ jobs:
 
 # Материалы
 
-https://github.com/MarcGiffing/bucket4j-spring-boot-starter
-https://www.baeldung.com/resilience4j
-https://www.baeldung.com/spring-retry
+https://habr.com/ru/companies/lamoda/articles/678932/
+https://microservices.io/patterns/data/transactional-outbox.html
