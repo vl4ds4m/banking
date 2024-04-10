@@ -1,4 +1,4 @@
-name: Autotests-hw7
+name: Autotests-hw8
 
 on:
   workflow_call:
@@ -44,13 +44,18 @@ jobs:
       - name: Deploy postgres
         continue-on-error: true
         run: |
-          helm install postgresql bitnami/postgresql -f tests/hw7/postgres-values.yml --wait --timeout 180s
+          helm install postgresql bitnami/postgresql -f tests/hw8/postgres-values.yml --wait --timeout 180s   
+
+      - name: Deploy redis
+        continue-on-error: true
+        run: |
+          helm install redis bitnami/redis -f tests/hw8/redis-values.yml --wait --timeout 180s
 
       - name: Deploy keycloak
         continue-on-error: true
         run: |
-          kubectl create secret generic realm-secret --from-file=tests/hw7/realm.json
-          helm install keycloak codecentric/keycloakx -f tests/hw7/keycloak-values.yml --wait --timeout 180s
+          kubectl create secret generic realm-secret --from-file=tests/hw8/realm.json
+          helm install keycloak codecentric/keycloakx -f tests/hw8/keycloak-values.yml --wait --timeout 180s
 
 
       - name: Deploy rates
@@ -60,7 +65,7 @@ jobs:
             --set fullnameOverride=rates \
             --set image.repository=miraclewisp/hse-rates \
             --set image.tag=auth-amd64 \
-            -f tests/hw7/rates-values.yml \
+            -f tests/hw8/rates-values.yml \
             --wait --timeout 180s
 
       - name: Deploy converter
@@ -70,7 +75,7 @@ jobs:
             --set fullnameOverride=converter \
             --set image.repository=${{ inputs.converter-image-name }} \
             --set image.tag=${{ inputs.image-tag }} \
-            -f tests/hw7/converter-values.yml \
+            -f tests/hw8/converter-values.yml \
             --wait --timeout 180s
 
       - name: Deploy accounts
@@ -80,7 +85,7 @@ jobs:
             --set fullnameOverride=accounts \
             --set image.repository=${{ inputs.accounts-image-name }} \
             --set image.tag=${{ inputs.image-tag }} \
-            -f tests/hw7/accounts-values.yml \
+            -f tests/hw8/accounts-values.yml \
             --wait --timeout 180s
 
       - name: Run tests
@@ -91,9 +96,9 @@ jobs:
             --set image.tag=amd64 \
             --set backoffLimit=0 \
             --set image.pullPolicy=Always \
-            --set 'args={\"-ws\"\, \"-fail\"}' \
-            -f tests/hw7/test-values.yml \
-            --wait --wait-for-jobs --timeout 180s
+            --set 'args={\"-ws\"\, \"-fail\"\, \"-idmp\"}' \
+            -f tests/hw8/test-values.yml \
+            --wait --wait-for-jobs --timeout 600s
 
       - name: Debug k8s entities
         run: |
