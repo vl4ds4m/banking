@@ -1,5 +1,6 @@
 package edu.tinkoff.service;
 
+import com.giffing.bucket4j.spring.boot.starter.context.RateLimiting;
 import edu.tinkoff.dao.CustomerRepository;
 import edu.tinkoff.dto.*;
 import edu.tinkoff.util.Conversions;
@@ -45,6 +46,11 @@ public class CustomerService {
         return customerRepository.findById(id);
     }
 
+    @RateLimiting(
+            name = "customerBalance",
+            cacheKey = "#id",
+            ratePerMethod = true
+    )
     public Optional<CustomerBalance> getBalance(int id, Currency currency) {
         Optional<Customer> customer = customerRepository.findById(id);
         if (customer.isEmpty()) {

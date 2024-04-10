@@ -10,6 +10,14 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
+  cache:
+    jcache:
+      provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
+    cache-names:
+      - buckets
+    caffeine:
+      spec: maximumSize=1000000,expireAfterAccess=3600s
+
 grpc:
   client:
     accounts:
@@ -24,3 +32,15 @@ logging:
       springframework:
         web:
           socket: TRACE
+
+bucket4j:
+  enabled: true
+  methods:
+    - name: customerBalance
+      cache-name: buckets
+      rate-limit:
+        bandwidths:
+          - capacity: 5
+            time: 60
+            unit: seconds
+            refill-speed: greedy
