@@ -1,8 +1,7 @@
 package edu.tinkoff.controller;
 
-import edu.tinkoff.dto.TransferMessage;
+import edu.tinkoff.dto.TransferRequest;
 import edu.tinkoff.service.TransferService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,9 +14,7 @@ public class TransfersController {
     }
 
     @PostMapping
-    public ResponseEntity<?> transfer(@RequestBody TransferMessage message) {
-        return transferService.transfer(message) ?
-                ResponseEntity.ok().build() :
-                ResponseEntity.badRequest().build();
+    public void transfer(@RequestBody TransferRequest request) {
+        transferService.transfer(request);
     }
 }

@@ -1,11 +1,8 @@
 package edu.tinkoff.controller;
 
-import edu.tinkoff.dto.Currency;
-import edu.tinkoff.dto.Customer;
-import edu.tinkoff.dto.CustomerBalance;
+import edu.tinkoff.dto.*;
 import edu.tinkoff.service.CustomerService;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,19 +15,15 @@ public class CustomersController {
     }
 
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
-        return customerService.createCustomer(customer)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.badRequest().build());
+    public CustomerCreationResponse createCustomer(@RequestBody CustomerCreationRequest request) {
+        return customerService.createCustomer(request);
     }
 
     @GetMapping("/{customerId}/balance")
-    public ResponseEntity<CustomerBalance> getBalance(
+    public CustomerBalanceResponse getBalance(
             @PathVariable int customerId,
             @RequestParam Currency currency
     ) {
-        return customerService.getBalance(customerId, currency)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.badRequest().build());
+        return customerService.getBalance(customerId, currency);
     }
 }
