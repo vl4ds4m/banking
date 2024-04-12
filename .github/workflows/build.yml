@@ -20,8 +20,8 @@ jobs:
 
       - uses: actions/setup-java@v4
         with:
-          distribution: 'oracle'
-          java-version: '21'
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Build apps
         run: mvn clean package
