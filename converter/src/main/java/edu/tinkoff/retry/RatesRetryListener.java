@@ -13,36 +13,12 @@ public class RatesRetryListener implements RetryListener {
     private static final Logger logger = LoggerFactory.getLogger(RatesService.class);
 
     @Override
-    public <T, E extends Throwable> boolean open(RetryContext context, RetryCallback<T, E> callback) {
-        logger.info("Try to get rates");
-        return true;
-    }
-
-    @Override
-    public <T, E extends Throwable> void onSuccess(
-            RetryContext context,
-            RetryCallback<T, E> callback,
-            T result
-    ) {
-        logger.info("Succeed");
-    }
-
-    @Override
     public <T, E extends Throwable> void onError(
             RetryContext context,
             RetryCallback<T, E> callback,
             Throwable throwable
     ) {
         int retryCount = context.getRetryCount();
-        logger.warn("Failed, attempts: {}", retryCount);
-    }
-
-    @Override
-    public <T, E extends Throwable> void close(
-            RetryContext context,
-            RetryCallback<T, E> callback,
-            Throwable throwable
-    ) {
-        logger.info("Completed");
+        logger.warn("Fail to get rates, attempt #{}", retryCount);
     }
 }
