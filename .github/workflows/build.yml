@@ -90,7 +90,7 @@ jobs:
           docker tag "${IMAGE_ACCOUNTS}:${IMAGE_TAG}" "${IMAGE_ACCOUNTS}:latest"
           docker push "${IMAGE_ACCOUNTS}:latest"
 
-  autotest:
+  autotest-converter:
     needs: build
     uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests.yml@main
     with:
