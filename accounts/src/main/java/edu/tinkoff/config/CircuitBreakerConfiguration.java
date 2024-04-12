@@ -30,31 +30,15 @@ public class CircuitBreakerConfiguration {
         CircuitBreakerRegistry registry = CircuitBreakerRegistry.of(config);
         CircuitBreaker circuitBreaker = registry.circuitBreaker("converter");
         circuitBreaker.getEventPublisher()
-                .onSuccess(event -> logger.info(
-                        "Success, state: {}",
-                        circuitBreaker.getState()
-                ))
                 .onError(event -> logger.warn(
-                        "Error, state: {}", circuitBreaker.getState()
-                ))
-                .onCallNotPermitted(event -> logger.warn(
-                        "Call not permitted"
-                ))
-                .onReset(event -> logger.info(
-                        "Reset"
-                ))
-                .onFailureRateExceeded(event -> logger.warn(
-                        "Failure rate exceeded"
-                ))
-                .onIgnoredError(event -> logger.warn(
-                        "Ignored error"
-                ))
-                .onSlowCallRateExceeded(event -> logger.warn(
-                        "Slow call rate exceeded"
-                ))
+                        "CB '{}' error, state: {}",
+                        event.getCircuitBreakerName(),
+                        circuitBreaker.getState()))
                 .onStateTransition(event -> logger.info(
-                        event.getStateTransition().toString()
-                ));
+                        "CB '{}' state transition, from: {}, to: {}",
+                        event.getCircuitBreakerName(),
+                        event.getStateTransition().getFromState(),
+                        event.getStateTransition().getToState()));
         return circuitBreaker;
     }
 }

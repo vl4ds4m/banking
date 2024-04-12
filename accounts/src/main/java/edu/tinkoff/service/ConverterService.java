@@ -3,7 +3,7 @@ package edu.tinkoff.service;
 import edu.tinkoff.dto.Currency;
 import edu.tinkoff.grpc.ConversionReply;
 import edu.tinkoff.grpc.ConversionRequest;
-import edu.tinkoff.grpc.ConverterServiceGrpc.ConverterServiceBlockingStub;
+import edu.tinkoff.grpc.ConverterServiceGrpc;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ public class ConverterService {
     private ConversionReply reply;
 
     public ConverterService(
-            ConverterServiceBlockingStub grpcStub,
+            ConverterServiceGrpc.ConverterServiceBlockingStub grpcStub,
             CircuitBreaker circuitBreaker
     ) {
         conversion = circuitBreaker.decorateRunnable(
