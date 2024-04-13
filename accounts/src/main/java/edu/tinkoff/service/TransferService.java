@@ -4,6 +4,7 @@ import edu.tinkoff.dto.Account;
 import edu.tinkoff.dto.AccountBrokerMessage;
 import edu.tinkoff.dto.Currency;
 import edu.tinkoff.dto.TransferRequest;
+import edu.tinkoff.exception.InvalidAccountNumberException;
 import edu.tinkoff.exception.InvalidDataException;
 import edu.tinkoff.util.Conversions;
 import jakarta.transaction.Transactional;
@@ -39,14 +40,12 @@ public class TransferService {
     public void transfer(@Valid TransferRequest request) {
         Optional<Account> optionalReceiver = accountService.findById(request.receiverNumber());
         if (optionalReceiver.isEmpty()) {
-            throw new InvalidDataException(
-                    "Account [number=" + request.receiverNumber() + "] isn't found");
+            throw new InvalidAccountNumberException(request.receiverNumber());
         }
 
         Optional<Account> optionalSender = accountService.findById(request.senderNumber());
         if (optionalSender.isEmpty()) {
-            throw new InvalidDataException(
-                    "Account [number=" + request.senderNumber() + "] isn't found");
+            throw new InvalidAccountNumberException(request.senderNumber());
         }
 
         Account receiver = optionalReceiver.get();

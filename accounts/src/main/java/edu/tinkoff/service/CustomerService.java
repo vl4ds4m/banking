@@ -3,6 +3,7 @@ package edu.tinkoff.service;
 import com.giffing.bucket4j.spring.boot.starter.context.RateLimiting;
 import edu.tinkoff.dao.CustomerRepository;
 import edu.tinkoff.dto.*;
+import edu.tinkoff.exception.InvalidCustomerIdException;
 import edu.tinkoff.exception.InvalidDataException;
 import edu.tinkoff.util.Conversions;
 import jakarta.validation.Valid;
@@ -53,7 +54,7 @@ public class CustomerService {
     public CustomerBalanceResponse getBalance(int id, Currency currency) {
         Optional<Customer> customer = customerRepository.findById(id);
         if (customer.isEmpty()) {
-            throw new InvalidDataException("Customer [id=" + id + "] isn't found");
+            throw new InvalidCustomerIdException(id);
         }
 
         Set<Account> accounts = customer.get().getAccounts();

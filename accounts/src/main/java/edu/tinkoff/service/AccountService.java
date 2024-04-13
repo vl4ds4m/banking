@@ -2,7 +2,7 @@ package edu.tinkoff.service;
 
 import edu.tinkoff.dao.AccountRepository;
 import edu.tinkoff.dto.*;
-import edu.tinkoff.exception.InvalidDataException;
+import edu.tinkoff.exception.*;
 import edu.tinkoff.util.Conversions;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -36,7 +36,7 @@ public class AccountService {
     public AccountCreationResponse createAccount(@Valid AccountCreationRequest request) {
         Optional<Customer> customer = customerService.findById(request.customerId());
         if (customer.isEmpty()) {
-            throw new InvalidDataException("Customer [id=" + request.customerId() + "] isn't found");
+            throw new InvalidCustomerIdException(request.customerId());
         }
 
         Optional<Account> account = accountRepository.findByCustomerIdAndCurrency(
@@ -64,7 +64,7 @@ public class AccountService {
     public AccountBalance getBalance(int number) {
         Optional<Account> account = accountRepository.findById(number);
         if (account.isEmpty()) {
-            throw new InvalidDataException("Account [number=" + number + "] isn't found");
+            throw new InvalidAccountNumberException(number);
         }
 
         BigDecimal amount = Conversions.setScale(account.get().getAmount());
@@ -76,7 +76,7 @@ public class AccountService {
     public void topUpAccount(int number, @Valid AccountTopUpRequest request) {
         Optional<Account> optionalAccount = accountRepository.findById(number);
         if (optionalAccount.isEmpty()) {
-            throw new InvalidDataException("Account [number=" + number + "] isn't found");
+            throw new InvalidAccountNumberException(number);
         }
 
         BigDecimal amount = Conversions.setScale(request.amount());
