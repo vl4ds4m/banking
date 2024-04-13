@@ -1,12 +1,11 @@
 package edu.tinkoff.controller;
 
-import edu.tinkoff.dto.AccountBalance;
-import edu.tinkoff.dto.AccountCreationRequest;
-import edu.tinkoff.dto.AccountCreationResponse;
-import edu.tinkoff.dto.AccountTopUpRequest;
+import edu.tinkoff.dto.*;
 import edu.tinkoff.service.AccountService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "accounts", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -28,10 +27,15 @@ public class AccountsController {
     }
 
     @PostMapping("/{accountNumber}/top-up")
-    public void topUpAccount(
+    public TransactionResponse topUpAccount(
             @PathVariable int accountNumber,
             @RequestBody AccountTopUpRequest request
     ) {
-        accountService.topUpAccount(accountNumber, request);
+        return accountService.topUpAccount(accountNumber, request);
+    }
+
+    @GetMapping("/{accountNumber}/transactions")
+    public List<TransactionResponse> getTransactions(@PathVariable int accountNumber) {
+        return accountService.getTransactions(accountNumber);
     }
 }

@@ -1,9 +1,7 @@
 package edu.tinkoff.service;
 
-import edu.tinkoff.dto.Account;
-import edu.tinkoff.dto.AccountBrokerMessage;
-import edu.tinkoff.dto.Currency;
-import edu.tinkoff.dto.TransferRequest;
+import edu.tinkoff.dao.TransactionRepository;
+import edu.tinkoff.dto.*;
 import edu.tinkoff.exception.InvalidAccountNumberException;
 import edu.tinkoff.exception.InvalidDataException;
 import edu.tinkoff.util.Conversions;
@@ -23,21 +21,24 @@ public class TransferService {
     private final AccountService accountService;
     private final NotificationService notificationService;
     private final SimpMessagingTemplate simpMessagingTemplate;
+    private final TransactionRepository transactionRepository;
 
     public TransferService(
             ConverterService converterService,
             AccountService accountService,
             NotificationService notificationService,
-            SimpMessagingTemplate simpMessagingTemplate
+            SimpMessagingTemplate simpMessagingTemplate,
+            TransactionRepository transactionRepository
     ) {
         this.converterService = converterService;
         this.accountService = accountService;
         this.notificationService = notificationService;
         this.simpMessagingTemplate = simpMessagingTemplate;
+        this.transactionRepository = transactionRepository;
     }
 
     @Transactional
-    public void transfer(@Valid TransferRequest request) {
+    public TransactionResponse transfer(@Valid TransferRequest request) {
         Optional<Account> optionalReceiver = accountService.findById(request.receiverNumber());
         if (optionalReceiver.isEmpty()) {
             throw new InvalidAccountNumberException(request.receiverNumber());
@@ -58,10 +59,10 @@ public class TransferService {
                     "amount=" + sender.getAmount());
         }
 
-        transfer(sender, receiver, amount);
+        return transfer(sender, receiver, amount);
     }
 
-    private void transfer(Account sender, Account receiver, BigDecimal amount) {
+    private TransactionResponse transfer(Account sender, Account receiver, BigDecimal amount) {
         Currency senderCurrency = sender.getCurrency();
         Currency receiverCurrency = receiver.getCurrency();
 
@@ -74,6 +75,9 @@ public class TransferService {
 
         sender = accountService.save(sender);
         receiver = accountService.save(receiver);
+
+        Transaction senderTransaction = transactionRepository.save(new Transaction(sender, amount.negate()));
+        transactionRepository.save(new Transaction(receiver, convertedAmount));
 
         notificationService.save(
                 sender.getCustomer().getId(),
@@ -88,6 +92,8 @@ public class TransferService {
 
         sendMessage(sender);
         sendMessage(receiver);
+
+        return new TransactionResponse(senderTransaction.getId(), senderTransaction.getAmount());
     }
 
     private void sendMessage(Account account) {
