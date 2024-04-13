@@ -6,10 +6,10 @@ import edu.tinkoff.dto.Currency;
 import edu.tinkoff.dto.TransferRequest;
 import edu.tinkoff.exception.InvalidDataException;
 import edu.tinkoff.util.Conversions;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
@@ -20,18 +20,22 @@ import java.util.Optional;
 public class TransferService {
     private final ConverterService converterService;
     private final AccountService accountService;
+    private final NotificationService notificationService;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     public TransferService(
             ConverterService converterService,
             AccountService accountService,
+            NotificationService notificationService,
             SimpMessagingTemplate simpMessagingTemplate
     ) {
         this.converterService = converterService;
         this.accountService = accountService;
+        this.notificationService = notificationService;
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
+    @Transactional
     public void transfer(@Valid TransferRequest request) {
         Optional<Account> optionalReceiver = accountService.findById(request.receiverNumber());
         if (optionalReceiver.isEmpty()) {
@@ -58,7 +62,6 @@ public class TransferService {
         transfer(sender, receiver, amount);
     }
 
-    @Transactional
     private void transfer(Account sender, Account receiver, BigDecimal amount) {
         Currency senderCurrency = sender.getCurrency();
         Currency receiverCurrency = receiver.getCurrency();
@@ -72,6 +75,17 @@ public class TransferService {
 
         sender = accountService.save(sender);
         receiver = accountService.save(receiver);
+
+        notificationService.save(
+                sender.getCustomer().getId(),
+                sender.getNumber(),
+                amount.negate(),
+                sender.getAmount());
+        notificationService.save(
+                receiver.getCustomer().getId(),
+                receiver.getNumber(),
+                convertedAmount,
+                receiver.getAmount());
 
         sendMessage(sender);
         sendMessage(receiver);
