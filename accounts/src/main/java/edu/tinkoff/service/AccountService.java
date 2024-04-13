@@ -4,6 +4,7 @@ import edu.tinkoff.dao.AccountRepository;
 import edu.tinkoff.dto.*;
 import edu.tinkoff.exception.InvalidDataException;
 import edu.tinkoff.util.Conversions;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -17,15 +18,18 @@ import java.util.Optional;
 public class AccountService {
     private final AccountRepository accountRepository;
     private final CustomerService customerService;
+    private final NotificationService notificationService;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     public AccountService(
             AccountRepository accountRepository,
             CustomerService customerService,
+            NotificationService notificationService,
             SimpMessagingTemplate simpMessagingTemplate
     ) {
         this.accountRepository = accountRepository;
         this.customerService = customerService;
+        this.notificationService = notificationService;
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
@@ -68,6 +72,7 @@ public class AccountService {
         return new AccountBalance(amount, currency);
     }
 
+    @Transactional
     public void topUpAccount(int number, @Valid AccountTopUpRequest request) {
         Optional<Account> optionalAccount = accountRepository.findById(number);
         if (optionalAccount.isEmpty()) {
@@ -80,11 +85,16 @@ public class AccountService {
 
         account = accountRepository.save(account);
 
+        notificationService.save(
+                account.getCustomer().getId(),
+                account.getNumber(),
+                amount,
+                account.getAmount());
+
         AccountBrokerMessage brokerMessage = new AccountBrokerMessage(
                 account.getNumber(),
                 account.getCurrency(),
-                Conversions.setScale(account.getAmount())
-        );
+                Conversions.setScale(account.getAmount()));
         simpMessagingTemplate.convertAndSend(AccountBrokerMessage.DESTINATION, brokerMessage);
     }
 

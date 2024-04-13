@@ -2,7 +2,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
 
   datasource:
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
@@ -17,6 +17,14 @@ spring:
       - buckets
     caffeine:
       spec: maximumSize=1000000,expireAfterAccess=3600s
+
+services:
+  timeout: 5
+
+  notification:
+    url: ${NOTIFICATION_SERVICE_URL}
+    count: 100
+    delay: PT5S
 
 grpc:
   client:
