@@ -18,6 +18,11 @@ spring:
     caffeine:
       spec: maximumSize=1000000,expireAfterAccess=3600s
 
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
 services:
   timeout: 5
 
@@ -25,6 +30,12 @@ services:
     url: ${NOTIFICATION_SERVICE_URL}
     count: 100
     delay: PT5S
+
+idempotency:
+  ttl: PT30S
+  paths:
+    - /transfers
+    - /accounts/*
 
 grpc:
   client:
