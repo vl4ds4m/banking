@@ -1,0 +1,17 @@
+replicaCount: 1
+
+environment:
+  - name: KEYCLOAK_URL
+    value: http://keycloak-keycloakx-http
+  - name: KEYCLOAK_REALM
+    value: hse
+  - name: RATES_URL
+    value: http://rates:8080
+  - name: ACCOUNTS_URL
+    value: http://accounts:8080
+  - name: ACCOUNTS_URL_WS
+    value: ws://accounts:8080
+  - name: CLIENT_ID
+    value: hse_converter
+  - name: CLIENT_SECRET
+    value: ZLM7AmkwCGsVknmqvbRSJYllwJi4zcGf

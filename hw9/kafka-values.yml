@@ -1,0 +1,14 @@
+controller:
+  replicaCount: 1
+  persistence:
+    enabled: false
+  resourcesPreset: micro
+
+provisioning:
+  enabled: true
+  topics:
+    - name: test-topic
+
+listeners:
+  client:
+    protocol: PLAINTEXT
