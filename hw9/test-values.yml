@@ -15,3 +15,7 @@ environment:
     value: hse_converter
   - name: CLIENT_SECRET
     value: ZLM7AmkwCGsVknmqvbRSJYllwJi4zcGf
+  - name: KAFKA_BOOTSTRAP_SERVERS
+    value: kafka:9092
+  - name: KAFKA_TOPIC
+    value: config-notifications

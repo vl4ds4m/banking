@@ -99,7 +99,7 @@ jobs:
             --set image.tag=amd64 \
             --set backoffLimit=0 \
             --set image.pullPolicy=Always \
-            --set 'args={\"-ws\"\, \"-fail\"\, \"-idmp\"}' \
+            --set 'args={\"-ws\"\, \"-fail\"\, \"-idmp\"\, \"-kafka\"}' \
             -f tests/hw9/test-values.yml \
             --wait --wait-for-jobs --timeout 600s
 
