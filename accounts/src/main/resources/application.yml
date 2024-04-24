@@ -23,6 +23,9 @@ spring:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
 
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+
 services:
   timeout: 5
 
@@ -30,6 +33,9 @@ services:
     url: ${NOTIFICATION_SERVICE_URL}
     count: 100
     delay: PT5S
+
+  kafka:
+    topic: ${KAFKA_TOPIC}
 
 idempotency:
   ttl: PT30S

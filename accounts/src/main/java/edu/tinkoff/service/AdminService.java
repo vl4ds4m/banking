@@ -1,9 +1,12 @@
 package edu.tinkoff.service;
 
 import edu.tinkoff.dao.ConfigRepository;
-import edu.tinkoff.dto.Config;
-import edu.tinkoff.dto.UpdateConfigsRequest;
+import edu.tinkoff.dto.*;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -12,16 +15,26 @@ import java.math.BigDecimal;
 @Service
 @Validated
 public class AdminService {
+    private static final String TOPIC_PROP = "${services.kafka.topic}";
+
     private final ConfigRepository configRepository;
+    private final KafkaTemplate<String, Action> kafkaTemplate;
+    private final String topic;
 
     private BigDecimal fee;
 
-    public AdminService(ConfigRepository configRepository) {
+    public AdminService(
+            ConfigRepository configRepository,
+            KafkaTemplate<String, Action> kafkaTemplate,
+            @Value(TOPIC_PROP) String topic
+    ) {
         this.configRepository = configRepository;
-        loadConfigs();
+        this.kafkaTemplate = kafkaTemplate;
+        this.topic = topic;
+        loadFee();
     }
 
-    private void loadConfigs() {
+    private void loadFee() {
         fee = configRepository.findById(Config.FEE)
                 .map(config -> new BigDecimal(config.getValue()))
                 .orElse(BigDecimal.ZERO);
@@ -31,9 +44,18 @@ public class AdminService {
         return fee;
     }
 
+    @Transactional
     public void updateConfigs(@Valid UpdateConfigsRequest request) {
         fee = request.fee();
-        Config feeConfig = new Config(Config.FEE, fee.toString());
-        configRepository.save(feeConfig);
+        configRepository.save(
+                new Config(Config.FEE, request.fee().toString()));
+        kafkaTemplate.send(topic, new Action(Action.Type.UPDATE_FEE));
+    }
+
+    @KafkaListener(groupId = "cfg-upd", topics = TOPIC_PROP)
+    public void reloadConfigs(Action action) {
+        if (Action.Type.UPDATE_FEE.equals(action.type())) {
+            loadFee();
+        }
     }
 }
