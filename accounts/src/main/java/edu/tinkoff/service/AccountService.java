@@ -1,6 +1,7 @@
 package edu.tinkoff.service;
 
 import edu.tinkoff.dao.AccountRepository;
+import edu.tinkoff.dao.TransactionRepository;
 import edu.tinkoff.dto.*;
 import edu.tinkoff.exception.*;
 import edu.tinkoff.util.Conversions;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,17 +22,20 @@ public class AccountService {
     private final CustomerService customerService;
     private final NotificationService notificationService;
     private final SimpMessagingTemplate simpMessagingTemplate;
+    private final TransactionRepository transactionRepository;
 
     public AccountService(
             AccountRepository accountRepository,
             CustomerService customerService,
             NotificationService notificationService,
-            SimpMessagingTemplate simpMessagingTemplate
+            SimpMessagingTemplate simpMessagingTemplate,
+            TransactionRepository transactionRepository
     ) {
         this.accountRepository = accountRepository;
         this.customerService = customerService;
         this.notificationService = notificationService;
         this.simpMessagingTemplate = simpMessagingTemplate;
+        this.transactionRepository = transactionRepository;
     }
 
     public AccountCreationResponse createAccount(@Valid AccountCreationRequest request) {
@@ -73,7 +78,7 @@ public class AccountService {
     }
 
     @Transactional
-    public void topUpAccount(int number, @Valid AccountTopUpRequest request) {
+    public TransactionResponse topUpAccount(int number, @Valid AccountTopUpRequest request) {
         Optional<Account> optionalAccount = accountRepository.findById(number);
         if (optionalAccount.isEmpty()) {
             throw new InvalidAccountNumberException(number);
@@ -96,6 +101,17 @@ public class AccountService {
                 account.getCurrency(),
                 Conversions.setScale(account.getAmount()));
         simpMessagingTemplate.convertAndSend(AccountBrokerMessage.DESTINATION, brokerMessage);
+
+        Transaction transaction = transactionRepository.save(new Transaction(account, amount));
+        return new TransactionResponse(transaction.getId(), transaction.getAmount());
+    }
+
+    public List<TransactionResponse> getTransactions(int number) {
+        return accountRepository.findById(number)
+                .map(Account::getTransactions)
+                .orElseThrow(() -> new InvalidAccountNumberException(number))
+                .stream().map(t -> new TransactionResponse(t.getId(), t.getAmount()))
+                .toList();
     }
 
     public Optional<Account> findById(int id) {

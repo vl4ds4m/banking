@@ -1,5 +1,6 @@
 package edu.tinkoff.controller;
 
+import edu.tinkoff.dto.TransactionResponse;
 import edu.tinkoff.dto.TransferRequest;
 import edu.tinkoff.service.TransferService;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +15,7 @@ public class TransfersController {
     }
 
     @PostMapping
-    public void transfer(@RequestBody TransferRequest request) {
-        transferService.transfer(request);
+    public TransactionResponse transfer(@RequestBody TransferRequest request) {
+        return transferService.transfer(request);
     }
 }

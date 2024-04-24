@@ -4,6 +4,7 @@ import edu.tinkoff.util.Conversions;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"customer_id", "currency"}))
@@ -22,6 +23,9 @@ public class Account {
     private Currency currency;
 
     private BigDecimal amount;
+
+    @OneToMany(mappedBy = "account")
+    private List<Transaction> transactions;
 
     public Account() {
         amount = Conversions.setScale(BigDecimal.ZERO);
@@ -63,5 +67,13 @@ public class Account {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
     }
 }
