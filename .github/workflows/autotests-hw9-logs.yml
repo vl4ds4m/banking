@@ -52,6 +52,8 @@ jobs:
           helm upgrade --install vector vector/vector \
             --values tests/hw9/vector-values.yml \
             --set customConfig.sinks.loki.auth.password=${{ secrets.HSE_LOKI_TOKEN }} \
+            --set customConfig.sinks.loki.labels.repository=${{ github.repository }} \
+            --set customConfig.sinks.loki.labels.run_id=${{ github.run_id }} \
             --wait --timeout 180s     
 
       - name: Deploy postgres
