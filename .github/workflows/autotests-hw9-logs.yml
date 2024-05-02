@@ -130,11 +130,6 @@ jobs:
           kubectl get pods
           kubectl get services
 
-
-      - name: Debug logs
-        run: |
-          kubectl get pods -n default|grep -v NAME|awk '{print $1}'|while read pods;do kubectl logs $pods;echo;done 
-
       - name: Vector logs 2
         run: |
           kubectl get pods -n default|grep -v NAME|grep vector| awk '{print $1}'|while read pods;do kubectl logs $pods;echo;done    
