@@ -15,6 +15,9 @@ on:
       image-tag:
         required: true
         type: string
+    secrets:
+      HSE_LOKI_TOKEN:
+        required: true
 
 jobs:
   tests:
@@ -37,7 +40,18 @@ jobs:
           helm repo add cetic https://cetic.github.io/helm-charts
           helm repo add codecentric https://codecentric.github.io/helm-charts
           helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add vector https://helm.vector.dev
           helm repo update
+
+      - name: Deploy vector
+        continue-on-error: true
+        run: |
+          helm upgrade --install vector vector/vector \
+            --values tests/hw9/vector-values.yml \
+            --set customConfig.sinks.loki.auth.password=${{ secrets.HSE_LOKI_TOKEN }} \
+            --set-string customConfig.sinks.loki.labels.repository='${{ github.repository }}' \
+            --set-string customConfig.sinks.loki.labels.run_id='${{ github.run_id }}' \
+            --wait --timeout 180s   
 
       - name: Deploy postgres
         continue-on-error: true

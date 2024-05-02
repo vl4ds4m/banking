@@ -29,6 +29,8 @@ jobs:
       converter-image-name: foo/bar-converter # имя образа вашего приложения
       accounts-image-name: foo/bar-accounts # имя образа вашего приложения
       image-tag: $branch_name-$commit_hash # таг образа, который собран в рамках данного ПРа
+    secrets:
+      HSE_LOKI_TOKEN: ${{ secrets.HSE_LOKI_TOKEN }}
 ```
 
 # Материалы
