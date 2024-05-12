@@ -35,7 +35,7 @@ public class AdminService {
     }
 
     private void loadFee() {
-        fee = configRepository.findById(Config.FEE)
+        fee = configRepository.findById(Config.Type.FEE)
                 .map(config -> new BigDecimal(config.getValue()))
                 .orElse(BigDecimal.ZERO);
     }
@@ -48,11 +48,11 @@ public class AdminService {
     public void updateConfigs(@Valid UpdateConfigsRequest request) {
         fee = request.fee();
         configRepository.save(
-                new Config(Config.FEE, request.fee().toString()));
+                new Config(Config.Type.FEE, request.fee().toString()));
         kafkaTemplate.send(topic, new Action(Action.Type.UPDATE_FEE));
     }
 
-    @KafkaListener(groupId = "cfg-upd", topics = TOPIC_PROP)
+    @KafkaListener(id = "configUpdater", topics = TOPIC_PROP)
     public void reloadConfigs(Action action) {
         if (Action.Type.UPDATE_FEE.equals(action.type())) {
             loadFee();

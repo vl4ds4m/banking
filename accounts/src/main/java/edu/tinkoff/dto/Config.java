@@ -4,10 +4,13 @@ import jakarta.persistence.*;
 
 @Entity
 public class Config {
-    public static final String FEE = "fee";
+    public enum Type {
+        FEE
+    }
 
     @Id
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private Type name;
 
     @Basic(optional = false)
     private String value;
@@ -15,16 +18,16 @@ public class Config {
     public Config() {
     }
 
-    public Config(String name, String value) {
+    public Config(Type name, String value) {
         this.name = name;
         this.value = value;
     }
 
-    public String getName() {
+    public Type getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(Type name) {
         this.name = name;
     }
 
@@ -43,6 +46,6 @@ public class Config {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof String other && name.equals(other);
+        return obj instanceof Config other && name.equals(other.name);
     }
 }
