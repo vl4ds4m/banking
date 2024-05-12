@@ -46,7 +46,6 @@ public class AdminService {
 
     @Transactional
     public void updateConfigs(@Valid UpdateConfigsRequest request) {
-        fee = request.fee();
         configRepository.save(
                 new Config(Config.Type.FEE, request.fee().toString()));
         kafkaTemplate.send(topic, new Action(Action.Type.UPDATE_FEE));
