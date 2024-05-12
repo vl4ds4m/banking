@@ -50,6 +50,8 @@ jobs:
       chart-path: ./rates # путь к чарту из второй дз
       image-name: foo/bar-converter # имя образа вашего приложения
       image-tag: $branch_name-$commit_hash # таг образа, который собран в рамках данного ПРа
+    secrets:
+      HSE_LOKI_TOKEN: ${{ secrets.HSE_LOKI_TOKEN }}
 ```
 
 Чарт из второй дз должен уметь принимать на вход параметры:
