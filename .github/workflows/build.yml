@@ -106,3 +106,5 @@ jobs:
       converter-image-name: ${{ needs.build.outputs.converter_image_name }}
       accounts-image-name: ${{ needs.build.outputs.accounts_image_name }}
       image-tag: ${{ needs.build.outputs.image_tag }}
+    secrets:
+      HSE_LOKI_TOKEN: ${{ secrets.HSE_LOKI_TOKEN }}
