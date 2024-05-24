@@ -4,6 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
@@ -23,6 +25,8 @@ public class IdempotencyFilter extends OncePerRequestFilter {
     private static final String IDEMPOTENCY_KEY = "Idempotency-Key";
     private static final String BLANK = "";
     private static final String DELIMITER = "_";
+
+    private static final Logger log = LoggerFactory.getLogger(IdempotencyFilter.class);
 
     private final RedisTemplate<String, IdempotencyValue> redisTemplate;
     private final Duration ttl;
@@ -59,6 +63,9 @@ public class IdempotencyFilter extends OncePerRequestFilter {
             setResultInCache(request, responseWrapper, valueOps);
             responseWrapper.copyBodyToResponse();
         } else {
+            log.info("Return a cached response [{} {}]",
+                    request.getMethod(), request.getRequestURI());
+
             response.setStatus(cachedResponse.status);
 
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -80,6 +87,9 @@ public class IdempotencyFilter extends OncePerRequestFilter {
         if (!needCache(responseWrapper)) {
             return;
         }
+
+        log.info("Persist a response in cache [{} {}]",
+                request.getMethod(), request.getRequestURI());
 
         String responseBody = new String(
                 responseWrapper.getContentAsByteArray(),

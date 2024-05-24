@@ -14,7 +14,7 @@ import java.time.Duration;
 
 @Configuration
 public class CircuitBreakerConfiguration {
-    private static final Logger logger = LoggerFactory.getLogger(ConverterService.class);
+    private static final Logger log = LoggerFactory.getLogger(ConverterService.class);
 
     @Bean
     public CircuitBreaker circuitBreaker() {
@@ -30,12 +30,12 @@ public class CircuitBreakerConfiguration {
         CircuitBreakerRegistry registry = CircuitBreakerRegistry.of(config);
         CircuitBreaker circuitBreaker = registry.circuitBreaker("converter");
         circuitBreaker.getEventPublisher()
-                .onError(event -> logger.warn(
-                        "CB '{}' error, state: {}",
+                .onError(event -> log.warn(
+                        "CB [{}] error, state: {}",
                         event.getCircuitBreakerName(),
                         circuitBreaker.getState()))
-                .onStateTransition(event -> logger.info(
-                        "CB '{}' state transition, from: {}, to: {}",
+                .onStateTransition(event -> log.info(
+                        "CB [{}] state transition from {} to {}",
                         event.getCircuitBreakerName(),
                         event.getStateTransition().getFromState(),
                         event.getStateTransition().getToState()));

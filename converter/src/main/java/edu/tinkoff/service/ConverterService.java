@@ -21,7 +21,7 @@ import java.util.Map;
 
 @GrpcService
 public class ConverterService extends ConverterServiceImplBase {
-    private static final Logger logger = LoggerFactory.getLogger(ConverterService.class);
+    private static final Logger log = LoggerFactory.getLogger(ConverterService.class);
 
     private final RatesService ratesService;
 
@@ -46,7 +46,7 @@ public class ConverterService extends ConverterServiceImplBase {
             responseObserver.onNext(reply);
             responseObserver.onCompleted();
         } catch (RuntimeException e) {
-            logger.error("Conversion exception: {}", e.getMessage());
+            log.error("Conversion exception: {}", e.getMessage());
             responseObserver.onError(Status.INTERNAL.asException());
         }
     }
@@ -67,7 +67,7 @@ public class ConverterService extends ConverterServiceImplBase {
         }
 
         BigDecimal convertedAmount = convert(from, to, amount);
-        logger.info("Convert [{} {}] to [{} {}]", amount, from, convertedAmount, to);
+        log.info("Convert [{} {}] to [{} {}]", amount, from, convertedAmount, to);
 
         return new CurrencyMessage(to, convertedAmount, null);
     }

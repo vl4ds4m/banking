@@ -7,6 +7,8 @@ import edu.tinkoff.exception.InvalidCustomerIdException;
 import edu.tinkoff.exception.InvalidDataException;
 import edu.tinkoff.util.Conversions;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -18,6 +20,8 @@ import java.util.Set;
 @Service
 @Validated
 public class CustomerService {
+    private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
+
     private final CustomerRepository customerRepository;
     private final ConverterService converterService;
 
@@ -38,6 +42,8 @@ public class CustomerService {
         customer.setBirthDate(request.birthDate());
 
         int customerId = customerRepository.save(customer).getId();
+
+        log.info("Create Customer[id={}]", customerId);
 
         return new CustomerCreationResponse(customerId);
     }
@@ -71,7 +77,7 @@ public class CustomerService {
                 balance = balance.add(convertedAmount);
             }
         }
-
+        log.info("Return Customer[id={}] balance", customer.get().getId());
         return new CustomerBalanceResponse(balance, currency);
     }
 }

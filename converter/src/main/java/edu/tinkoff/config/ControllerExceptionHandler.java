@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {
-    private static final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     @ExceptionHandler
     public ResponseEntity<?> handleException(Exception e) {
-        logger.error("Exception was thrown: {}", e.getMessage());
+        log.error("Exception was thrown: {}", e.getMessage());
         return ResponseEntity.internalServerError().build();
     }
 }

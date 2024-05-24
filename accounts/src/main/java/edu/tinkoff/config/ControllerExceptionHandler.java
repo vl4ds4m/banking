@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {
-    private static final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     @ExceptionHandler({ConstraintViolationException.class, InvalidDataException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -25,7 +25,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler({StatusException.class, StatusRuntimeException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public void handleGrpcException(Exception e) {
-        logger.error(
+        log.error(
                 "Grpc exception was thrown, code: {}, description: {}",
                 Status.fromThrowable(e).getCode(),
                 Status.fromThrowable(e).getDescription()
@@ -35,6 +35,6 @@ public class ControllerExceptionHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public void handleException(Exception e) {
-        logger.error("Exception was thrown: {}", e.getMessage());
+        log.error("Exception was thrown: {}", e.getMessage());
     }
 }

@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @RestController
 @RequestMapping(path = "convert", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CurrencyController {
-    private static final Logger logger = LoggerFactory.getLogger(CurrencyController.class);
+    private static final Logger log = LoggerFactory.getLogger(CurrencyController.class);
 
     private final ConverterService converterService;
 
@@ -26,7 +26,7 @@ public class CurrencyController {
             @RequestParam("to") String toName,
             @RequestParam("amount") BigDecimal amount
     ) {
-        logger.info("Accept a request to convert currency");
+        log.info("Accept a request to convert currency");
         CurrencyMessage message = converterService.convert(fromName, toName, amount);
         return message.errorMessage() == null ?
                 ResponseEntity.ok(message) :

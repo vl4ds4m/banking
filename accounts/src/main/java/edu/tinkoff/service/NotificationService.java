@@ -6,6 +6,8 @@ import edu.tinkoff.dto.NotificationRequest;
 import edu.tinkoff.properties.NotificationProperties;
 import edu.tinkoff.util.Conversions;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -15,6 +17,7 @@ import java.util.List;
 
 @Service
 public class NotificationService {
+    private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
     private final NotificationRepository notificationRepository;
     private final RestTemplate restTemplate;
     private final String postUrl;
@@ -36,7 +39,8 @@ public class NotificationService {
                 accountId,
                 Conversions.setScale(amount),
                 Conversions.setScale(balance));
-        notificationRepository.save(new Notification(customerId, message));
+        Notification notification = notificationRepository.save(new Notification(customerId, message));
+        log.info("Persist Notification[id={}]", notification.getId());
     }
 
     @Transactional
@@ -55,6 +59,7 @@ public class NotificationService {
         ResponseEntity<?> responseEntity;
         try {
             responseEntity = restTemplate.postForEntity(postUrl, request, Void.class);
+            log.info("Post Notification[id={}]", notification.getId());
         } catch (RuntimeException e) {
             return false;
         }

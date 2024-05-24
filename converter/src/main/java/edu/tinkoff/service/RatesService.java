@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class RatesService {
-    private static final Logger logger = LoggerFactory.getLogger(RatesService.class);
+    private static final Logger log = LoggerFactory.getLogger(RatesService.class);
 
     private final RestTemplate restTemplate;
     private final RetryTemplate retryTemplate;
@@ -35,7 +35,7 @@ public class RatesService {
     public RatesResposne getRatesResponse() {
         RetryCallback<RatesResposne, RuntimeException> retryCallback =
                 context -> {
-                    logger.info("Send a request to get currency rates");
+                    log.info("Send a request to get currency rates");
                     return restTemplate.getForObject(currencyRatesUrl, RatesResposne.class);
                 };
         return retryTemplate.execute(retryCallback);

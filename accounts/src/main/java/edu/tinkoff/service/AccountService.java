@@ -7,6 +7,8 @@ import edu.tinkoff.exception.*;
 import edu.tinkoff.util.Conversions;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +20,8 @@ import java.util.Optional;
 @Service
 @Validated
 public class AccountService {
+    private static final Logger log = LoggerFactory.getLogger(AccountService.class);
+
     private final AccountRepository accountRepository;
     private final CustomerService customerService;
     private final NotificationService notificationService;
@@ -50,20 +54,26 @@ public class AccountService {
         );
         if (account.isPresent()) {
             throw new InvalidDataException(
-                    "Account [customerId=" + request.customerId() + ", " +
+                    "Account[customerId=" + request.customerId() + ", " +
                     "currency=" + request.currency() + "] already exists");
         }
 
         Account savedAccount = accountRepository.save(new Account(customer.get(), request.currency()));
+        log.info("Create Account[{}]", savedAccount.getNumber());
 
         AccountBrokerMessage brokerMessage = new AccountBrokerMessage(
                 savedAccount.getNumber(),
                 request.currency(),
                 Conversions.setScale(savedAccount.getAmount())
         );
-        simpMessagingTemplate.convertAndSend(AccountBrokerMessage.DESTINATION, brokerMessage);
+        sendMessage(brokerMessage);
 
         return new AccountCreationResponse(savedAccount.getNumber());
+    }
+
+    private void sendMessage(AccountBrokerMessage message) {
+        simpMessagingTemplate.convertAndSend(AccountBrokerMessage.DESTINATION, message);
+        log.info("Send {}", message);
     }
 
     public AccountBalance getBalance(int number) {
@@ -72,6 +82,7 @@ public class AccountService {
             throw new InvalidAccountNumberException(number);
         }
 
+        log.info("Return Account[{}] balance", account.get().getNumber());
         BigDecimal amount = Conversions.setScale(account.get().getAmount());
         Currency currency = account.get().getCurrency();
         return new AccountBalance(amount, currency);
@@ -89,6 +100,7 @@ public class AccountService {
         account.setAmount(account.getAmount().add(amount));
 
         account = accountRepository.save(account);
+        log.info("Top up Account[{}]", account.getNumber());
 
         notificationService.save(
                 account.getCustomer().getId(),
@@ -100,25 +112,19 @@ public class AccountService {
                 account.getNumber(),
                 account.getCurrency(),
                 Conversions.setScale(account.getAmount()));
-        simpMessagingTemplate.convertAndSend(AccountBrokerMessage.DESTINATION, brokerMessage);
+        sendMessage(brokerMessage);
 
         Transaction transaction = transactionRepository.save(new Transaction(account, amount));
+        log.info("Persist Transaction[id={}]", transaction.getId());
         return new TransactionResponse(transaction.getId(), transaction.getAmount());
     }
 
     public List<TransactionResponse> getTransactions(int number) {
+        log.info("Return Account[{}] transactions", number);
         return accountRepository.findById(number)
                 .map(Account::getTransactions)
                 .orElseThrow(() -> new InvalidAccountNumberException(number))
                 .stream().map(t -> new TransactionResponse(t.getId(), t.getAmount()))
                 .toList();
-    }
-
-    public Optional<Account> findById(int id) {
-        return accountRepository.findById(id);
-    }
-
-    public Account save(Account account) {
-        return accountRepository.save(account);
     }
 }

@@ -5,12 +5,16 @@ import edu.tinkoff.grpc.ConversionReply;
 import edu.tinkoff.grpc.ConversionRequest;
 import edu.tinkoff.grpc.ConverterServiceGrpc;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
 @Service
 public class ConverterService {
+    private static final Logger log = LoggerFactory.getLogger(ConverterService.class);
+
     private final Runnable conversion;
     private ConversionRequest request;
     private ConversionReply reply;
@@ -19,9 +23,10 @@ public class ConverterService {
             ConverterServiceGrpc.ConverterServiceBlockingStub grpcStub,
             CircuitBreaker circuitBreaker
     ) {
-        conversion = circuitBreaker.decorateRunnable(
-                () -> reply = grpcStub.convert(request)
-        );
+        conversion = circuitBreaker.decorateRunnable(() -> {
+            log.info("Send a request to convert currency");
+            reply = grpcStub.convert(request);
+        });
     }
 
     public BigDecimal convert(Currency from, Currency to, BigDecimal amount) {

@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Component
 public class KeycloakAuthClient {
-    private static final Logger logger = LoggerFactory.getLogger(KeycloakAuthClient.class);
+    private static final Logger log = LoggerFactory.getLogger(KeycloakAuthClient.class);
 
     private final RestTemplate restTemplate;
 
@@ -47,7 +47,7 @@ public class KeycloakAuthClient {
             return Optional.empty();
         }
 
-        logger.info("Send a request to get {} access token", clientId);
+        log.info("Send a request to get {} access token", clientId);
 
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.add("client_id", clientId);

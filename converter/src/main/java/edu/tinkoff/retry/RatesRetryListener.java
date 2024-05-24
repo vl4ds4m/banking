@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RatesRetryListener implements RetryListener {
-    private static final Logger logger = LoggerFactory.getLogger(RatesService.class);
+    private static final Logger log = LoggerFactory.getLogger(RatesService.class);
 
     @Override
     public <T, E extends Throwable> void onError(
@@ -19,6 +19,6 @@ public class RatesRetryListener implements RetryListener {
             Throwable throwable
     ) {
         int retryCount = context.getRetryCount();
-        logger.warn("Fail to get rates, attempt #{}", retryCount);
+        log.warn("Fail to get rates, attempt #{}", retryCount);
     }
 }

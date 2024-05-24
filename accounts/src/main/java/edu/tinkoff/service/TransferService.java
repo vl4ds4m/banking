@@ -1,5 +1,6 @@
 package edu.tinkoff.service;
 
+import edu.tinkoff.dao.AccountRepository;
 import edu.tinkoff.dao.TransactionRepository;
 import edu.tinkoff.dto.*;
 import edu.tinkoff.exception.InvalidAccountNumberException;
@@ -7,6 +8,8 @@ import edu.tinkoff.exception.InvalidDataException;
 import edu.tinkoff.util.Conversions;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -17,8 +20,10 @@ import java.util.Optional;
 @Service
 @Validated
 public class TransferService {
+    private static final Logger log = LoggerFactory.getLogger(TransferService.class);
+
     private final ConverterService converterService;
-    private final AccountService accountService;
+    private final AccountRepository accountRepository;
     private final NotificationService notificationService;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final TransactionRepository transactionRepository;
@@ -26,14 +31,14 @@ public class TransferService {
 
     public TransferService(
             ConverterService converterService,
-            AccountService accountService,
+            AccountRepository accountRepository,
             NotificationService notificationService,
             SimpMessagingTemplate simpMessagingTemplate,
             TransactionRepository transactionRepository,
             AdminService adminService
     ) {
         this.converterService = converterService;
-        this.accountService = accountService;
+        this.accountRepository = accountRepository;
         this.notificationService = notificationService;
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.transactionRepository = transactionRepository;
@@ -42,12 +47,12 @@ public class TransferService {
 
     @Transactional
     public TransactionResponse transfer(@Valid TransferRequest request) {
-        Optional<Account> optionalReceiver = accountService.findById(request.receiverNumber());
+        Optional<Account> optionalReceiver = accountRepository.findById(request.receiverNumber());
         if (optionalReceiver.isEmpty()) {
             throw new InvalidAccountNumberException(request.receiverNumber());
         }
 
-        Optional<Account> optionalSender = accountService.findById(request.senderNumber());
+        Optional<Account> optionalSender = accountRepository.findById(request.senderNumber());
         if (optionalSender.isEmpty()) {
             throw new InvalidAccountNumberException(request.senderNumber());
         }
@@ -79,11 +84,13 @@ public class TransferService {
         sender.setAmount(sender.getAmount().subtract(amount));
         receiver.setAmount(receiver.getAmount().add(convertedAmount));
 
-        sender = accountService.save(sender);
-        receiver = accountService.save(receiver);
+        sender = accountRepository.save(sender);
+        receiver = accountRepository.save(receiver);
+        log.info("Transfer currency from Account[{}] to Account[{}]",
+                sender.getNumber(), receiver.getNumber());
 
-        Transaction senderTransaction = transactionRepository.save(new Transaction(sender, amount.negate()));
-        transactionRepository.save(new Transaction(receiver, convertedAmount));
+        Transaction senderTransaction = persistTransaction(new Transaction(sender, amount.negate()));
+        persistTransaction(new Transaction(receiver, convertedAmount));
 
         notificationService.save(
                 sender.getCustomer().getId(),
@@ -102,6 +109,12 @@ public class TransferService {
         return new TransactionResponse(senderTransaction.getId(), senderTransaction.getAmount());
     }
 
+    private Transaction persistTransaction(Transaction transaction) {
+        transaction = transactionRepository.save(transaction);
+        log.info("Persist Transaction[id={}]", transaction.getId());
+        return transaction;
+    }
+
     private void sendMessage(Account account) {
         AccountBrokerMessage message = new AccountBrokerMessage(
                 account.getNumber(),
@@ -109,5 +122,6 @@ public class TransferService {
                 Conversions.setScale(account.getAmount())
         );
         simpMessagingTemplate.convertAndSend(AccountBrokerMessage.DESTINATION, message);
+        log.info("Send {}", message);
     }
 }
