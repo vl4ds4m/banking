@@ -22,19 +22,22 @@ public class TransferService {
     private final NotificationService notificationService;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final TransactionRepository transactionRepository;
+    private final AdminService adminService;
 
     public TransferService(
             ConverterService converterService,
             AccountService accountService,
             NotificationService notificationService,
             SimpMessagingTemplate simpMessagingTemplate,
-            TransactionRepository transactionRepository
+            TransactionRepository transactionRepository,
+            AdminService adminService
     ) {
         this.converterService = converterService;
         this.accountService = accountService;
         this.notificationService = notificationService;
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.transactionRepository = transactionRepository;
+        this.adminService = adminService;
     }
 
     @Transactional
@@ -66,9 +69,12 @@ public class TransferService {
         Currency senderCurrency = sender.getCurrency();
         Currency receiverCurrency = receiver.getCurrency();
 
+        BigDecimal feeRate = adminService.getFee();
+        BigDecimal transferredAmount = amount.subtract(amount.multiply(feeRate));
+
         BigDecimal convertedAmount = !senderCurrency.equals(receiverCurrency) ?
-                converterService.convert(senderCurrency, receiverCurrency, amount) :
-                amount;
+                converterService.convert(senderCurrency, receiverCurrency, transferredAmount) :
+                transferredAmount;
 
         sender.setAmount(sender.getAmount().subtract(amount));
         receiver.setAmount(receiver.getAmount().add(convertedAmount));

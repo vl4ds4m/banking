@@ -23,6 +23,15 @@ spring:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
 
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        "[spring.json.trusted.packages]": "edu.tinkoff.dto"
+
 services:
   timeout: 5
 
@@ -30,6 +39,9 @@ services:
     url: ${NOTIFICATION_SERVICE_URL}
     count: 100
     delay: PT5S
+
+  kafka:
+    topic: ${KAFKA_TOPIC}
 
 idempotency:
   ttl: PT30S

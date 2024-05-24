@@ -98,11 +98,13 @@ jobs:
       image-name: ${{ needs.build.outputs.converter_image_name }}
       image-tag: ${{ needs.build.outputs.image_tag }}
 
-  autotest-hw8:
+  autotest-hw9:
     needs: build
-    uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests-hw8.yml@main
+    uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests-hw9.yml@main
     with:
       chart-path: ./helm-chart
       converter-image-name: ${{ needs.build.outputs.converter_image_name }}
       accounts-image-name: ${{ needs.build.outputs.accounts_image_name }}
       image-tag: ${{ needs.build.outputs.image_tag }}
+    secrets:
+      HSE_LOKI_TOKEN: ${{ secrets.HSE_LOKI_TOKEN }}
