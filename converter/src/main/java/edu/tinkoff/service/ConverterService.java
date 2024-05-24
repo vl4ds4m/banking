@@ -67,6 +67,8 @@ public class ConverterService extends ConverterServiceImplBase {
         }
 
         BigDecimal convertedAmount = convert(from, to, amount);
+        logger.info("Convert [{} {}] to [{} {}]", amount, from, convertedAmount, to);
+
         return new CurrencyMessage(to, convertedAmount, null);
     }
 

@@ -1,5 +1,7 @@
 package edu.tinkoff.auth;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -13,6 +15,8 @@ import java.util.Optional;
 
 @Component
 public class KeycloakAuthClient {
+    private static final Logger logger = LoggerFactory.getLogger(KeycloakAuthClient.class);
+
     private final RestTemplate restTemplate;
 
     private String url;
@@ -42,6 +46,8 @@ public class KeycloakAuthClient {
         if (clientId.isEmpty()) {
             return Optional.empty();
         }
+
+        logger.info("Send a request to get {} access token", clientId);
 
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.add("client_id", clientId);

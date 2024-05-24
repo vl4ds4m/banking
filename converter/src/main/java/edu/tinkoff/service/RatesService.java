@@ -1,6 +1,8 @@
 package edu.tinkoff.service;
 
 import edu.tinkoff.dto.RatesResposne;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.RetryCallback;
@@ -10,6 +12,8 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class RatesService {
+    private static final Logger logger = LoggerFactory.getLogger(RatesService.class);
+
     private final RestTemplate restTemplate;
     private final RetryTemplate retryTemplate;
 
@@ -30,7 +34,10 @@ public class RatesService {
 
     public RatesResposne getRatesResponse() {
         RetryCallback<RatesResposne, RuntimeException> retryCallback =
-                context -> restTemplate.getForObject(currencyRatesUrl, RatesResposne.class);
+                context -> {
+                    logger.info("Send a request to get currency rates");
+                    return restTemplate.getForObject(currencyRatesUrl, RatesResposne.class);
+                };
         return retryTemplate.execute(retryCallback);
     }
 }
