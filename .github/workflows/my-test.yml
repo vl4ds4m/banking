@@ -35,6 +35,9 @@ jobs:
 
       - name: Start minikube
         uses: medyagh/setup-minikube@master
+        with:
+          cpus: max
+          memory: max
 
       - name: Add helm repo
         run: |
@@ -48,13 +51,23 @@ jobs:
       - name: Deploy postgres
         continue-on-error: true
         run: |
-          helm install postgresql bitnami/postgresql -f tests/hw6/postgres-values.yml --wait --timeout 180s
+          helm install postgresql bitnami/postgresql -f tests/hw9/postgres-values.yml --wait --timeout 180s   
+
+      - name: Deploy redis
+        continue-on-error: true
+        run: |
+          helm install redis bitnami/redis -f tests/hw9/redis-values.yml --wait --timeout 180s      
+
+      - name: Deploy kafka
+        continue-on-error: true
+        run: |
+          helm upgrade --install kafka bitnami/kafka -f tests/hw9/kafka-values.yml --wait --timeout 180s
 
       - name: Deploy keycloak
         continue-on-error: true
         run: |
-          kubectl create secret generic realm-secret --from-file=tests/hw6/realm.json
-          helm install keycloak codecentric/keycloakx -f tests/hw6/keycloak-values.yml --wait --timeout 180s
+          kubectl create secret generic realm-secret --from-file=tests/hw9/realm.json
+          helm install keycloak codecentric/keycloakx -f tests/hw9/keycloak-values.yml --wait --timeout 180s
 
 
       - name: Deploy rates
@@ -64,7 +77,7 @@ jobs:
             --set fullnameOverride=rates \
             --set image.repository=miraclewisp/hse-rates \
             --set image.tag=auth-amd64 \
-            -f tests/hw6/rates-values.yml \
+            -f tests/hw9/rates-values.yml \
             --wait --timeout 180s
 
       - name: Deploy converter
@@ -74,7 +87,7 @@ jobs:
             --set fullnameOverride=converter \
             --set image.repository=${{ inputs.converter-image-name }} \
             --set image.tag=${{ inputs.image-tag }} \
-            -f tests/hw6/converter-values.yml \
+            -f tests/hw9/converter-values.yml \
             --wait --timeout 180s
 
       - name: Deploy accounts
@@ -84,7 +97,7 @@ jobs:
             --set fullnameOverride=accounts \
             --set image.repository=${{ inputs.accounts-image-name }} \
             --set image.tag=${{ inputs.image-tag }} \
-            -f tests/hw6/accounts-values.yml \
+            -f tests/hw9/accounts-values.yml \
             --wait --timeout 180s
 
       - name: Run tests
@@ -95,9 +108,9 @@ jobs:
             --set image.tag=amd64 \
             --set backoffLimit=0 \
             --set image.pullPolicy=Always \
-            --set 'args={\"-ws\"\, \"-fail\"}' \
-            -f tests/hw6/test-values.yml \
-            --wait --wait-for-jobs --timeout 180s
+            --set 'args={\"-ws\"\, \"-fail\"\, \"-idmp\"\, \"-kafka\"}' \
+            -f tests/hw9/test-values.yml \
+            --wait --wait-for-jobs --timeout 600s
 
       - name: Debug k8s entities
         run: |
