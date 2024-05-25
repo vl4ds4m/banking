@@ -1,9 +1,7 @@
 package edu.tinkoff.dto;
 
-import edu.tinkoff.util.Conversions;
 import jakarta.persistence.*;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -13,7 +11,7 @@ public class Transaction {
     private UUID id;
 
     @Basic(optional = false)
-    private BigDecimal amount;
+    private Double amount;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Account account;
@@ -21,9 +19,9 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(Account account, BigDecimal amount) {
+    public Transaction(Account account, Double amount) {
         this.account = account;
-        this.amount = Conversions.setScale(amount);
+        this.amount = amount;
     }
 
     public UUID getId() {
@@ -34,12 +32,12 @@ public class Transaction {
         this.id = id;
     }
 
-    public BigDecimal getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = Conversions.setScale(amount);
+    public void setAmount(Double amount) {
+        this.amount = amount;
     }
 
     public Account getAccount() {

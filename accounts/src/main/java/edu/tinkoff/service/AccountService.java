@@ -64,8 +64,7 @@ public class AccountService {
         AccountBrokerMessage brokerMessage = new AccountBrokerMessage(
                 savedAccount.getNumber(),
                 request.currency(),
-                Conversions.setScale(savedAccount.getAmount())
-        );
+                Conversions.setScale(savedAccount.getAmount()));
         sendMessage(brokerMessage);
 
         return new AccountCreationResponse(savedAccount.getNumber());
@@ -97,26 +96,28 @@ public class AccountService {
 
         BigDecimal amount = Conversions.setScale(request.amount());
         Account account = optionalAccount.get();
-        account.setAmount(account.getAmount().add(amount));
+        account.setAmount(account.getAmount() + amount.doubleValue());
 
         account = accountRepository.save(account);
         log.info("Top up Account[{}]", account.getNumber());
 
+        BigDecimal accountAmount = Conversions.setScale(account.getAmount());
         notificationService.save(
                 account.getCustomer().getId(),
                 account.getNumber(),
                 amount,
-                account.getAmount());
+                accountAmount);
 
         AccountBrokerMessage brokerMessage = new AccountBrokerMessage(
                 account.getNumber(),
                 account.getCurrency(),
-                Conversions.setScale(account.getAmount()));
+                accountAmount);
         sendMessage(brokerMessage);
 
-        Transaction transaction = transactionRepository.save(new Transaction(account, amount));
-        log.info("Persist Transaction[id={}]", transaction.getId());
-        return new TransactionResponse(transaction.getId(), transaction.getAmount());
+        Transaction transaction = transactionRepository.save(
+                new Transaction(account, amount.doubleValue()));
+        log.info("Persist Transaction[{}]", transaction.getId());
+        return new TransactionResponse(transaction.getId(), amount);
     }
 
     public List<TransactionResponse> getTransactions(int number) {
@@ -124,7 +125,8 @@ public class AccountService {
         return accountRepository.findById(number)
                 .map(Account::getTransactions)
                 .orElseThrow(() -> new InvalidAccountNumberException(number))
-                .stream().map(t -> new TransactionResponse(t.getId(), t.getAmount()))
+                .stream().map(t -> new TransactionResponse(
+                        t.getId(), Conversions.setScale(t.getAmount())))
                 .toList();
     }
 }

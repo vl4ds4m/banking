@@ -9,8 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-
 @Service
 public class ConverterService {
     private static final Logger log = LoggerFactory.getLogger(ConverterService.class);
@@ -29,14 +27,14 @@ public class ConverterService {
         });
     }
 
-    public BigDecimal convert(Currency from, Currency to, BigDecimal amount) {
+    public double convert(Currency from, Currency to, double amount) {
         request = ConversionRequest.newBuilder()
                 .setFrom(from.toString())
                 .setTo(to.toString())
-                .setAmount(amount.doubleValue())
+                .setAmount(amount)
                 .build();
 
         conversion.run();
-        return BigDecimal.valueOf(reply.getAmount());
+        return reply.getAmount();
     }
 }

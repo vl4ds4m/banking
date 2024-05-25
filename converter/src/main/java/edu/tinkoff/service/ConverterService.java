@@ -6,15 +6,12 @@ import edu.tinkoff.dto.RatesResposne;
 import edu.tinkoff.grpc.ConversionReply;
 import edu.tinkoff.grpc.ConversionRequest;
 import edu.tinkoff.grpc.ConverterServiceGrpc.ConverterServiceImplBase;
+import edu.tinkoff.util.Conversions;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static edu.tinkoff.util.Conversions.SCALE;
-import static edu.tinkoff.util.Conversions.ROUNDING_MODE;
-import static edu.tinkoff.util.Conversions.setScale;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -35,8 +32,7 @@ public class ConverterService extends ConverterServiceImplBase {
             CurrencyMessage message = convert(
                     request.getFrom(),
                     request.getTo(),
-                    BigDecimal.valueOf(request.getAmount())
-            );
+                    request.getAmount());
 
             ConversionReply reply = ConversionReply.newBuilder()
                     .setCurrency(message.currency().toString())
@@ -51,7 +47,7 @@ public class ConverterService extends ConverterServiceImplBase {
         }
     }
 
-    public CurrencyMessage convert(String fromName, String toName, BigDecimal amount) {
+    public CurrencyMessage convert(String fromName, String toName, double amount) {
         Currency from = Currency.fromValue(fromName);
         if (from == null) {
             return currencyErrorResponse(fromName);
@@ -62,12 +58,13 @@ public class ConverterService extends ConverterServiceImplBase {
             return currencyErrorResponse(toName);
         }
 
-        if (BigDecimal.ZERO.compareTo(amount) >= 0) {
+        BigDecimal initialAmount = Conversions.setScale(amount);
+        if (BigDecimal.ZERO.compareTo(initialAmount) >= 0) {
             return invalidAmountErrorResponse();
         }
 
-        BigDecimal convertedAmount = convert(from, to, amount);
-        log.info("Convert [{} {}] to [{} {}]", amount, from, convertedAmount, to);
+        BigDecimal convertedAmount = convert(from, to, initialAmount);
+        log.info("Convert [{} {}] to [{} {}]", initialAmount, from, convertedAmount, to);
 
         return new CurrencyMessage(to, convertedAmount, null);
     }
@@ -93,21 +90,23 @@ public class ConverterService extends ConverterServiceImplBase {
         BigDecimal convertedAmount;
 
         if (from == to) {
-            convertedAmount = setScale(amount);
+            convertedAmount = amount;
 
         } else if (from == ratesResposne.getBase()) {
             BigDecimal currencyValue = rates.get(to.getValue());
-            convertedAmount = amount.divide(currencyValue, SCALE, ROUNDING_MODE);
+            convertedAmount = amount.divide(
+                    currencyValue, Conversions.SCALE, Conversions.ROUNDING_MODE);
 
         } else if (to == ratesResposne.getBase()) {
             BigDecimal currencyValue = rates.get(from.getValue());
-            convertedAmount = setScale(amount.multiply(currencyValue));
+            convertedAmount = Conversions.setScale(amount.multiply(currencyValue));
 
         } else {
             BigDecimal currencyValue = rates.get(from.getValue());
             convertedAmount = amount.multiply(currencyValue);
             currencyValue = rates.get(to.getValue());
-            convertedAmount = convertedAmount.divide(currencyValue, SCALE, ROUNDING_MODE);
+            convertedAmount = convertedAmount.divide(
+                    currencyValue, Conversions.SCALE, Conversions.ROUNDING_MODE);
         }
 
         return convertedAmount;

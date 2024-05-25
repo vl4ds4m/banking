@@ -60,11 +60,12 @@ public class TransferService {
         Account receiver = optionalReceiver.get();
         Account sender = optionalSender.get();
         BigDecimal amount = Conversions.setScale(request.amount());
+        BigDecimal senderAmount = Conversions.setScale(sender.getAmount());
 
-        if (sender.getAmount().compareTo(amount) < 0) {
+        if (senderAmount.compareTo(amount) < 0) {
             throw new InvalidDataException(
                     "Insufficient funds in the sender account: " +
-                    "amount=" + sender.getAmount());
+                    "amount=" + senderAmount);
         }
 
         return transfer(sender, receiver, amount);
@@ -77,41 +78,46 @@ public class TransferService {
         BigDecimal feeRate = adminService.getFee();
         BigDecimal transferredAmount = amount.subtract(amount.multiply(feeRate));
 
-        BigDecimal convertedAmount = !senderCurrency.equals(receiverCurrency) ?
-                converterService.convert(senderCurrency, receiverCurrency, transferredAmount) :
-                transferredAmount;
+        BigDecimal convertedAmount = transferredAmount;
+        if (!senderCurrency.equals(receiverCurrency)) {
+            double converted = converterService.convert(
+                    senderCurrency, receiverCurrency, transferredAmount.doubleValue());
+            convertedAmount = Conversions.setScale(converted);
+        }
 
-        sender.setAmount(sender.getAmount().subtract(amount));
-        receiver.setAmount(receiver.getAmount().add(convertedAmount));
+        sender.setAmount(sender.getAmount() - amount.doubleValue());
+        receiver.setAmount(receiver.getAmount() + convertedAmount.doubleValue());
 
         sender = accountRepository.save(sender);
         receiver = accountRepository.save(receiver);
         log.info("Transfer currency from Account[{}] to Account[{}]",
                 sender.getNumber(), receiver.getNumber());
 
-        Transaction senderTransaction = persistTransaction(new Transaction(sender, amount.negate()));
-        persistTransaction(new Transaction(receiver, convertedAmount));
+        BigDecimal negatedAmount = amount.negate();
+        Transaction senderTransaction = persistTransaction(
+                new Transaction(sender, negatedAmount.doubleValue()));
+        persistTransaction(new Transaction(receiver, convertedAmount.doubleValue()));
 
         notificationService.save(
                 sender.getCustomer().getId(),
                 sender.getNumber(),
-                amount.negate(),
-                sender.getAmount());
+                negatedAmount,
+                Conversions.setScale(sender.getAmount()));
         notificationService.save(
                 receiver.getCustomer().getId(),
                 receiver.getNumber(),
                 convertedAmount,
-                receiver.getAmount());
+                Conversions.setScale(receiver.getAmount()));
 
         sendMessage(sender);
         sendMessage(receiver);
 
-        return new TransactionResponse(senderTransaction.getId(), senderTransaction.getAmount());
+        return new TransactionResponse(senderTransaction.getId(), negatedAmount);
     }
 
     private Transaction persistTransaction(Transaction transaction) {
         transaction = transactionRepository.save(transaction);
-        log.info("Persist Transaction[id={}]", transaction.getId());
+        log.info("Persist Transaction[{}]", transaction.getId());
         return transaction;
     }
 

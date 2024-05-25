@@ -67,14 +67,10 @@ public class CustomerService {
         BigDecimal balance = Conversions.setScale(BigDecimal.ZERO);
 
         for (Account account : accounts) {
-            BigDecimal amount = account.getAmount();
-            if (BigDecimal.ZERO.compareTo(amount) < 0) {
-                BigDecimal convertedAmount = converterService.convert(
-                        account.getCurrency(),
-                        currency,
-                        amount
-                );
-                balance = balance.add(convertedAmount);
+            double amount = account.getAmount();
+            if (amount > 0) {
+                double convertedAmount = converterService.convert(account.getCurrency(), currency, amount);
+                balance = balance.add(Conversions.setScale(convertedAmount));
             }
         }
         log.info("Return Customer[id={}] balance", customer.get().getId());

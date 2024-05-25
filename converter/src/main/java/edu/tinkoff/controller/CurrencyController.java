@@ -24,7 +24,7 @@ public class CurrencyController {
     public ResponseEntity<CurrencyMessage> convert(
             @RequestParam("from") String fromName,
             @RequestParam("to") String toName,
-            @RequestParam("amount") BigDecimal amount
+            @RequestParam("amount") double amount
     ) {
         log.info("Accept a request to convert currency");
         CurrencyMessage message = converterService.convert(fromName, toName, amount);

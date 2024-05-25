@@ -1,9 +1,7 @@
 package edu.tinkoff.dto;
 
-import edu.tinkoff.util.Conversions;
 import jakarta.persistence.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -22,17 +20,16 @@ public class Account {
     @Column(name = "currency")
     private Currency currency;
 
-    private BigDecimal amount;
+    private Double amount;
 
     @OneToMany(mappedBy = "account")
     private List<Transaction> transactions;
 
     public Account() {
-        amount = Conversions.setScale(BigDecimal.ZERO);
     }
 
     public Account(Customer customer, Currency currency) {
-        this();
+        this.amount = 0.0;
         this.customer = customer;
         this.currency = currency;
     }
@@ -61,11 +58,11 @@ public class Account {
         this.currency = currency;
     }
 
-    public BigDecimal getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 

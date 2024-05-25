@@ -4,7 +4,6 @@ import edu.tinkoff.dao.NotificationRepository;
 import edu.tinkoff.dto.Notification;
 import edu.tinkoff.dto.NotificationRequest;
 import edu.tinkoff.properties.NotificationProperties;
-import edu.tinkoff.util.Conversions;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +35,7 @@ public class NotificationService {
 
     public void save(int customerId, int accountId, BigDecimal amount, BigDecimal balance) {
         String message = String.format("Счет %d. Операция: %s. Баланс: %s",
-                accountId,
-                Conversions.setScale(amount),
-                Conversions.setScale(balance));
+                accountId, amount, balance);
         Notification notification = notificationRepository.save(new Notification(customerId, message));
         log.info("Persist Notification[id={}]", notification.getId());
     }
