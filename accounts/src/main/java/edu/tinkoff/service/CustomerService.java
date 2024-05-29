@@ -6,6 +6,7 @@ import edu.tinkoff.dto.*;
 import edu.tinkoff.exception.InvalidCustomerIdException;
 import edu.tinkoff.exception.InvalidDataException;
 import edu.tinkoff.util.Conversions;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ public class CustomerService {
         this.converterService = converterService;
     }
 
+    @Observed
     public CustomerCreationResponse createCustomer(@Valid CustomerCreationRequest request) {
         int roughCustomerAge = LocalDate.now().getYear() - request.birthDate().getYear();
         if (roughCustomerAge < 14 || roughCustomerAge > 120) {
@@ -57,6 +59,7 @@ public class CustomerService {
             cacheKey = "#id",
             ratePerMethod = true
     )
+    @Observed
     public CustomerBalanceResponse getBalance(int id, Currency currency) {
         Optional<Customer> customer = customerRepository.findById(id);
         if (customer.isEmpty()) {

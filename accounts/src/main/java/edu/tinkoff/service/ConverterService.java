@@ -5,6 +5,8 @@ import edu.tinkoff.grpc.ConversionReply;
 import edu.tinkoff.grpc.ConversionRequest;
 import edu.tinkoff.grpc.ConverterServiceGrpc;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,12 +21,16 @@ public class ConverterService {
 
     public ConverterService(
             ConverterServiceGrpc.ConverterServiceBlockingStub grpcStub,
-            CircuitBreaker circuitBreaker
+            CircuitBreaker circuitBreaker,
+            ObservationRegistry registry
     ) {
-        conversion = circuitBreaker.decorateRunnable(() -> {
-            log.info("Send a request to convert currency");
-            reply = grpcStub.convert(request);
-        });
+        conversion = circuitBreaker.decorateRunnable(() -> Observation
+                .createNotStarted("conversion", registry)
+                .observe(() -> {
+                    log.info("Send a request to convert currency");
+                    reply = grpcStub.convert(request);
+                })
+        );
     }
 
     public double convert(Currency from, Currency to, double amount) {

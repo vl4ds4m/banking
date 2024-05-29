@@ -2,6 +2,7 @@ package edu.tinkoff.service;
 
 import edu.tinkoff.dao.ConfigRepository;
 import edu.tinkoff.dto.*;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -49,6 +50,7 @@ public class AdminService {
         return fee;
     }
 
+    @Observed
     @Transactional
     public void updateConfigs(@Valid UpdateConfigsRequest request) {
         configRepository.save(

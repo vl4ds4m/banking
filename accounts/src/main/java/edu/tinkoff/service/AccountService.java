@@ -5,6 +5,7 @@ import edu.tinkoff.dao.TransactionRepository;
 import edu.tinkoff.dto.*;
 import edu.tinkoff.exception.*;
 import edu.tinkoff.util.Conversions;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -42,6 +43,7 @@ public class AccountService {
         this.transactionRepository = transactionRepository;
     }
 
+    @Observed
     public AccountCreationResponse createAccount(@Valid AccountCreationRequest request) {
         Optional<Customer> customer = customerService.findById(request.customerId());
         if (customer.isEmpty()) {
@@ -75,6 +77,7 @@ public class AccountService {
         log.info("Send {}", message);
     }
 
+    @Observed
     public AccountBalance getBalance(int number) {
         Optional<Account> account = accountRepository.findById(number);
         if (account.isEmpty()) {
@@ -87,6 +90,7 @@ public class AccountService {
         return new AccountBalance(amount, currency);
     }
 
+    @Observed
     @Transactional
     public TransactionResponse topUpAccount(int number, @Valid AccountTopUpRequest request) {
         Optional<Account> optionalAccount = accountRepository.findById(number);
@@ -120,6 +124,7 @@ public class AccountService {
         return new TransactionResponse(transaction.getId(), amount);
     }
 
+    @Observed
     public List<TransactionResponse> getTransactions(int number) {
         log.info("Return Account[{}] transactions", number);
         return accountRepository.findById(number)

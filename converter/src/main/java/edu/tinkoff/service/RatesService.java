@@ -1,6 +1,8 @@
 package edu.tinkoff.service;
 
 import edu.tinkoff.dto.RatesResposne;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,15 +18,18 @@ public class RatesService {
 
     private final RestTemplate restTemplate;
     private final RetryTemplate retryTemplate;
+    private final ObservationRegistry observationRegistry;
 
     private String currencyRatesUrl;
 
     public RatesService(
             @Qualifier("auth") RestTemplate restTemplate,
-            RetryTemplate retryTemplate
+            RetryTemplate retryTemplate,
+            ObservationRegistry observationRegistry
     ) {
         this.restTemplate = restTemplate;
         this.retryTemplate = retryTemplate;
+        this.observationRegistry = observationRegistry;
     }
 
     @Value("${services.currency-rates.url}")
@@ -33,11 +38,12 @@ public class RatesService {
     }
 
     public RatesResposne getRatesResponse() {
-        RetryCallback<RatesResposne, RuntimeException> retryCallback =
-                context -> {
-                    log.info("Send a request to get currency rates");
-                    return restTemplate.getForObject(currencyRatesUrl, RatesResposne.class);
-                };
+        RetryCallback<RatesResposne, RuntimeException> retryCallback = context ->
+                Observation.createNotStarted("rates", observationRegistry)
+                        .observe(() -> {
+                            log.info("Send a request to get currency rates");
+                            return restTemplate.getForObject(currencyRatesUrl, RatesResposne.class);
+                        });
         return retryTemplate.execute(retryCallback);
     }
 }

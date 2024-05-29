@@ -6,6 +6,7 @@ import edu.tinkoff.dto.*;
 import edu.tinkoff.exception.InvalidAccountNumberException;
 import edu.tinkoff.exception.InvalidDataException;
 import edu.tinkoff.util.Conversions;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -45,6 +46,7 @@ public class TransferService {
         this.adminService = adminService;
     }
 
+    @Observed
     @Transactional
     public TransactionResponse transfer(@Valid TransferRequest request) {
         Optional<Account> optionalReceiver = accountRepository.findById(request.receiverNumber());

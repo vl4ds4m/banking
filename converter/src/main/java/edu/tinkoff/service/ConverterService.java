@@ -9,6 +9,7 @@ import edu.tinkoff.grpc.ConverterServiceGrpc.ConverterServiceImplBase;
 import edu.tinkoff.util.Conversions;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import io.micrometer.observation.annotation.Observed;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +27,10 @@ public class ConverterService extends ConverterServiceImplBase {
         this.ratesService = ratesService;
     }
 
+    @Observed
     @Override
     public void convert(ConversionRequest request, StreamObserver<ConversionReply> responseObserver) {
+        log.info("Accept a request to convert currency");
         try {
             CurrencyMessage message = convert(
                     request.getFrom(),
@@ -47,6 +50,7 @@ public class ConverterService extends ConverterServiceImplBase {
         }
     }
 
+    @Observed
     public CurrencyMessage convert(String fromName, String toName, double amount) {
         Currency from = Currency.fromValue(fromName);
         if (from == null) {
@@ -64,7 +68,6 @@ public class ConverterService extends ConverterServiceImplBase {
         }
 
         BigDecimal convertedAmount = convert(from, to, initialAmount);
-        log.info("Convert [{} {}] to [{} {}]", initialAmount, from, convertedAmount, to);
 
         return new CurrencyMessage(to, convertedAmount, null);
     }
@@ -109,6 +112,7 @@ public class ConverterService extends ConverterServiceImplBase {
                     currencyValue, Conversions.SCALE, Conversions.ROUNDING_MODE);
         }
 
+        log.info("Convert [{} {}] to [{} {}]", amount, from, convertedAmount, to);
         return convertedAmount;
     }
 }
