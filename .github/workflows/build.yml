@@ -60,15 +60,19 @@ jobs:
         run: |
           docker build \
           --build-arg JAR_FILE=integer-adder/target/integer-adder.jar \
+          --platform=linux/amd64,linux/arm64/v8 \
           -t "${IMAGE_INTEGER_ADDER}:${IMAGE_TAG}" .
           docker build \
           --build-arg JAR_FILE=random-number/target/random-number.jar \
+          --platform=linux/amd64,linux/arm64/v8 \
           -t "${IMAGE_RANDOM_NUMBER}:${IMAGE_TAG}" .
           docker build \
           --build-arg JAR_FILE=converter/target/converter.jar \
+          --platform=linux/amd64,linux/arm64/v8 \
           -t "${IMAGE_CONVERTER}:${IMAGE_TAG}" .
           docker build \
           --build-arg JAR_FILE=accounts/target/accounts.jar \
+          --platform=linux/amd64,linux/arm64/v8 \
           -t "${IMAGE_ACCOUNTS}:${IMAGE_TAG}" .
 
       - name: Push the Docker images
