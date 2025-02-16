@@ -10,7 +10,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>integer-adder</module>
-        <module>random-number</module>
         <module>converter</module>
         <module>accounts</module>
         <module>common</module>
