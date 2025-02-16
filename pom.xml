@@ -9,7 +9,6 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
     <modules>
-        <module>integer-adder</module>
         <module>converter</module>
         <module>accounts</module>
         <module>common</module>
