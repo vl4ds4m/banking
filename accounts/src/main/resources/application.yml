@@ -32,7 +32,7 @@ spring:
     consumer:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        "[spring.json.trusted.packages]": "edu.tinkoff.dto"
+        "[spring.json.trusted.packages]": "edu.vl4ds4m.tbank.dto"
 
 services:
   timeout: 5
