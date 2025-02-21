@@ -3,21 +3,21 @@ syntax = "proto3";
 package edu.vl4ds4m.tbank;
 
 option java_multiple_files = true;
-option java_package = "edu.vl4ds4m.tbank.grpc";
+option java_package = "edu.vl4ds4m.tbank.converter.grpc";
 option java_outer_classname = "ConverterProto";
 
-service ConverterService {
-  rpc Convert (ConversionRequest) returns (ConversionReply) {
+service Converter {
+  rpc Convert (ConverterGrpcRequest) returns (ConverterGrpcResponse) {
   }
 }
 
-message ConversionRequest {
+message ConverterGrpcRequest {
   string from = 1;
   string to = 2;
   double amount = 3;
 }
 
-message ConversionReply {
+message ConverterGrpcResponse {
   string currency = 1;
   double amount = 2;
 }

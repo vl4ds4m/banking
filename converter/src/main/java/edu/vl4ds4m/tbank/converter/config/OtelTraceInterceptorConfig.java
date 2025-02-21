@@ -1,4 +1,4 @@
-package edu.vl4ds4m.tbank.config;
+package edu.vl4ds4m.tbank.converter.config;
 
 import io.grpc.ServerInterceptor;
 import io.micrometer.core.instrument.binder.grpc.ObservationGrpcServerInterceptor;

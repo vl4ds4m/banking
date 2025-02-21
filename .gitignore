@@ -40,3 +40,4 @@ build/
 ### Local files ###
 **/src/**/application-local.yml
 mi-md/
+*/run/

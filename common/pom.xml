@@ -88,13 +88,13 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.parent.basedir}/api.yml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/openapi/api.yml</inputSpec>
                             <language>java</language>
                             <generateApis>false</generateApis>
                             <generateSupportingFiles>false</generateSupportingFiles>
                             <modelPackage>edu.vl4ds4m.tbank.dto</modelPackage>
                             <configOptions>
-                                <sourceFolder>src/gen/java</sourceFolder>
+                                <sourceFolder>java</sourceFolder>
                             </configOptions>
                         </configuration>
                     </execution>

@@ -5,9 +5,3 @@ services:
 
   currency-rates:
     url: ${RATES_URL:http://rates:8080}/rates
-
-  keycloak:
-    url: ${KEYCLOAK_URL:}/realms/${KEYCLOAK_REALM:}/protocol/openid-connect
-    client:
-      id: ${CLIENT_ID:}
-      secret: ${CLIENT_SECRET:}

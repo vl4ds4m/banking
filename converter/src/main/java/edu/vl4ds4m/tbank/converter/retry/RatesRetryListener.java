@@ -1,6 +1,6 @@
-package edu.vl4ds4m.tbank.retry;
+package edu.vl4ds4m.tbank.converter.retry;
 
-import edu.vl4ds4m.tbank.service.RatesService;
+import edu.vl4ds4m.tbank.converter.service.RatesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.retry.RetryCallback;

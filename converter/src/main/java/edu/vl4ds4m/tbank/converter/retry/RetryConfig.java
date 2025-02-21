@@ -1,7 +1,5 @@
-package edu.vl4ds4m.tbank.config;
+package edu.vl4ds4m.tbank.converter.retry;
 
-import edu.vl4ds4m.tbank.retry.ProgressiveBackOffPolicy;
-import edu.vl4ds4m.tbank.retry.RatesRetryListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.annotation.EnableRetry;
@@ -11,7 +9,6 @@ import org.springframework.retry.support.RetryTemplate;
 @Configuration
 @EnableRetry
 public class RetryConfig {
-
     @Bean
     public RetryTemplate retryTemplate(
             ProgressiveBackOffPolicy backOffPolicy,

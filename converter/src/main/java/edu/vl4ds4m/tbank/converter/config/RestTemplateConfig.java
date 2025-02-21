@@ -1,12 +1,13 @@
-package edu.vl4ds4m.tbank.config;
+package edu.vl4ds4m.tbank.converter.config;
 
-import edu.vl4ds4m.tbank.auth.AuthInterceptor;
+import edu.vl4ds4m.tbank.converter.auth.AuthInterceptor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
@@ -30,8 +31,9 @@ public class RestTemplateConfig {
     }
 
     @Bean
+    @Profile("auth")
     @Qualifier("auth")
-    public RestTemplate authRestTemplate(
+    public RestTemplate restTemplateWithAuth(
             RestTemplateBuilder restTemplateBuilder,
             AuthInterceptor authInterceptor
     ) {

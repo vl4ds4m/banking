@@ -1,16 +1,17 @@
-package edu.vl4ds4m.tbank.auth;
+package edu.vl4ds4m.tbank.converter.auth;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Optional;
 
 @Component
+@Profile("auth")
 public class AuthInterceptor implements ClientHttpRequestInterceptor {
     private final KeycloakAuthClient keycloakAuthClient;
 
@@ -19,11 +20,10 @@ public class AuthInterceptor implements ClientHttpRequestInterceptor {
     }
 
     @Override
-    @NonNull
     public ClientHttpResponse intercept(
-            @NonNull HttpRequest request,
-            @NonNull byte[] body,
-            @NonNull ClientHttpRequestExecution execution
+            HttpRequest request,
+            byte[] body,
+            ClientHttpRequestExecution execution
     ) throws IOException {
         Optional<String> token = keycloakAuthClient.getToken();
         token.ifPresent(s -> request.getHeaders().setBearerAuth(s));

@@ -1,4 +1,4 @@
-package edu.vl4ds4m.tbank.retry;
+package edu.vl4ds4m.tbank.converter.retry;
 
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.backoff.BackOffContext;

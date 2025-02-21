@@ -1,4 +1,4 @@
-package edu.vl4ds4m.tbank;
+package edu.vl4ds4m.tbank.converter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

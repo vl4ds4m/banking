@@ -1,10 +1,11 @@
-package edu.vl4ds4m.tbank.auth;
+package edu.vl4ds4m.tbank.converter.auth;
 
 import com.auth0.jwt.JWT;
 import org.keycloak.representations.AccessTokenResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -15,6 +16,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @Component
+@Profile("auth")
 public class KeycloakAuthClient {
     private static final Logger logger = LoggerFactory.getLogger(KeycloakAuthClient.class);
 
@@ -81,10 +83,6 @@ public class KeycloakAuthClient {
                 new HttpEntity<>(requestBody, headers),
                 AccessTokenResponse.class
         );
-
-        if (response == null) {
-            throw new RuntimeException("Access token response is null");
-        }
 
         return response.getToken();
     }
