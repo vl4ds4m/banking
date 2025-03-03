@@ -1,4 +1,4 @@
-package edu.vl4ds4m.tbank.config;
+package edu.vl4ds4m.tbank.controller;
 
 import edu.vl4ds4m.tbank.exception.InvalidDataException;
 import io.grpc.Status;
@@ -19,6 +19,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler({ConstraintViolationException.class, InvalidDataException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleInvalidDataException(RuntimeException e) {
+        logger.debug("Handle bad request");
         return e.getMessage();
     }
 
@@ -35,6 +36,6 @@ public class ControllerExceptionHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public void handleException(Exception e) {
-        logger.error("Exception was thrown: {}", e.getMessage());
+        logger.error(e.getMessage());
     }
 }
