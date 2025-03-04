@@ -1,6 +1,6 @@
 package edu.vl4ds4m.tbank.config;
 
-import edu.vl4ds4m.tbank.grpc.ConverterServiceGrpc;
+import edu.vl4ds4m.tbank.converter.grpc.ConverterGrpc;
 import edu.vl4ds4m.tbank.service.ConverterService;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.micrometer.observation.ObservationRegistry;
@@ -12,14 +12,14 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration(proxyBeanMethods = false)
 @GrpcClientBean(
-        clazz = ConverterServiceGrpc.ConverterServiceBlockingStub.class,
+        clazz = ConverterGrpc.ConverterBlockingStub.class,
         beanName = "grpcStub",
         client = @GrpcClient("accounts")
 )
 public class GrpcConfig {
     @Bean
     public ConverterService converterService(
-            @Autowired ConverterServiceGrpc.ConverterServiceBlockingStub grpcStub,
+            @Autowired ConverterGrpc.ConverterBlockingStub grpcStub,
             CircuitBreaker circuitBreaker,
             ObservationRegistry registry
     ) {

@@ -8,19 +8,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/transfers")
-public class TransfersController {
-    private static final Logger logger = LoggerFactory.getLogger(TransfersController.class);
+@RequestMapping(TransferController.PATH)
+public class TransferController {
+    static final String PATH = "/transfers";
+
+    private static final Logger logger = LoggerFactory.getLogger(TransferController.class);
 
     private final TransferService transferService;
 
-    public TransfersController(TransferService transferService) {
+    public TransferController(TransferService transferService) {
         this.transferService = transferService;
     }
 
     @PostMapping
     public TransactionResponse transfer(@RequestBody TransferRequest request) {
-        logger.info("Accept a request to transfer currency");
+        logger.debug("Accept POST {}: {}", PATH, request);
         return transferService.transfer(request);
     }
 }

@@ -7,23 +7,24 @@ import edu.vl4ds4m.tbank.dto.CustomerCreationResponse;
 import edu.vl4ds4m.tbank.service.CustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/customers", produces = MediaType.APPLICATION_JSON_VALUE)
-public class CustomersController {
-    private static final Logger logger = LoggerFactory.getLogger(CustomersController.class);
+@RequestMapping(CustomerController.PATH)
+public class CustomerController {
+    static final String PATH = "/customers";
+
+    private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
 
     private final CustomerService customerService;
 
-    public CustomersController(CustomerService customerService) {
+    public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
 
     @PostMapping
     public CustomerCreationResponse createCustomer(@RequestBody CustomerCreationRequest request) {
-        logger.info("Accept a request to create a customer");
+        logger.debug("Accept POST {}: {}", PATH, request);
         return customerService.createCustomer(request);
     }
 
@@ -32,7 +33,7 @@ public class CustomersController {
             @PathVariable int customerId,
             @RequestParam Currency currency
     ) {
-        logger.info("Accept a request to get a customer balance");
+        logger.debug("Accept GET {}/{}/balance?currency={}", PATH, customerId, currency);
         return customerService.getBalance(customerId, currency);
     }
 }

@@ -25,7 +25,7 @@
 |-----------|---------------|--------------|-----------------------------------|
 | firstName | string        | +            | Имя клиента                       |
 | lastName  | string        | +            | Фамилия клиента                   |
-| birthDay  | string($date) | +            | Дата рождения, формат: YYYY-MM-DD |
+| birthDate | string($date) | +            | Дата рождения, формат: YYYY-MM-DD |
 
 `POST /customers`
 
@@ -33,7 +33,7 @@
 {
   "firstName": "Петр",
   "lastName": "Иванов",
-  "birthDay": "1923-12-30"
+  "birthDate": "1923-12-30"
 }
 ```
 

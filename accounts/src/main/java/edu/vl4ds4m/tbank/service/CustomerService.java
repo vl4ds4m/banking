@@ -35,21 +35,17 @@ public class CustomerService {
     public CustomerCreationResponse createCustomer(@Valid CustomerCreationRequest request) {
         LocalDate now = LocalDate.now();
         LocalDate maxBirthDate = now.minusYears(14);
-        LocalDate minBirthDate = now.minusYears(120);
+        LocalDate minBirthDate = now.minusYears(121).plusDays(1);
         LocalDate birthDate = request.birthDate();
         if (birthDate.isAfter(maxBirthDate) || birthDate.isBefore(minBirthDate)) {
             throw new InvalidDataException("Customer age must be between 14 and 120");
         }
-
         Customer customer = new Customer();
         customer.setFirstName(request.firstName());
         customer.setLastName(request.lastName());
         customer.setBirthDate(request.birthDate());
-
         int customerId = customerRepository.save(customer).getId();
-
         logger.debug("Create Customer[id={}]", customerId);
-
         return new CustomerCreationResponse(customerId);
     }
 
@@ -68,10 +64,8 @@ public class CustomerService {
         if (customer.isEmpty()) {
             throw new InvalidCustomerIdException(id);
         }
-
         Set<Account> accounts = customer.get().getAccounts();
         BigDecimal balance = Conversions.setScale(BigDecimal.ZERO);
-
         for (Account account : accounts) {
             double amount = account.getAmount();
             if (amount > 0) {

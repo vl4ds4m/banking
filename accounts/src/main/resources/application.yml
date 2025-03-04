@@ -61,10 +61,8 @@ grpc:
 
 logging:
   level:
-    org:
-      springframework:
-        web:
-          socket: TRACE
+    edu.vl4ds4m.tbank: DEBUG
+    org.springframework.web.socket: TRACE
 
 bucket4j:
   enabled: true

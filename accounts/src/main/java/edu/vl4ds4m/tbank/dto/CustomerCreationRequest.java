@@ -14,7 +14,7 @@ public record CustomerCreationRequest(
         @NotBlank
         String lastName,
 
-        @JsonProperty("birthDay")
+        @JsonProperty("birthDate")
         @NotNull
         @Past
         LocalDate birthDate

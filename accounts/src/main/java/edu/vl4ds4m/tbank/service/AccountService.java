@@ -1,7 +1,6 @@
 package edu.vl4ds4m.tbank.service;
 
 import edu.vl4ds4m.tbank.dao.AccountRepository;
-import edu.vl4ds4m.tbank.dao.TransactionRepository;
 import edu.vl4ds4m.tbank.dto.*;
 import edu.vl4ds4m.tbank.exception.*;
 import edu.vl4ds4m.tbank.util.Conversions;
@@ -10,7 +9,6 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -26,21 +24,21 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final CustomerService customerService;
     private final NotificationService notificationService;
-    private final SimpMessagingTemplate simpMessagingTemplate;
-    private final TransactionRepository transactionRepository;
+    private final SimpMessagingService simpMessagingService;
+    private final TransactionService transactionService;
 
     public AccountService(
             AccountRepository accountRepository,
             CustomerService customerService,
             NotificationService notificationService,
-            SimpMessagingTemplate simpMessagingTemplate,
-            TransactionRepository transactionRepository
+            SimpMessagingService simpMessagingService,
+            TransactionService transactionService
     ) {
         this.accountRepository = accountRepository;
         this.customerService = customerService;
         this.notificationService = notificationService;
-        this.simpMessagingTemplate = simpMessagingTemplate;
-        this.transactionRepository = transactionRepository;
+        this.simpMessagingService = simpMessagingService;
+        this.transactionService = transactionService;
     }
 
     @Observed
@@ -49,32 +47,18 @@ public class AccountService {
         if (customer.isEmpty()) {
             throw new InvalidCustomerIdException(request.customerId());
         }
-
         Optional<Account> account = accountRepository.findByCustomerIdAndCurrency(
                 request.customerId(),
-                request.currency()
-        );
+                request.currency());
         if (account.isPresent()) {
             throw new InvalidDataException(
                     "Account[customerId=" + request.customerId() + ", " +
                     "currency=" + request.currency() + "] already exists");
         }
-
         Account savedAccount = accountRepository.save(new Account(customer.get(), request.currency()));
-        logger.info("Create Account[{}]", savedAccount.getNumber());
-
-        AccountBrokerMessage brokerMessage = new AccountBrokerMessage(
-                savedAccount.getNumber(),
-                request.currency(),
-                Conversions.setScale(savedAccount.getAmount()));
-        sendMessage(brokerMessage);
-
+        logger.debug("Create Account[number={}]", savedAccount.getNumber());
+        simpMessagingService.sendMessage(savedAccount);
         return new AccountCreationResponse(savedAccount.getNumber());
-    }
-
-    private void sendMessage(AccountBrokerMessage message) {
-        simpMessagingTemplate.convertAndSend(AccountBrokerMessage.DESTINATION, message);
-        logger.info("Send {}", message);
     }
 
     @Observed
@@ -83,8 +67,7 @@ public class AccountService {
         if (account.isEmpty()) {
             throw new InvalidAccountNumberException(number);
         }
-
-        logger.info("Return Account[{}] balance", account.get().getNumber());
+        logger.debug("Return Account[number={}] balance", account.get().getNumber());
         BigDecimal amount = Conversions.setScale(account.get().getAmount());
         Currency currency = account.get().getCurrency();
         return new AccountBalance(amount, currency);
@@ -97,41 +80,34 @@ public class AccountService {
         if (optionalAccount.isEmpty()) {
             throw new InvalidAccountNumberException(number);
         }
-
         BigDecimal amount = Conversions.setScale(request.amount());
         Account account = optionalAccount.get();
         account.setAmount(account.getAmount() + amount.doubleValue());
-
         account = accountRepository.save(account);
-        logger.info("Top up Account[{}]", account.getNumber());
-
+        logger.debug(
+                "Top up Account[number={}] with {} {}",
+                account.getNumber(), amount, account.getCurrency());
         BigDecimal accountAmount = Conversions.setScale(account.getAmount());
         notificationService.save(
                 account.getCustomer().getId(),
                 account.getNumber(),
                 amount,
                 accountAmount);
-
-        AccountBrokerMessage brokerMessage = new AccountBrokerMessage(
-                account.getNumber(),
-                account.getCurrency(),
-                accountAmount);
-        sendMessage(brokerMessage);
-
-        Transaction transaction = transactionRepository.save(
+        simpMessagingService.sendMessage(account);
+        Transaction transaction = transactionService.persist(
                 new Transaction(account, amount.doubleValue()));
-        logger.info("Persist Transaction[{}]", transaction.getId());
         return new TransactionResponse(transaction.getId(), amount);
     }
 
     @Observed
     public List<TransactionResponse> getTransactions(int number) {
-        logger.info("Return Account[{}] transactions", number);
-        return accountRepository.findById(number)
+        List<TransactionResponse> responses = accountRepository.findById(number)
                 .map(Account::getTransactions)
                 .orElseThrow(() -> new InvalidAccountNumberException(number))
-                .stream().map(t -> new TransactionResponse(
-                        t.getId(), Conversions.setScale(t.getAmount())))
-                .toList();
+                .stream().map(
+                        t -> new TransactionResponse(t.getId(), Conversions.setScale(t.getAmount()))
+                ).toList();
+        logger.debug("Return Account[number={}] transactions", number);
+        return responses;
     }
 }

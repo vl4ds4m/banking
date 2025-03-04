@@ -1,9 +1,9 @@
 package edu.vl4ds4m.tbank.service;
 
 import edu.vl4ds4m.tbank.dto.Currency;
-import edu.vl4ds4m.tbank.grpc.ConversionReply;
-import edu.vl4ds4m.tbank.grpc.ConversionRequest;
-import edu.vl4ds4m.tbank.grpc.ConverterServiceGrpc;
+import edu.vl4ds4m.tbank.converter.grpc.ConverterGrpcResponse;
+import edu.vl4ds4m.tbank.converter.grpc.ConverterGrpcRequest;
+import edu.vl4ds4m.tbank.converter.grpc.ConverterGrpc;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
@@ -16,25 +16,26 @@ public class ConverterService {
     private static final Logger logger = LoggerFactory.getLogger(ConverterService.class);
 
     private final Runnable conversion;
-    private ConversionRequest request;
-    private ConversionReply reply;
+    private ConverterGrpcRequest request;
+    private ConverterGrpcResponse reply;
 
     public ConverterService(
-            ConverterServiceGrpc.ConverterServiceBlockingStub grpcStub,
+            ConverterGrpc.ConverterBlockingStub grpcStub,
             CircuitBreaker circuitBreaker,
             ObservationRegistry registry
     ) {
         conversion = circuitBreaker.decorateRunnable(() -> Observation
                 .createNotStarted("conversion", registry)
                 .observe(() -> {
-                    logger.info("Send a request to convert currency");
+                    logger.debug("Send ConverterRequest[from={}, to={}, amount={}]",
+                            request.getFrom(), request.getTo(), request.getAmount());
                     reply = grpcStub.convert(request);
                 })
         );
     }
 
     public double convert(Currency from, Currency to, double amount) {
-        request = ConversionRequest.newBuilder()
+        request = ConverterGrpcRequest.newBuilder()
                 .setFrom(from.toString())
                 .setTo(to.toString())
                 .setAmount(amount)

@@ -16,7 +16,8 @@ import java.util.List;
 
 @Service
 public class NotificationService {
-    private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
+    private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
+
     private final NotificationRepository notificationRepository;
     private final RestTemplate restTemplate;
     private final String postUrl;
@@ -37,7 +38,7 @@ public class NotificationService {
         String message = String.format("Счет %d. Операция: %s. Баланс: %s",
                 accountId, amount, balance);
         Notification notification = notificationRepository.save(new Notification(customerId, message));
-        log.info("Persist Notification[id={}]", notification.getId());
+        logger.debug("Persist Notification[id={}]", notification.getId());
     }
 
     @Transactional
@@ -56,7 +57,7 @@ public class NotificationService {
         ResponseEntity<?> responseEntity;
         try {
             responseEntity = restTemplate.postForEntity(postUrl, request, Void.class);
-            log.info("Post Notification[id={}]", notification.getId());
+            logger.debug("Post Notification[id={}]", notification.getId());
         } catch (RuntimeException e) {
             return false;
         }
