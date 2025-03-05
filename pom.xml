@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.vl4ds4m.tbank</groupId>
-    <artifactId>ab-2</artifactId>
-    <version>1.1</version>
+    <groupId>edu.vl4ds4m.banking</groupId>
+    <artifactId>banking</artifactId>
+    <version>1.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>common</module>
@@ -33,9 +33,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>edu.vl4ds4m.tbank</groupId>
+                <groupId>edu.vl4ds4m.banking</groupId>
                 <artifactId>common</artifactId>
-                <version>1.1</version>
+                <version>1.0</version>
             </dependency>
 
             <dependency>

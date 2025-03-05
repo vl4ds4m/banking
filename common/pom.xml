@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>edu.vl4ds4m.tbank</groupId>
-        <artifactId>ab-2</artifactId>
-        <version>1.1</version>
+        <groupId>edu.vl4ds4m.banking</groupId>
+        <artifactId>banking</artifactId>
+        <version>1.0</version>
     </parent>
 
     <artifactId>common</artifactId>
@@ -92,7 +92,7 @@
                             <language>java</language>
                             <generateApis>false</generateApis>
                             <generateSupportingFiles>false</generateSupportingFiles>
-                            <modelPackage>edu.vl4ds4m.tbank.dto</modelPackage>
+                            <modelPackage>edu.vl4ds4m.banking.dto</modelPackage>
                             <configOptions>
                                 <sourceFolder>java</sourceFolder>
                             </configOptions>
