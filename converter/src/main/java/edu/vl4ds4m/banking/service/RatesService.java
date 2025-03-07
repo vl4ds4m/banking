@@ -16,6 +16,8 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 public class RatesService {
+    private static final String PATH = "/rates";
+
     private static final Logger logger = LoggerFactory.getLogger(RatesService.class);
 
     private final RestTemplate restTemplate;
@@ -25,12 +27,12 @@ public class RatesService {
     private final String currencyRatesUrl;
 
     public RatesService(
-            String currencyRatesUrl,
+            String currencyRatesHost,
             RestTemplate restTemplate,
             RetryTemplate retryTemplate,
             ObservationRegistry observationRegistry
     ) {
-        this.currencyRatesUrl = currencyRatesUrl;
+        this.currencyRatesUrl = currencyRatesHost + PATH;
         this.restTemplate = restTemplate;
         this.retryTemplate = retryTemplate;
         this.observationRegistry = observationRegistry;

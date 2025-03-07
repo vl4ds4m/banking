@@ -25,7 +25,7 @@ public class SimpMessagingService {
                 account.getNumber(),
                 account.getCurrency(),
                 Conversions.setScale(account.getAmount()));
-        template.convertAndSend(AccountBrokerMessage.DESTINATION, message);
         logger.debug("Send {}", message);
+        template.convertAndSend(AccountBrokerMessage.DESTINATION, message);
     }
 }

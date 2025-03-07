@@ -1,6 +1,6 @@
 package edu.vl4ds4m.banking.config;
 
-import edu.vl4ds4m.banking.converter.grpc.ConverterGrpc;
+import edu.vl4ds4m.banking.grpc.ConverterGrpc;
 import edu.vl4ds4m.banking.service.ConverterService;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.micrometer.observation.ObservationRegistry;

@@ -1,9 +1,9 @@
 package edu.vl4ds4m.banking.service;
 
 import edu.vl4ds4m.banking.dto.Currency;
-import edu.vl4ds4m.banking.converter.grpc.ConverterGrpcResponse;
-import edu.vl4ds4m.banking.converter.grpc.ConverterGrpcRequest;
-import edu.vl4ds4m.banking.converter.grpc.ConverterGrpc;
+import edu.vl4ds4m.banking.grpc.ConverterGrpcResponse;
+import edu.vl4ds4m.banking.grpc.ConverterGrpcRequest;
+import edu.vl4ds4m.banking.grpc.ConverterGrpc;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;

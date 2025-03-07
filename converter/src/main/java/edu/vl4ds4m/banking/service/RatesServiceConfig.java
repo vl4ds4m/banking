@@ -11,17 +11,17 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class RatesServiceConfig {
-    private final String currencyRatesUrl;
+    private final String currencyRatesHost;
     private final RetryTemplate retryTemplate;
     private final ObservationRegistry observationRegistry;
 
     public RatesServiceConfig(
-            @Value("${services.currency-rates.url}")
-            String currencyRatesUrl,
+            @Value("${services.currency-rates.host}")
+            String currencyRatesHost,
             RetryTemplate retryTemplate,
             ObservationRegistry observationRegistry
     ) {
-        this.currencyRatesUrl = currencyRatesUrl;
+        this.currencyRatesHost = currencyRatesHost;
         this.retryTemplate = retryTemplate;
         this.observationRegistry = observationRegistry;
     }
@@ -29,12 +29,12 @@ public class RatesServiceConfig {
     @Bean
     @Profile("!auth")
     public RatesService ratesService(RestTemplate restTemplate) {
-        return new RatesService(currencyRatesUrl, restTemplate, retryTemplate, observationRegistry);
+        return new RatesService(currencyRatesHost, restTemplate, retryTemplate, observationRegistry);
     }
 
     @Bean
     @Profile("auth")
     public RatesService ratesServiceWithAuth(@Qualifier("auth") RestTemplate restTemplate) {
-        return new RatesService(currencyRatesUrl, restTemplate, retryTemplate, observationRegistry);
+        return new RatesService(currencyRatesHost, restTemplate, retryTemplate, observationRegistry);
     }
 }

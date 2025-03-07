@@ -1,8 +1,6 @@
 package edu.vl4ds4m.banking.controller;
 
-import edu.vl4ds4m.banking.dto.CustomerBalanceResponse;
-import edu.vl4ds4m.banking.dto.CustomerCreationRequest;
-import edu.vl4ds4m.banking.dto.CustomerCreationResponse;
+import edu.vl4ds4m.banking.dto.*;
 import edu.vl4ds4m.banking.service.CustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

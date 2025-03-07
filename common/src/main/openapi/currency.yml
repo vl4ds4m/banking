@@ -1,17 +1,4 @@
 openapi: 3.0.0
-paths:
-  /rates:
-    get:
-      summary: Returns rates.
-      description: Returns currency rates.
-      responses:
-        '200':    # status code
-          description: Currency rates
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RatesResponse'
-
 components:
   schemas:
     RatesResponse:
