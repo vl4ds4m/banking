@@ -1,8 +1,8 @@
-package edu.vl4ds4m.banking.service;
+package edu.vl4ds4m.banking.converter.service;
 
-import edu.vl4ds4m.banking.exception.InvalidCurrencyException;
-import edu.vl4ds4m.banking.exception.NonPositiveAmountException;
-import edu.vl4ds4m.banking.exception.RatesServiceException;
+import edu.vl4ds4m.banking.converter.exception.InvalidCurrencyException;
+import edu.vl4ds4m.banking.converter.exception.NonPositiveAmountException;
+import edu.vl4ds4m.banking.converter.exception.RatesServiceException;
 import edu.vl4ds4m.banking.dto.Currency;
 import edu.vl4ds4m.banking.dto.RatesResponse;
 import edu.vl4ds4m.banking.util.Conversions;
@@ -36,7 +36,7 @@ public class ConverterService {
         }
         amount = Conversions.setScale(amount);
         if (BigDecimal.ZERO.compareTo(amount) >= 0) {
-            throw new NonPositiveAmountException();
+            throw new NonPositiveAmountException(amount);
         }
         return convert(source, target, amount);
     }

@@ -1,6 +1,6 @@
-package edu.vl4ds4m.banking.service;
+package edu.vl4ds4m.banking.converter.service;
 
-import edu.vl4ds4m.banking.exception.RatesServiceException;
+import edu.vl4ds4m.banking.converter.exception.RatesServiceException;
 import edu.vl4ds4m.banking.dto.Currency;
 import edu.vl4ds4m.banking.dto.RatesResponse;
 import io.micrometer.observation.Observation;

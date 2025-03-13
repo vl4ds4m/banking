@@ -1,4 +1,4 @@
-package edu.vl4ds4m.banking;
+package edu.vl4ds4m.banking.converter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

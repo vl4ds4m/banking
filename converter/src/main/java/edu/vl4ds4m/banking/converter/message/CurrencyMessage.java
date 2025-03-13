@@ -1,4 +1,4 @@
-package edu.vl4ds4m.banking.message;
+package edu.vl4ds4m.banking.converter.message;
 
 import java.math.BigDecimal;
 

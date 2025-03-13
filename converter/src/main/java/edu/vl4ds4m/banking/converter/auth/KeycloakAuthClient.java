@@ -1,4 +1,4 @@
-package edu.vl4ds4m.banking.auth;
+package edu.vl4ds4m.banking.converter.auth;
 
 import com.auth0.jwt.JWT;
 import org.keycloak.representations.AccessTokenResponse;

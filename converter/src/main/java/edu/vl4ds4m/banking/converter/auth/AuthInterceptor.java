@@ -1,4 +1,4 @@
-package edu.vl4ds4m.banking.auth;
+package edu.vl4ds4m.banking.converter.auth;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpRequest;

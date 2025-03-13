@@ -1,4 +1,4 @@
-package edu.vl4ds4m.banking.service;
+package edu.vl4ds4m.banking.converter.service;
 
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.beans.factory.annotation.Qualifier;

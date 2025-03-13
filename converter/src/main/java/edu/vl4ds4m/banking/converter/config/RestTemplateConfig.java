@@ -1,6 +1,6 @@
-package edu.vl4ds4m.banking.config;
+package edu.vl4ds4m.banking.converter.config;
 
-import edu.vl4ds4m.banking.auth.AuthInterceptor;
+import edu.vl4ds4m.banking.converter.auth.AuthInterceptor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
