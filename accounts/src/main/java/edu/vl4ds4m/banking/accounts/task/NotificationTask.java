@@ -4,7 +4,7 @@ import edu.vl4ds4m.banking.accounts.service.NotificationService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 public class NotificationTask {
     private final NotificationService service;
 

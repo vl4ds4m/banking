@@ -7,17 +7,17 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 public record TransferRequest(
-        @JsonProperty("receiverAccount")
-        @NotNull
-        Integer receiverNumber,
+    @JsonProperty("receiverAccount")
+    @NotNull
+    Integer receiverNumber,
 
-        @JsonProperty("senderAccount")
-        @NotNull
-        Integer senderNumber,
+    @JsonProperty("senderAccount")
+    @NotNull
+    Integer senderNumber,
 
-        @JsonProperty("amountInSenderCurrency")
-        @NotNull
-        @Positive
-        BigDecimal amount
+    @JsonProperty("amountInSenderCurrency")
+    @NotNull
+    @Positive
+    BigDecimal amount
 ) {
 }

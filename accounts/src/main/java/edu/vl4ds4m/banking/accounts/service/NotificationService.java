@@ -2,7 +2,7 @@ package edu.vl4ds4m.banking.accounts.service;
 
 import edu.vl4ds4m.banking.accounts.dao.NotificationRepository;
 import edu.vl4ds4m.banking.accounts.properties.NotificationProperties;
-import edu.vl4ds4m.banking.accounts.dto.Notification;
+import edu.vl4ds4m.banking.accounts.entity.Notification;
 import edu.vl4ds4m.banking.accounts.dto.NotificationRequest;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -24,9 +25,9 @@ public class NotificationService {
     private final int notificationCount;
 
     public NotificationService(
-            NotificationRepository notificationRepository,
-            NotificationProperties properties,
-            RestTemplate restTemplate
+        NotificationRepository notificationRepository,
+        NotificationProperties properties,
+        RestTemplate restTemplate
     ) {
         this.notificationRepository = notificationRepository;
         this.restTemplate = restTemplate;
@@ -36,28 +37,30 @@ public class NotificationService {
 
     public void save(int customerId, int accountId, BigDecimal amount, BigDecimal balance) {
         String message = String.format("Счет %d. Операция: %s. Баланс: %s",
-                accountId, amount, balance);
-        Notification notification = notificationRepository.save(new Notification(customerId, message));
-        logger.debug("Persist Notification[id={}]", notification.getId());
+            accountId, amount, balance);
+        Notification notification = notificationRepository.save(
+            new Notification(customerId, message, Instant.now()));
+        logger.debug("Notification[id={}] saved", notification.getId());
     }
 
     @Transactional
     public void checkAndPost() {
-        List<Notification> notifications =
-                notificationRepository.findTopKOrderByInstantAsc(notificationCount);
-        List<Notification> receivedNotifications = notifications.stream()
-                .filter(this::post).toList();
-        notificationRepository.deleteAll(receivedNotifications);
+        List<Notification> posted = notificationRepository
+            .findTopKOrderByInstantAsc(notificationCount)
+            .stream()
+            .filter(this::post)
+            .toList();
+        notificationRepository.deleteAll(posted);
     }
 
     private boolean post(Notification notification) {
         NotificationRequest request = new NotificationRequest(
-                notification.getCustomerId(),
-                notification.getMessage());
+            notification.getCustomerId(),
+            notification.getMessage());
         ResponseEntity<?> responseEntity;
         try {
-            responseEntity = restTemplate.postForEntity(postUrl, request, Void.class);
             logger.debug("Post Notification[id={}]", notification.getId());
+            responseEntity = restTemplate.postForEntity(postUrl, request, Void.class);
         } catch (RuntimeException e) {
             return false;
         }

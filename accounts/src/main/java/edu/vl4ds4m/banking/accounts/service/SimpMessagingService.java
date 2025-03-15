@@ -1,8 +1,7 @@
 package edu.vl4ds4m.banking.accounts.service;
 
-import edu.vl4ds4m.banking.accounts.dto.Account;
+import edu.vl4ds4m.banking.accounts.entity.Account;
 import edu.vl4ds4m.banking.accounts.dto.AccountBrokerMessage;
-import edu.vl4ds4m.banking.util.Conversions;
 import io.micrometer.observation.annotation.Observed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,7 @@ public class SimpMessagingService {
         AccountBrokerMessage message = new AccountBrokerMessage(
                 account.getNumber(),
                 account.getCurrency(),
-                Conversions.setScale(account.getAmount()));
+                account.getAmount());
         logger.debug("Send {}", message);
         template.convertAndSend(AccountBrokerMessage.DESTINATION, message);
     }

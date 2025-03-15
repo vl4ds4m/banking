@@ -1,7 +1,7 @@
 package edu.vl4ds4m.banking.accounts.service;
 
 import edu.vl4ds4m.banking.accounts.dao.TransactionRepository;
-import edu.vl4ds4m.banking.accounts.dto.Transaction;
+import edu.vl4ds4m.banking.accounts.entity.Transaction;
 import io.micrometer.observation.annotation.Observed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ public class TransactionService {
     @Observed
     public Transaction persist(Transaction transaction) {
         transaction = repository.save(transaction);
-        logger.debug("Persist Transaction[id={}]", transaction.getId());
+        logger.debug("Transaction[id={}] saved", transaction.getId());
         return transaction;
     }
 }

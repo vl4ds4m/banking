@@ -7,9 +7,9 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 public record AccountTopUpRequest(
-        @JsonProperty("amount")
-        @NotNull
-        @Positive
-        BigDecimal amount
+    @JsonProperty("amount")
+    @NotNull
+    @Positive
+    BigDecimal amount
 ) {
 }

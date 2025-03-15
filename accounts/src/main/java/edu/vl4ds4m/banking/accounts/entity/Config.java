@@ -1,8 +1,12 @@
-package edu.vl4ds4m.banking.accounts.dto;
+package edu.vl4ds4m.banking.accounts.entity;
 
+import edu.vl4ds4m.banking.Conversions;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 @Entity
+@Table(name = "configs")
 public class Config {
     public enum Type {
         FEE
@@ -10,33 +14,24 @@ public class Config {
 
     @Id
     @Enumerated(EnumType.STRING)
+    @Column(name = "name")
     private Type name;
 
-    @Basic(optional = false)
-    private String value;
+    @Column(name = "value",
+        nullable = false,
+        precision = Conversions.PRECISION,
+        scale = Conversions.SCALE)
+    private BigDecimal value;
 
-    public Config() {
-    }
+    protected Config() {}
 
-    public Config(Type name, String value) {
+    public Config(Type name, BigDecimal value) {
         this.name = name;
         this.value = value;
     }
 
-    public Type getName() {
-        return name;
-    }
-
-    public void setName(Type name) {
-        this.name = name;
-    }
-
-    public String getValue() {
+    public BigDecimal getValue() {
         return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 
     @Override

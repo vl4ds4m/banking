@@ -3,10 +3,12 @@ package edu.vl4ds4m.banking.accounts.service;
 import com.giffing.bucket4j.spring.boot.starter.context.RateLimiting;
 import edu.vl4ds4m.banking.accounts.dao.CustomerRepository;
 import edu.vl4ds4m.banking.accounts.dto.*;
+import edu.vl4ds4m.banking.accounts.entity.Account;
+import edu.vl4ds4m.banking.accounts.entity.Customer;
 import edu.vl4ds4m.banking.accounts.exception.InvalidCustomerIdException;
 import edu.vl4ds4m.banking.dto.*;
 import edu.vl4ds4m.banking.exception.InvalidDataException;
-import edu.vl4ds4m.banking.util.Conversions;
+import edu.vl4ds4m.banking.Conversions;
 import io.micrometer.observation.annotation.Observed;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -41,12 +43,13 @@ public class CustomerService {
         if (birthDate.isAfter(maxBirthDate) || birthDate.isBefore(minBirthDate)) {
             throw new InvalidDataException("Customer age must be between 14 and 120");
         }
-        Customer customer = new Customer();
-        customer.setFirstName(request.firstName());
-        customer.setLastName(request.lastName());
-        customer.setBirthDate(request.birthDate());
+
+        Customer customer = new Customer(
+            request.firstName(),
+            request.lastName(),
+            request.birthDate());
         int customerId = customerRepository.save(customer).getId();
-        logger.debug("Create Customer[id={}]", customerId);
+        logger.debug("Customer[id={}] created", customerId);
         return new CustomerCreationResponse(customerId);
     }
 
@@ -55,26 +58,25 @@ public class CustomerService {
     }
 
     @RateLimiting(
-            name = "customerBalance",
-            cacheKey = "#id",
-            ratePerMethod = true
-    )
+        name = "customerBalance",
+        cacheKey = "#id",
+        ratePerMethod = true)
     @Observed
     public CustomerBalanceResponse getBalance(int id, Currency currency) {
-        Optional<Customer> customer = customerRepository.findById(id);
-        if (customer.isEmpty()) {
-            throw new InvalidCustomerIdException(id);
-        }
-        Set<Account> accounts = customer.get().getAccounts();
-        BigDecimal balance = Conversions.setScale(BigDecimal.ZERO);
+        Customer customer = findById(id)
+            .orElseThrow(() -> new InvalidCustomerIdException(id));
+
+        logger.debug("Return Customer[id={}] balance", customer.getId());
+        Set<Account> accounts = customer.getAccounts();
+        BigDecimal balance = Conversions.ZERO;
         for (Account account : accounts) {
-            double amount = account.getAmount();
-            if (amount > 0) {
-                double convertedAmount = converterService.convert(account.getCurrency(), currency, amount);
-                balance = balance.add(Conversions.setScale(convertedAmount));
+            BigDecimal amount = account.getAmount();
+            if (Conversions.ZERO.compareTo(amount) < 0) {
+                amount = converterService.convert(
+                    account.getCurrency(), currency, amount);
+                balance = balance.add(amount);
             }
         }
-        logger.debug("Return Customer[id={}] balance", customer.get().getId());
         return new CustomerBalanceResponse(balance, currency);
     }
 }

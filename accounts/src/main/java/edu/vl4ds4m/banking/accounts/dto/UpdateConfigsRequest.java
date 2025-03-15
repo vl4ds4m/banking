@@ -8,9 +8,9 @@ import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 public record UpdateConfigsRequest(
-        @JsonProperty("fee")
-        @NotNull
-        @Min(0) @Max(1)
-        BigDecimal fee
+    @JsonProperty("fee")
+    @NotNull
+    @Min(0) @Max(1)
+    BigDecimal fee
 ) {
 }

@@ -1,9 +1,7 @@
 package edu.vl4ds4m.banking.accounts.controller;
 
-import edu.vl4ds4m.banking.accounts.dto.CustomerBalanceResponse;
-import edu.vl4ds4m.banking.accounts.dto.CustomerCreationRequest;
-import edu.vl4ds4m.banking.accounts.dto.CustomerCreationResponse;
-import edu.vl4ds4m.banking.dto.*;
+import edu.vl4ds4m.banking.accounts.dto.*;
+import edu.vl4ds4m.banking.dto.Currency;
 import edu.vl4ds4m.banking.accounts.service.CustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +28,8 @@ public class CustomerController {
 
     @GetMapping("/{customerId}/balance")
     public CustomerBalanceResponse getBalance(
-            @PathVariable int customerId,
-            @RequestParam Currency currency
+        @PathVariable int customerId,
+        @RequestParam Currency currency
     ) {
         logger.debug("Accept GET {}/{}/balance?currency={}", PATH, customerId, currency);
         return customerService.getBalance(customerId, currency);

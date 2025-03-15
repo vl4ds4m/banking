@@ -6,7 +6,10 @@ import edu.vl4ds4m.banking.dto.Currency;
 import java.math.BigDecimal;
 
 public record AccountBalance(
-        @JsonProperty("amount") BigDecimal amount,
-        @JsonProperty("currency") Currency currency
+    @JsonProperty("amount")
+    BigDecimal amount,
+
+    @JsonProperty("currency")
+    Currency currency
 ) {
 }

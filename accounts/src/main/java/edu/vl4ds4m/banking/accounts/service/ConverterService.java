@@ -1,5 +1,6 @@
 package edu.vl4ds4m.banking.accounts.service;
 
+import edu.vl4ds4m.banking.Conversions;
 import edu.vl4ds4m.banking.dto.Currency;
 import edu.vl4ds4m.banking.grpc.ConverterGrpcResponse;
 import edu.vl4ds4m.banking.grpc.ConverterGrpcRequest;
@@ -11,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 public class ConverterService {
     private static final Logger logger = LoggerFactory.getLogger(ConverterService.class);
@@ -20,28 +23,27 @@ public class ConverterService {
     private ConverterGrpcResponse reply;
 
     public ConverterService(
-            ConverterGrpc.ConverterBlockingStub grpcStub,
-            CircuitBreaker circuitBreaker,
-            ObservationRegistry registry
+        ConverterGrpc.ConverterBlockingStub grpcStub,
+        CircuitBreaker circuitBreaker,
+        ObservationRegistry registry
     ) {
         conversion = circuitBreaker.decorateRunnable(() -> Observation
-                .createNotStarted("conversion", registry)
-                .observe(() -> {
-                    logger.debug("Send ConverterRequest[from={}, to={}, amount={}]",
-                            request.getFrom(), request.getTo(), request.getAmount());
-                    reply = grpcStub.convert(request);
-                })
+            .createNotStarted("conversion", registry)
+            .observe(() -> {
+                logger.debug("Send ConverterRequest[from={}, to={}, amount={}]",
+                    request.getFrom(), request.getTo(), request.getAmount());
+                reply = grpcStub.convert(request);
+            })
         );
     }
 
-    public double convert(Currency from, Currency to, double amount) {
+    public BigDecimal convert(Currency from, Currency to, BigDecimal amount) {
         request = ConverterGrpcRequest.newBuilder()
-                .setFrom(from.toString())
-                .setTo(to.toString())
-                .setAmount(amount)
-                .build();
-
+            .setFrom(from.toString())
+            .setTo(to.toString())
+            .setAmount(amount.doubleValue())
+            .build();
         conversion.run();
-        return reply.getAmount();
+        return Conversions.setScale(reply.getAmount());
     }
 }

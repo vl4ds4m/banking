@@ -5,7 +5,7 @@ import edu.vl4ds4m.banking.converter.exception.NonPositiveAmountException;
 import edu.vl4ds4m.banking.converter.exception.RatesServiceException;
 import edu.vl4ds4m.banking.dto.Currency;
 import edu.vl4ds4m.banking.dto.RatesResponse;
-import edu.vl4ds4m.banking.util.Conversions;
+import edu.vl4ds4m.banking.Conversions;
 import io.micrometer.observation.annotation.Observed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

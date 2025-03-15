@@ -1,8 +1,9 @@
 package edu.vl4ds4m.banking.accounts.service;
 
+import edu.vl4ds4m.banking.Conversions;
 import edu.vl4ds4m.banking.accounts.dao.ConfigRepository;
 import edu.vl4ds4m.banking.accounts.dto.Action;
-import edu.vl4ds4m.banking.accounts.dto.Config;
+import edu.vl4ds4m.banking.accounts.entity.Config;
 import edu.vl4ds4m.banking.accounts.dto.UpdateConfigsRequest;
 import io.micrometer.observation.annotation.Observed;
 import jakarta.transaction.Transactional;
@@ -31,9 +32,9 @@ public class AdminService {
     private BigDecimal fee;
 
     public AdminService(
-            ConfigRepository configRepository,
-            KafkaTemplate<String, Action> kafkaTemplate,
-            @Value(TOPIC_PROP) String topic
+        ConfigRepository configRepository,
+        KafkaTemplate<String, Action> kafkaTemplate,
+        @Value(TOPIC_PROP) String topic
     ) {
         this.configRepository = configRepository;
         this.kafkaTemplate = kafkaTemplate;
@@ -43,8 +44,8 @@ public class AdminService {
 
     private void loadFee() {
         fee = configRepository.findById(Config.Type.FEE)
-                .map(config -> new BigDecimal(config.getValue()))
-                .orElse(BigDecimal.ZERO);
+            .map(Config::getValue)
+            .orElse(Conversions.ZERO);
         logger.info("Configuration[fee={}]", fee);
     }
 
@@ -55,13 +56,13 @@ public class AdminService {
     @Observed
     @Transactional
     public void updateConfigs(@Valid UpdateConfigsRequest request) {
-        configRepository.save(
-                new Config(Config.Type.FEE, request.fee().toString()));
-        logger.info("Persist Configuration[fee={}]", request.fee());
+        BigDecimal fee = Conversions.setScale(request.fee());
+        logger.info("Save Configuration[fee={}]", fee);
+        configRepository.save(new Config(Config.Type.FEE, fee));
 
         Action action = new Action(Action.Type.UPDATE_FEE);
-        kafkaTemplate.send(topic, action);
         logger.info("Send {}", action);
+        kafkaTemplate.send(topic, action);
     }
 
     @KafkaListener(id = "configUpdater", topics = TOPIC_PROP)

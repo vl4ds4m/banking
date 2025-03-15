@@ -1,14 +1,15 @@
-package edu.vl4ds4m.banking.util;
+package edu.vl4ds4m.banking;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class Conversions {
-    private Conversions() {
-    }
+    private Conversions() {}
 
+    public static final int PRECISION = 100;
     public static final int SCALE = 2;
     public static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_EVEN;
+    public static final BigDecimal ZERO = setScale(BigDecimal.ZERO);
 
     public static BigDecimal setScale(double number) {
         return BigDecimal.valueOf(number).setScale(SCALE, ROUNDING_MODE);

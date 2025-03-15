@@ -6,17 +6,17 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 public record CustomerCreationRequest(
-        @JsonProperty("firstName")
-        @NotBlank
-        String firstName,
+    @JsonProperty("firstName")
+    @NotBlank
+    String firstName,
 
-        @JsonProperty("lastName")
-        @NotBlank
-        String lastName,
+    @JsonProperty("lastName")
+    @NotBlank
+    String lastName,
 
-        @JsonProperty("birthDate")
-        @NotNull
-        @Past
-        LocalDate birthDate
+    @JsonProperty("birthDate")
+    @NotNull
+    @Past
+    LocalDate birthDate
 ) {
 }

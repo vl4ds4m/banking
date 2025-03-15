@@ -35,8 +35,8 @@ public class AccountController {
 
     @PostMapping("/{accountNumber}/top-up")
     public TransactionResponse topUpAccount(
-            @PathVariable int accountNumber,
-            @RequestBody AccountTopUpRequest request
+        @PathVariable int accountNumber,
+        @RequestBody AccountTopUpRequest request
     ) {
         logger.debug("Accept POST {}/{}/top-up: {}", PATH, accountNumber, request);
         return accountService.topUpAccount(accountNumber, request);

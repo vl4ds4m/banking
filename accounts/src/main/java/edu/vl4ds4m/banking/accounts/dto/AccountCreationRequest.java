@@ -5,12 +5,12 @@ import edu.vl4ds4m.banking.dto.Currency;
 import jakarta.validation.constraints.NotNull;
 
 public record AccountCreationRequest(
-        @JsonProperty("customerId")
-        @NotNull
-        Integer customerId,
+    @JsonProperty("customerId")
+    @NotNull
+    Integer customerId,
 
-        @JsonProperty("currency")
-        @NotNull
-        Currency currency
+    @JsonProperty("currency")
+    @NotNull
+    Currency currency
 ) {
 }

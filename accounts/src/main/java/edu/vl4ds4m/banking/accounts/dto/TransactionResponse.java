@@ -6,7 +6,10 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record TransactionResponse(
-        @JsonProperty("transactionId") UUID uuid,
-        @JsonProperty("amount") BigDecimal amount
+    @JsonProperty("transactionId")
+    UUID uuid,
+
+    @JsonProperty("amount")
+    BigDecimal amount
 ) {
 }

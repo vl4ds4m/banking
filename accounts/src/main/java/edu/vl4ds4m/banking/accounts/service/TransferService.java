@@ -1,14 +1,14 @@
 package edu.vl4ds4m.banking.accounts.service;
 
 import edu.vl4ds4m.banking.accounts.dao.AccountRepository;
-import edu.vl4ds4m.banking.accounts.dto.Account;
-import edu.vl4ds4m.banking.accounts.dto.Transaction;
+import edu.vl4ds4m.banking.accounts.entity.Account;
+import edu.vl4ds4m.banking.accounts.entity.Transaction;
 import edu.vl4ds4m.banking.accounts.dto.TransactionResponse;
 import edu.vl4ds4m.banking.accounts.dto.TransferRequest;
 import edu.vl4ds4m.banking.accounts.exception.InvalidAccountNumberException;
 import edu.vl4ds4m.banking.dto.*;
 import edu.vl4ds4m.banking.exception.InvalidDataException;
-import edu.vl4ds4m.banking.util.Conversions;
+import edu.vl4ds4m.banking.Conversions;
 import io.micrometer.observation.annotation.Observed;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -32,12 +32,12 @@ public class TransferService {
     private final AdminService adminService;
 
     public TransferService(
-            ConverterService converterService,
-            AccountRepository accountRepository,
-            NotificationService notificationService,
-            SimpMessagingService simpMessagingService,
-            TransactionService transactionService,
-            AdminService adminService
+        ConverterService converterService,
+        AccountRepository accountRepository,
+        NotificationService notificationService,
+        SimpMessagingService simpMessagingService,
+        TransactionService transactionService,
+        AdminService adminService
     ) {
         this.converterService = converterService;
         this.accountRepository = accountRepository;
@@ -51,53 +51,61 @@ public class TransferService {
     @Transactional
     public TransactionResponse transfer(@Valid TransferRequest request) {
         Account receiver = accountRepository.findById(request.receiverNumber())
-                .orElseThrow(() -> new InvalidAccountNumberException(request.receiverNumber()));
+            .orElseThrow(() -> new InvalidAccountNumberException(request.receiverNumber()));
         Account sender = accountRepository.findById(request.senderNumber())
-                .orElseThrow(() -> new InvalidAccountNumberException(request.senderNumber()));
+            .orElseThrow(() -> new InvalidAccountNumberException(request.senderNumber()));
+
         BigDecimal amount = Conversions.setScale(request.amount());
         BigDecimal senderAmount = Conversions.setScale(sender.getAmount());
+
         if (senderAmount.compareTo(amount) < 0) {
             throw new InvalidDataException(
-                    "Insufficient funds in the sender account: " +
-                    "amount=" + senderAmount);
+                "Insufficient funds in the sender account: amount=" + senderAmount);
         }
+
         return transfer(sender, receiver, amount);
     }
 
     private TransactionResponse transfer(Account sender, Account receiver, BigDecimal amount) {
         Currency senderCurrency = sender.getCurrency();
         Currency receiverCurrency = receiver.getCurrency();
+
         BigDecimal feeRate = adminService.getFee();
         BigDecimal transferredAmount = amount.subtract(amount.multiply(feeRate));
+
         BigDecimal convertedAmount = transferredAmount;
         if (!senderCurrency.equals(receiverCurrency)) {
-            double converted = converterService.convert(
-                    senderCurrency, receiverCurrency, transferredAmount.doubleValue());
-            convertedAmount = Conversions.setScale(converted);
+            convertedAmount = converterService.convert(
+                senderCurrency, receiverCurrency, transferredAmount);
         }
-        sender.setAmount(sender.getAmount() - amount.doubleValue());
-        receiver.setAmount(receiver.getAmount() + convertedAmount.doubleValue());
+
+        sender.setAmount(sender.getAmount().subtract(amount));
+        receiver.setAmount(receiver.getAmount().add(convertedAmount));
         sender = accountRepository.save(sender);
         receiver = accountRepository.save(receiver);
         logger.debug("Transfer {} {} from Account[number={}] to Account[number={}]",
-                amount, senderCurrency, sender.getNumber(), receiver.getNumber());
+            amount, senderCurrency, sender.getNumber(), receiver.getNumber());
+
         BigDecimal negatedAmount = amount.negate();
         Transaction senderTransaction = transactionService.persist(
-                new Transaction(sender, negatedAmount.doubleValue()));
+            new Transaction(sender, negatedAmount));
         transactionService.persist(
-                new Transaction(receiver, convertedAmount.doubleValue()));
+            new Transaction(receiver, convertedAmount));
+
         notificationService.save(
-                sender.getCustomer().getId(),
-                sender.getNumber(),
-                negatedAmount,
-                Conversions.setScale(sender.getAmount()));
+            sender.getCustomer().getId(),
+            sender.getNumber(),
+            negatedAmount,
+            sender.getAmount());
         notificationService.save(
-                receiver.getCustomer().getId(),
-                receiver.getNumber(),
-                convertedAmount,
-                Conversions.setScale(receiver.getAmount()));
+            receiver.getCustomer().getId(),
+            receiver.getNumber(),
+            convertedAmount,
+            receiver.getAmount());
+
         simpMessagingService.sendMessage(sender);
         simpMessagingService.sendMessage(receiver);
+
         return new TransactionResponse(senderTransaction.getId(), negatedAmount);
     }
 }
