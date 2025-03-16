@@ -1,4 +1,4 @@
-package edu.vl4ds4m.banking.converter.auth;
+package edu.vl4ds4m.banking.rates.auth;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpRequest;
@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Component
-@Profile("auth")
+@Profile(Auth.PROFILE)
 public class AuthInterceptor implements ClientHttpRequestInterceptor {
     private final KeycloakAuthClient keycloakAuthClient;
 

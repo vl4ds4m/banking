@@ -1,8 +1,9 @@
-package edu.vl4ds4m.banking.converter.service;
+package edu.vl4ds4m.banking.converter;
 
 import edu.vl4ds4m.banking.converter.exception.InvalidCurrencyException;
 import edu.vl4ds4m.banking.converter.exception.NonPositiveAmountException;
-import edu.vl4ds4m.banking.converter.exception.RatesServiceException;
+import edu.vl4ds4m.banking.rates.RatesServiceException;
+import edu.vl4ds4m.banking.rates.RatesService;
 import edu.vl4ds4m.banking.dto.Currency;
 import edu.vl4ds4m.banking.dto.RatesResponse;
 import edu.vl4ds4m.banking.Conversions;

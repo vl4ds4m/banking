@@ -1,4 +1,4 @@
-package edu.vl4ds4m.banking.converter.exception;
+package edu.vl4ds4m.banking.rates;
 
 public class RatesServiceException extends RuntimeException {
     public RatesServiceException(String message) {

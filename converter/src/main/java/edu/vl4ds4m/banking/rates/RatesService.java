@@ -1,6 +1,5 @@
-package edu.vl4ds4m.banking.converter.service;
+package edu.vl4ds4m.banking.rates;
 
-import edu.vl4ds4m.banking.converter.exception.RatesServiceException;
 import edu.vl4ds4m.banking.dto.Currency;
 import edu.vl4ds4m.banking.dto.RatesResponse;
 import io.micrometer.observation.Observation;
@@ -27,10 +26,10 @@ public class RatesService {
     private final String currencyRatesUrl;
 
     public RatesService(
-            String currencyRatesHost,
-            RestTemplate restTemplate,
-            RetryTemplate retryTemplate,
-            ObservationRegistry observationRegistry
+        String currencyRatesHost,
+        RestTemplate restTemplate,
+        RetryTemplate retryTemplate,
+        ObservationRegistry observationRegistry
     ) {
         this.currencyRatesUrl = currencyRatesHost + PATH;
         this.restTemplate = restTemplate;
@@ -40,9 +39,9 @@ public class RatesService {
 
     public RatesResponse getRatesResponse() {
         RetryCallback<RatesResponse, RatesServiceException> retryCallback =
-                context -> Observation
-                        .createNotStarted("rates", observationRegistry)
-                        .observe(this::requestRatesResponse);
+            context -> Observation
+                .createNotStarted("rates", observationRegistry)
+                .observe(this::requestRatesResponse);
         RatesResponse response = retryTemplate.execute(retryCallback);
         checkRatesResponse(response);
         return response;

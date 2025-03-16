@@ -1,4 +1,4 @@
-package edu.vl4ds4m.banking.converter.config;
+package edu.vl4ds4m.banking.converter;
 
 import io.grpc.ServerInterceptor;
 import io.micrometer.core.instrument.binder.grpc.ObservationGrpcServerInterceptor;

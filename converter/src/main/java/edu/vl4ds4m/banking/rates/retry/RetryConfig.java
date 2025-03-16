@@ -1,4 +1,4 @@
-package edu.vl4ds4m.banking.converter.retry;
+package edu.vl4ds4m.banking.rates.retry;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

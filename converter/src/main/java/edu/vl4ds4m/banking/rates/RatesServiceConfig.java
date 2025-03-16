@@ -1,5 +1,6 @@
-package edu.vl4ds4m.banking.converter.service;
+package edu.vl4ds4m.banking.rates;
 
+import edu.vl4ds4m.banking.rates.auth.Auth;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,10 +17,10 @@ public class RatesServiceConfig {
     private final ObservationRegistry observationRegistry;
 
     public RatesServiceConfig(
-            @Value("${services.currency-rates.host}")
-            String currencyRatesHost,
-            RetryTemplate retryTemplate,
-            ObservationRegistry observationRegistry
+        @Value("${services.currency-rates-host}")
+        String currencyRatesHost,
+        RetryTemplate retryTemplate,
+        ObservationRegistry observationRegistry
     ) {
         this.currencyRatesHost = currencyRatesHost;
         this.retryTemplate = retryTemplate;
@@ -27,14 +28,14 @@ public class RatesServiceConfig {
     }
 
     @Bean
-    @Profile("!auth")
+    @Profile("!" + Auth.PROFILE)
     public RatesService ratesService(RestTemplate restTemplate) {
         return new RatesService(currencyRatesHost, restTemplate, retryTemplate, observationRegistry);
     }
 
     @Bean
-    @Profile("auth")
-    public RatesService ratesServiceWithAuth(@Qualifier("auth") RestTemplate restTemplate) {
+    @Profile(Auth.PROFILE)
+    public RatesService ratesServiceWithAuth(@Qualifier(Auth.QUALIFIER) RestTemplate restTemplate) {
         return new RatesService(currencyRatesHost, restTemplate, retryTemplate, observationRegistry);
     }
 }

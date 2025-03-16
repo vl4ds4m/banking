@@ -1,4 +1,4 @@
-package edu.vl4ds4m.banking.converter.auth;
+package edu.vl4ds4m.banking.rates.auth;
 
 import com.auth0.jwt.JWT;
 import org.keycloak.representations.AccessTokenResponse;
@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @Component
-@Profile("auth")
+@Profile(Auth.PROFILE)
 public class KeycloakAuthClient {
     private static final Logger logger = LoggerFactory.getLogger(KeycloakAuthClient.class);
 

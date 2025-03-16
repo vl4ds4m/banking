@@ -1,5 +1,8 @@
-package edu.vl4ds4m.banking.converter.exception;
+package edu.vl4ds4m.banking.converter;
 
+import edu.vl4ds4m.banking.converter.exception.InvalidCurrencyException;
+import edu.vl4ds4m.banking.converter.exception.NonPositiveAmountException;
+import edu.vl4ds4m.banking.rates.RatesServiceException;
 import org.slf4j.Logger;
 
 public class ConverterExceptionHandler {
