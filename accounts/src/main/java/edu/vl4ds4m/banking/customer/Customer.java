@@ -1,7 +1,7 @@
 package edu.vl4ds4m.banking.customer;
 
 import edu.vl4ds4m.banking.account.Account;
-import edu.vl4ds4m.banking.accounts.entity.Account_;
+import edu.vl4ds4m.banking.account.Account_;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;

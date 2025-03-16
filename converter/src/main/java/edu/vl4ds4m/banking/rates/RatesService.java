@@ -1,7 +1,7 @@
 package edu.vl4ds4m.banking.rates;
 
-import edu.vl4ds4m.banking.dto.Currency;
-import edu.vl4ds4m.banking.dto.RatesResponse;
+import edu.vl4ds4m.banking.currency.Currency;
+import edu.vl4ds4m.banking.currency.RatesResponse;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.slf4j.Logger;

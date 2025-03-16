@@ -14,22 +14,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
         </dependency>
-
         <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.auth0</groupId>
-            <artifactId>java-jwt</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
 
         <!-- gRPC interface -->
@@ -50,12 +40,8 @@
         </dependency>
 
         <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-tracing</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-tracing-bridge-otel</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
         </dependency>
     </dependencies>
 
@@ -76,7 +62,7 @@
                             <library>resttemplate</library>
                             <generateApis>false</generateApis>
                             <generateSupportingFiles>false</generateSupportingFiles>
-                            <modelPackage>edu.vl4ds4m.banking.dto</modelPackage>
+                            <modelPackage>edu.vl4ds4m.banking.currency</modelPackage>
                             <configOptions>
                                 <sourceFolder>java</sourceFolder>
                             </configOptions>

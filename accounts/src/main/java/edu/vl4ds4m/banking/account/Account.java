@@ -1,9 +1,9 @@
 package edu.vl4ds4m.banking.account;
 
 import edu.vl4ds4m.banking.transaction.Transaction;
-import edu.vl4ds4m.banking.accounts.entity.Transaction_;
+import edu.vl4ds4m.banking.transaction.Transaction_;
 import edu.vl4ds4m.banking.customer.Customer;
-import edu.vl4ds4m.banking.dto.Currency;
+import edu.vl4ds4m.banking.currency.Currency;
 import edu.vl4ds4m.banking.Conversions;
 import jakarta.persistence.*;
 

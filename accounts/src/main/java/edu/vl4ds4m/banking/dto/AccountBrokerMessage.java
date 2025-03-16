@@ -1,5 +1,7 @@
 package edu.vl4ds4m.banking.dto;
 
+import edu.vl4ds4m.banking.currency.Currency;
+
 import java.math.BigDecimal;
 
 public record AccountBrokerMessage(

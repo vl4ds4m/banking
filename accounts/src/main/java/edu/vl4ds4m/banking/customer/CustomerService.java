@@ -3,6 +3,7 @@ package edu.vl4ds4m.banking.customer;
 import com.giffing.bucket4j.spring.boot.starter.context.RateLimiting;
 import edu.vl4ds4m.banking.account.Account;
 import edu.vl4ds4m.banking.converter.ConverterService;
+import edu.vl4ds4m.banking.currency.Currency;
 import edu.vl4ds4m.banking.exception.InvalidCustomerIdException;
 import edu.vl4ds4m.banking.dto.*;
 import edu.vl4ds4m.banking.exception.InvalidDataException;

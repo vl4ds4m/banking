@@ -1,4 +1,4 @@
-package edu.vl4ds4m.banking.config;
+package edu.vl4ds4m.banking;
 
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.aop.ObservedAspect;

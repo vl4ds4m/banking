@@ -1,11 +1,10 @@
-package edu.vl4ds4m.banking.converter;
+package edu.vl4ds4m.banking.converter.grpc;
 
+import edu.vl4ds4m.banking.converter.ConverterExceptionHandler;
+import edu.vl4ds4m.banking.converter.ConverterService;
 import edu.vl4ds4m.banking.converter.exception.InvalidCurrencyException;
 import edu.vl4ds4m.banking.converter.exception.NonPositiveAmountException;
 import edu.vl4ds4m.banking.rates.RatesServiceException;
-import edu.vl4ds4m.banking.grpc.ConverterGrpc;
-import edu.vl4ds4m.banking.grpc.ConverterGrpcRequest;
-import edu.vl4ds4m.banking.grpc.ConverterGrpcResponse;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import io.micrometer.observation.annotation.Observed;
