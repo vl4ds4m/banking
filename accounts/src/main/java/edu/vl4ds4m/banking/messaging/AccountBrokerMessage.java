@@ -9,5 +9,5 @@ public record AccountBrokerMessage(
     Currency currency,
     BigDecimal balance
 ) {
-    public static final String DESTINATION = "/topic/accounts";
+    public static final String DESTINATION = "/accounts";
 }

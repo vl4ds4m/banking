@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 public class SimpMessagingService {
     private static final Logger logger = LoggerFactory.getLogger(SimpMessagingService.class);
 
+    private final String destinationPrefix;
     private final SimpMessagingTemplate template;
 
-    public SimpMessagingService(SimpMessagingTemplate template) {
+    public SimpMessagingService(MessagingProperties properties, SimpMessagingTemplate template) {
+        this.destinationPrefix = properties.destinationPrefix();
         this.template = template;
     }
 
@@ -23,7 +25,8 @@ public class SimpMessagingService {
                 account.getNumber(),
                 account.getCurrency(),
                 account.getAmount());
-        logger.debug("Send {}", message);
-        template.convertAndSend(AccountBrokerMessage.DESTINATION, message);
+        String destination = destinationPrefix + AccountBrokerMessage.DESTINATION;
+        logger.debug("Send {} to {}", message, destination);
+        template.convertAndSend(destination, message);
     }
 }
