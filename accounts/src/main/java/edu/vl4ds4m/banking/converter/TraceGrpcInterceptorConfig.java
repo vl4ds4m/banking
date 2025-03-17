@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
 @Configuration
-public class OtelTraceInterceptorConfig {
+public class TraceGrpcInterceptorConfig {
     @Bean
     @GrpcGlobalClientInterceptor
     @Order(InterceptorOrder.ORDER_TRACING_METRICS)
