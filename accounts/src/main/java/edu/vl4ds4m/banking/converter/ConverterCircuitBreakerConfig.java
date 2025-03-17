@@ -12,32 +12,32 @@ import org.springframework.context.annotation.Configuration;
 import java.time.Duration;
 
 @Configuration
-public class CircuitBreakerConfiguration {
+public class ConverterCircuitBreakerConfig {
     private static final Logger logger = LoggerFactory.getLogger(ConverterService.class);
 
     @Bean
     public CircuitBreaker circuitBreaker() {
         CircuitBreakerConfig config = CircuitBreakerConfig.custom()
-                .failureRateThreshold(50f)
-                .slidingWindowType(SlidingWindowType.TIME_BASED)
-                .slidingWindowSize(60)
-                .minimumNumberOfCalls(10)
-                .waitDurationInOpenState(Duration.ofSeconds(10))
-                .permittedNumberOfCallsInHalfOpenState(3)
-                .build();
+            .failureRateThreshold(50f)
+            .slidingWindowType(SlidingWindowType.TIME_BASED)
+            .slidingWindowSize(60)
+            .minimumNumberOfCalls(10)
+            .waitDurationInOpenState(Duration.ofSeconds(10))
+            .permittedNumberOfCallsInHalfOpenState(3)
+            .build();
 
         CircuitBreakerRegistry registry = CircuitBreakerRegistry.of(config);
         CircuitBreaker circuitBreaker = registry.circuitBreaker("converter");
         circuitBreaker.getEventPublisher()
-                .onError(event -> logger.warn(
-                        "CB [{}] error, state: {}",
-                        event.getCircuitBreakerName(),
-                        circuitBreaker.getState()))
-                .onStateTransition(event -> logger.info(
-                        "CB [{}] state transition from {} to {}",
-                        event.getCircuitBreakerName(),
-                        event.getStateTransition().getFromState(),
-                        event.getStateTransition().getToState()));
+            .onError(event -> logger.warn(
+                "CB [{}] error, state: {}",
+                event.getCircuitBreakerName(),
+                circuitBreaker.getState()))
+            .onStateTransition(event -> logger.info(
+                "CB [{}] state transition from {} to {}",
+                event.getCircuitBreakerName(),
+                event.getStateTransition().getFromState(),
+                event.getStateTransition().getToState()));
         return circuitBreaker;
     }
 }

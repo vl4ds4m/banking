@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
     clazz = ConverterGrpc.ConverterBlockingStub.class,
     beanName = "grpcStub",
     client = @GrpcClient("accounts"))
-public class GrpcConfig {
+public class ConverterGrpcConfig {
     @Bean
     public ConverterService converterService(
         @Autowired
