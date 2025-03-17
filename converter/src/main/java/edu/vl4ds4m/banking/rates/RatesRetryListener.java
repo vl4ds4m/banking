@@ -1,6 +1,5 @@
-package edu.vl4ds4m.banking.rates.retry;
+package edu.vl4ds4m.banking.rates;
 
-import edu.vl4ds4m.banking.rates.RatesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.retry.RetryCallback;
@@ -14,9 +13,9 @@ public class RatesRetryListener implements RetryListener {
 
     @Override
     public <T, E extends Throwable> void onError(
-            RetryContext context,
-            RetryCallback<T, E> callback,
-            Throwable throwable
+        RetryContext context,
+        RetryCallback<T, E> callback,
+        Throwable throwable
     ) {
         int retryCount = context.getRetryCount();
         logger.warn("Fail to get rates, attempt #{}", retryCount);
