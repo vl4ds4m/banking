@@ -1,4 +1,4 @@
 @NonNullApi
-package edu.vl4ds4m.banking.rates.auth;
+package edu.vl4ds4m.banking.auth;
 
 import org.springframework.lang.NonNullApi;

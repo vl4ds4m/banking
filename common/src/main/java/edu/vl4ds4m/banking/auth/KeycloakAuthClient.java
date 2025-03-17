@@ -1,10 +1,10 @@
-package edu.vl4ds4m.banking.rates.auth;
+package edu.vl4ds4m.banking.auth;
 
 import com.auth0.jwt.JWT;
 import org.keycloak.representations.AccessTokenResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -17,34 +17,25 @@ import java.util.Optional;
 
 @Component
 @Profile(Auth.PROFILE)
+@EnableConfigurationProperties(KeycloakProperties.class)
 public class KeycloakAuthClient {
     private static final Logger logger = LoggerFactory.getLogger(KeycloakAuthClient.class);
 
     private final RestTemplate restTemplate;
 
-    private String tokenUrl;
-    private String clientId;
-    private String clientSecret;
+    private final String tokenUrl;
+    private final String clientId;
+    private final String clientSecret;
 
     private String cachedToken;
 
-    public KeycloakAuthClient(RestTemplate restTemplate) {
+    public KeycloakAuthClient(RestTemplate restTemplate, KeycloakProperties properties) {
         this.restTemplate = restTemplate;
-    }
-
-    @Value("${services.keycloak.url}")
-    public void setTokenUrl(String url) {
-        tokenUrl = url + "/token";
-    }
-
-    @Value("${services.keycloak.client.id}")
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
-    }
-
-    @Value("${services.keycloak.client.secret}")
-    public void setClientSecret(String clientSecret) {
-        this.clientSecret = clientSecret;
+        this.tokenUrl = String.format(
+            "%s/realms/%s/protocol/openid-connect/token",
+            properties.url(), properties.realm());
+        this.clientId = properties.clientId();
+        this.clientSecret = properties.clientSecret();
     }
 
     public Optional<String> getToken() {
@@ -68,7 +59,7 @@ public class KeycloakAuthClient {
     }
 
     private String postForToken() {
-        logger.info("Send a request to get {} access token", clientId);
+        logger.debug("Send a request to get {} access token", clientId);
 
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.add("client_id", clientId);

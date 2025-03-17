@@ -1,8 +1,7 @@
 package edu.vl4ds4m.banking.rates;
 
-import edu.vl4ds4m.banking.rates.auth.Auth;
-import edu.vl4ds4m.banking.rates.auth.AuthInterceptor;
-import org.springframework.beans.factory.annotation.Qualifier;
+import edu.vl4ds4m.banking.auth.Auth;
+import edu.vl4ds4m.banking.auth.AuthInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -31,8 +30,8 @@ public class RestTemplateConfig {
     }
 
     @Bean
+    @Auth
     @Profile(Auth.PROFILE)
-    @Qualifier(Auth.QUALIFIER)
     public RestTemplate restTemplateWithAuth(
         RestTemplateBuilder restTemplateBuilder,
         AuthInterceptor authInterceptor

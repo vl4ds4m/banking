@@ -1,8 +1,7 @@
 package edu.vl4ds4m.banking.rates;
 
-import edu.vl4ds4m.banking.rates.auth.Auth;
+import edu.vl4ds4m.banking.auth.Auth;
 import io.micrometer.observation.ObservationRegistry;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,7 +34,7 @@ public class RatesServiceConfig {
 
     @Bean
     @Profile(Auth.PROFILE)
-    public RatesService ratesServiceWithAuth(@Qualifier(Auth.QUALIFIER) RestTemplate restTemplate) {
+    public RatesService ratesServiceWithAuth(@Auth RestTemplate restTemplate) {
         return new RatesService(currencyRatesHost, restTemplate, retryTemplate, observationRegistry);
     }
 }
