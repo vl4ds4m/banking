@@ -1,6 +1,5 @@
 package edu.vl4ds4m.banking.notification;
 
-import edu.vl4ds4m.banking.dto.NotificationRequest;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

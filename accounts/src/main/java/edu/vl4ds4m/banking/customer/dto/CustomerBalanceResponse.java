@@ -1,4 +1,4 @@
-package edu.vl4ds4m.banking.dto;
+package edu.vl4ds4m.banking.customer.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.vl4ds4m.banking.currency.Currency;

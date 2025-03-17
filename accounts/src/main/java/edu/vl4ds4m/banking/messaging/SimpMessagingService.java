@@ -1,7 +1,6 @@
 package edu.vl4ds4m.banking.messaging;
 
 import edu.vl4ds4m.banking.account.Account;
-import edu.vl4ds4m.banking.dto.AccountBrokerMessage;
 import io.micrometer.observation.annotation.Observed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,7 +1,6 @@
 package edu.vl4ds4m.banking.transfer;
 
-import edu.vl4ds4m.banking.dto.TransactionResponse;
-import edu.vl4ds4m.banking.dto.TransferRequest;
+import edu.vl4ds4m.banking.transaction.TransactionResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;

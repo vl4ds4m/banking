@@ -1,6 +1,6 @@
 package edu.vl4ds4m.banking.admin;
 
-import edu.vl4ds4m.banking.dto.UpdateConfigsRequest;
+import edu.vl4ds4m.banking.admin.dto.UpdateConfigsRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;

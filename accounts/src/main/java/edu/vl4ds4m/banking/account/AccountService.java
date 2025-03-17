@@ -1,12 +1,16 @@
 package edu.vl4ds4m.banking.account;
 
 import edu.vl4ds4m.banking.Conversions;
-import edu.vl4ds4m.banking.dto.*;
+import edu.vl4ds4m.banking.account.dto.AccountBalance;
+import edu.vl4ds4m.banking.account.dto.AccountCreationRequest;
+import edu.vl4ds4m.banking.account.dto.AccountCreationResponse;
+import edu.vl4ds4m.banking.account.dto.AccountTopUpRequest;
 import edu.vl4ds4m.banking.exception.InvalidAccountNumberException;
 import edu.vl4ds4m.banking.exception.InvalidCustomerIdException;
 import edu.vl4ds4m.banking.notification.NotificationService;
 import edu.vl4ds4m.banking.messaging.SimpMessagingService;
 import edu.vl4ds4m.banking.transaction.Transaction;
+import edu.vl4ds4m.banking.transaction.TransactionResponse;
 import edu.vl4ds4m.banking.transaction.TransactionService;
 import edu.vl4ds4m.banking.customer.Customer;
 import edu.vl4ds4m.banking.customer.CustomerService;

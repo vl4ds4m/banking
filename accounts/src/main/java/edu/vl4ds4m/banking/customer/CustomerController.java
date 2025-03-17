@@ -1,7 +1,9 @@
 package edu.vl4ds4m.banking.customer;
 
 import edu.vl4ds4m.banking.currency.Currency;
-import edu.vl4ds4m.banking.dto.*;
+import edu.vl4ds4m.banking.customer.dto.CustomerBalanceResponse;
+import edu.vl4ds4m.banking.customer.dto.CustomerCreationRequest;
+import edu.vl4ds4m.banking.customer.dto.CustomerCreationResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;

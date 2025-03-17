@@ -1,8 +1,8 @@
 package edu.vl4ds4m.banking.admin;
 
 import edu.vl4ds4m.banking.Conversions;
-import edu.vl4ds4m.banking.dto.Action;
-import edu.vl4ds4m.banking.dto.UpdateConfigsRequest;
+import edu.vl4ds4m.banking.admin.dto.Action;
+import edu.vl4ds4m.banking.admin.dto.UpdateConfigsRequest;
 import io.micrometer.observation.annotation.Observed;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;

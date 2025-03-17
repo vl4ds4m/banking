@@ -1,6 +1,10 @@
 package edu.vl4ds4m.banking.account;
 
-import edu.vl4ds4m.banking.dto.*;
+import edu.vl4ds4m.banking.account.dto.AccountBalance;
+import edu.vl4ds4m.banking.account.dto.AccountCreationRequest;
+import edu.vl4ds4m.banking.account.dto.AccountCreationResponse;
+import edu.vl4ds4m.banking.account.dto.AccountTopUpRequest;
+import edu.vl4ds4m.banking.transaction.TransactionResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
