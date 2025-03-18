@@ -1,4 +1,4 @@
-package edu.vl4ds4m.banking.retry;
+package edu.vl4ds4m.banking.rates.retry;
 
 import jakarta.validation.constraints.Min;
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -1,5 +1,6 @@
-package edu.vl4ds4m.banking.rates;
+package edu.vl4ds4m.banking.rates.retry;
 
+import edu.vl4ds4m.banking.rates.RatesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.retry.RetryCallback;
