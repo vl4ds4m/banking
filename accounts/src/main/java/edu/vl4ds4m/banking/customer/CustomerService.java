@@ -59,7 +59,7 @@ public class CustomerService {
     }
 
     @RateLimiting(
-        name = "customerBalance",
+        name = "customer-balance",
         cacheKey = "#id",
         ratePerMethod = true)
     @Observed

@@ -59,13 +59,10 @@ grpc.client.accounts:
   keepAliveWithoutCalls: true
   negotiation-type: plaintext
 
-logging.level:
-  edu.vl4ds4m.banking: DEBUG
-
 bucket4j:
   enabled: true
   methods:
-    - name: customerBalance
+    - name: customer-balance
       cache-name: buckets
       rate-limit:
         bandwidths:
