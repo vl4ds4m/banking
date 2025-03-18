@@ -29,10 +29,6 @@ public class ConverterCircuitBreakerConfig {
         CircuitBreakerRegistry registry = CircuitBreakerRegistry.of(config);
         CircuitBreaker circuitBreaker = registry.circuitBreaker("converter");
         circuitBreaker.getEventPublisher()
-            .onError(event -> logger.warn(
-                "CB [{}] error, state: {}",
-                event.getCircuitBreakerName(),
-                circuitBreaker.getState()))
             .onStateTransition(event -> logger.info(
                 "CB [{}] state transition from {} to {}",
                 event.getCircuitBreakerName(),
