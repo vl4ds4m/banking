@@ -1,11 +1,13 @@
 package edu.vl4ds4m.banking.customer;
 
+import com.giffing.bucket4j.spring.boot.starter.context.RateLimitException;
 import edu.vl4ds4m.banking.currency.Currency;
 import edu.vl4ds4m.banking.customer.dto.CustomerBalanceResponse;
 import edu.vl4ds4m.banking.customer.dto.CustomerCreationRequest;
 import edu.vl4ds4m.banking.customer.dto.CustomerCreationResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,5 +36,11 @@ public class CustomerController {
     ) {
         logger.debug("Accept GET {}/{}/balance?currency={}", PATH, customerId, currency);
         return customerService.getBalance(customerId, currency);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public void handleRateLimitException(RateLimitException e) {
+        logger.debug("Handle RateLimitException: {}", e.getMessage());
     }
 }

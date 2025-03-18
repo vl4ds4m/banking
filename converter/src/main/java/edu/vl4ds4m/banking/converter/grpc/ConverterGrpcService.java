@@ -37,25 +37,21 @@ public class ConverterGrpcService extends ConverterGrpc.ConverterImplBase {
         logger.debug("Accept a request to convert currency");
         BigDecimal converted;
         try {
-            try {
-                converted = service.convert(
-                    request.getFrom(),
-                    request.getTo(),
-                    BigDecimal.valueOf(request.getAmount()));
-            } catch (RuntimeException e) {
-                Status status = handleException(e);
-                observer.onError(status.asRuntimeException());
-                return;
-            }
-            ConverterGrpcResponse response = ConverterGrpcResponse.newBuilder()
-                .setCurrency(request.getTo())
-                .setAmount(converted.doubleValue())
-                .build();
-            observer.onNext(response);
-            observer.onCompleted();
+            converted = service.convert(
+                request.getFrom(),
+                request.getTo(),
+                BigDecimal.valueOf(request.getAmount()));
         } catch (RuntimeException e) {
-            exceptionHandler.errorUnhandledException(e);
+            Status status = handleException(e);
+            observer.onError(status.asRuntimeException());
+            return;
         }
+        ConverterGrpcResponse response = ConverterGrpcResponse.newBuilder()
+            .setCurrency(request.getTo())
+            .setAmount(converted.doubleValue())
+            .build();
+        observer.onNext(response);
+        observer.onCompleted();
     }
 
     private Status handleException(RuntimeException exception) {
@@ -73,10 +69,7 @@ public class ConverterGrpcService extends ConverterGrpc.ConverterImplBase {
                 String description = exceptionHandler.warnRatesServiceError(e);
                 status = Status.UNAVAILABLE.withDescription(description);
             }
-            default -> {
-                String description = exceptionHandler.errorUnhandledException(exception);
-                status = Status.INTERNAL.withDescription(description);
-            }
+            default -> throw exception;
         }
         return status;
     }

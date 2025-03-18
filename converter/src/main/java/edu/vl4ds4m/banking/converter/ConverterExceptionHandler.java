@@ -24,9 +24,4 @@ public class ConverterExceptionHandler {
         logger.warn("Handle RatesServiceException: {}", e.getMessage());
         return "Rates service is unavailable";
     }
-
-    public String errorUnhandledException(Exception e) {
-        logger.error("Unhandled exception: {}", e.getMessage());
-        return "Unhandled exception";
-    }
 }

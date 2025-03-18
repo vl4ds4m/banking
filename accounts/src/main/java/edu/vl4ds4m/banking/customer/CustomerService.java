@@ -1,5 +1,6 @@
 package edu.vl4ds4m.banking.customer;
 
+import com.giffing.bucket4j.spring.boot.starter.context.RateLimitException;
 import com.giffing.bucket4j.spring.boot.starter.context.RateLimiting;
 import edu.vl4ds4m.banking.account.Account;
 import edu.vl4ds4m.banking.converter.ConverterService;
@@ -61,7 +62,8 @@ public class CustomerService {
     @RateLimiting(
         name = "customer-balance",
         cacheKey = "#id",
-        ratePerMethod = true)
+        ratePerMethod = true,
+        fallbackMethodName = "exceedRateOnBalance")
     @Observed
     public CustomerBalanceResponse getBalance(int id, Currency currency) {
         Customer customer = findById(id)
@@ -79,5 +81,15 @@ public class CustomerService {
             }
         }
         return new CustomerBalanceResponse(balance, currency);
+    }
+
+    public CustomerBalanceResponse exceedRateOnBalance(int id, Currency currency) {
+        throw new RateLimitException() {
+            @Override
+            public String getMessage() {
+                return String.format(
+                    "Too many requests of Customer[id=%d] balance", id);
+            }
+        };
     }
 }

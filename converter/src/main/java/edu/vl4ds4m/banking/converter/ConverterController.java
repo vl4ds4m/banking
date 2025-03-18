@@ -55,10 +55,4 @@ public class ConverterController {
     public void warnRatesServiceError(RatesServiceException e) {
         handler.warnRatesServiceError(e);
     }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public void returnInternalError(Exception e) {
-        handler.errorUnhandledException(e);
-    }
 }
