@@ -35,11 +35,6 @@ spring:
 services:
   timeout: 5
 
-  notification:
-    url: ${NOTIFICATION_SERVICE_URL}
-    count: 100
-    delay: PT5S
-
   kafka:
     topic: ${KAFKA_TOPIC}
 
@@ -47,8 +42,14 @@ messaging:
   endpoint: /ws
   destination-prefix: /topic
 
+notification:
+  host: ${NOTIFICATION_SERVICE_URL}
+  url: ${notification.host}/notification
+  count: 100
+  delay: 5s
+
 idempotency:
-  ttl: PT30S
+  ttl: 30s
   paths:
     - /transfers
     - /accounts/*

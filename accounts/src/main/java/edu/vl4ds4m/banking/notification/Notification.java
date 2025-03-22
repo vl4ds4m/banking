@@ -5,20 +5,26 @@ import jakarta.persistence.*;
 import java.time.Instant;
 
 @Entity
-@Table(name = "notifications")
+@Table(name = Notification.TABLE_NAME)
 public class Notification {
+    static final String TABLE_NAME = "notifications";
+    static final String ID = "id";
+    static final String CUSTOMER_ID = "customer_id";
+    static final String MESSAGE = "message";
+    static final String TIME = "time";
+
     @Id
     @GeneratedValue
-    @Column(name = "id")
+    @Column(name = ID)
     private Long id;
 
-    @Column(name = "customer_id", nullable = false)
+    @Column(name = CUSTOMER_ID, nullable = false)
     private Integer customerId;
 
-    @Column(name = "message", nullable = false)
+    @Column(name = MESSAGE, nullable = false)
     private String message;
 
-    @Column(name = "time", nullable = false)
+    @Column(name = TIME, nullable = false)
     private Instant time;
 
     protected Notification() {}

@@ -17,38 +17,39 @@ import java.util.List;
 public class NotificationService {
     private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
-    private final NotificationRepository notificationRepository;
+    private final NotificationRepository repository;
     private final RestTemplate restTemplate;
-    private final String postUrl;
+    private final String url;
     private final int notificationCount;
 
     public NotificationService(
-        NotificationRepository notificationRepository,
+        NotificationRepository repository,
         NotificationProperties properties,
         RestTemplate restTemplate
     ) {
-        this.notificationRepository = notificationRepository;
+        this.repository = repository;
         this.restTemplate = restTemplate;
-        this.postUrl = properties.url() + "/notification";
+        this.url = properties.url() + "/notification";
         this.notificationCount = properties.count();
     }
 
     public void save(int customerId, int accountId, BigDecimal amount, BigDecimal balance) {
         String message = String.format("Счет %d. Операция: %s. Баланс: %s",
             accountId, amount, balance);
-        Notification notification = notificationRepository.save(
+        Notification notification = repository.save(
             new Notification(customerId, message, Instant.now()));
         logger.debug("Notification[id={}] saved", notification.getId());
     }
 
     @Transactional
-    public void checkAndPost() {
-        List<Notification> posted = notificationRepository
-            .findTopKOrderByInstantAsc(notificationCount)
+    public void post() {
+        List<Notification> posted = repository
+            .findNextK(notificationCount)
             .stream()
             .filter(this::post)
             .toList();
-        notificationRepository.deleteAll(posted);
+        logger.debug("{} notification(s)'re posted", posted.size());
+        repository.deleteAll(posted);
     }
 
     private boolean post(Notification notification) {
@@ -57,8 +58,7 @@ public class NotificationService {
             notification.getMessage());
         ResponseEntity<?> responseEntity;
         try {
-            logger.debug("Post Notification[id={}]", notification.getId());
-            responseEntity = restTemplate.postForEntity(postUrl, request, Void.class);
+            responseEntity = restTemplate.postForEntity(url, request, Void.class);
         } catch (RuntimeException e) {
             return false;
         }
