@@ -9,7 +9,7 @@ import java.time.Duration;
 @ConfigurationProperties("idempotency")
 @Validated
 public record IdempotencyProperties(
-        @NotNull String[] paths,
-        @NotNull Duration ttl
+    @NotNull String[] paths,
+    @NotNull Duration ttl
 ) {
 }

@@ -19,7 +19,10 @@ import java.time.Duration;
 import java.util.Optional;
 
 public class IdempotencyFilter extends OncePerRequestFilter {
-    public record IdempotencyValue(int status, String body) {
+    public record IdempotencyValue(int status, String body, boolean isDone) {
+        static IdempotencyValue inProgress() {
+            return new IdempotencyValue(0, "", false);
+        }
     }
 
     private static final String IDEMPOTENCY_KEY = "Idempotency-Key";
@@ -38,24 +41,23 @@ public class IdempotencyFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain
+        @NonNull HttpServletRequest request,
+        @NonNull HttpServletResponse response,
+        @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
         String method = request.getMethod();
         String idempotencyKey = Optional.ofNullable(request.getHeader(IDEMPOTENCY_KEY))
-                .orElse(BLANK);
+            .orElse(BLANK);
         if (!isTargetMethod(method) || idempotencyKey.isBlank()) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String cacheKey = String.join(DELIMITER,
-                method, request.getRequestURI(), idempotencyKey);
+            method, request.getRequestURI(), idempotencyKey);
         BoundValueOperations<String, IdempotencyValue> valueOps = redisTemplate.boundValueOps(cacheKey);
-
-        IdempotencyValue cachedResponse = valueOps.getAndExpire(ttl);
-        if (cachedResponse == null) {
+        boolean isAbsent = valueOps.setIfAbsent(IdempotencyValue.inProgress(), ttl);
+        if (isAbsent) {
             ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
 
             filterChain.doFilter(request, responseWrapper);
@@ -63,14 +65,20 @@ public class IdempotencyFilter extends OncePerRequestFilter {
             setResultInCache(request, responseWrapper, valueOps);
             responseWrapper.copyBodyToResponse();
         } else {
-            logger.info("Return a cached response [{} {}]",
+            IdempotencyValue cachedResponse = valueOps.get();
+            if (cachedResponse.isDone) {
+                logger.debug("Return a cached response [{} {}]",
                     request.getMethod(), request.getRequestURI());
 
-            response.setStatus(cachedResponse.status);
+                response.setStatus(cachedResponse.status);
 
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.getWriter().write(cachedResponse.body);
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                response.getWriter().write(cachedResponse.body);
+            } else {
+                logger.warn("Response for given idempotency key is still in progress");
 
+                response.setStatus(HttpStatus.TOO_EARLY.value());
+            }
             response.flushBuffer();
         }
     }
@@ -80,23 +88,24 @@ public class IdempotencyFilter extends OncePerRequestFilter {
     }
 
     private void setResultInCache(
-            HttpServletRequest request,
-            ContentCachingResponseWrapper responseWrapper,
-            BoundValueOperations<String, IdempotencyValue> valueOps
+        HttpServletRequest request,
+        ContentCachingResponseWrapper responseWrapper,
+        BoundValueOperations<String, IdempotencyValue> valueOps
     ) throws UnsupportedEncodingException {
         if (!needCache(responseWrapper)) {
+            valueOps.getAndDelete();
             return;
         }
 
-        logger.info("Persist a response in cache [{} {}]",
-                request.getMethod(), request.getRequestURI());
+        logger.debug("Persist a response in cache [{} {}]",
+            request.getMethod(), request.getRequestURI());
 
         String responseBody = new String(
-                responseWrapper.getContentAsByteArray(),
-                request.getCharacterEncoding());
+            responseWrapper.getContentAsByteArray(),
+            request.getCharacterEncoding());
         IdempotencyValue result = new IdempotencyValue(
-                responseWrapper.getStatus(),
-                responseBody);
+            responseWrapper.getStatus(),
+            responseBody, true);
         valueOps.set(result, ttl);
     }
 
