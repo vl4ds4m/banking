@@ -7,7 +7,6 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -28,11 +27,11 @@ public class AdminService {
 
     public AdminService(
         ConfigRepository configRepository,
-        KafkaTemplate<String, Action> kafkaTemplate,
+        //KafkaTemplate<String, Action> kafkaTemplate,
         @Value(PROP_TOPIC_UPD_CFG) String topic
     ) {
         this.configRepository = configRepository;
-        this.kafkaTemplate = kafkaTemplate;
+        this.kafkaTemplate = null; // kafkaTemplate;
         this.updCfgTopic = topic;
         loadFee();
         loadParam(ConfigParam.Key.DUMMY);
@@ -82,7 +81,7 @@ public class AdminService {
         }
 
         updateConfigParam(ConfigParam.Key.FEE, fee.toString());
-        sendAction(Action.Type.UPDATE_FEE);
+        this.fee = fee; // sendAction(Action.Type.UPDATE_FEE);
     }
 
     private void updateConfigParam(ConfigParam.Key key, String value) {
@@ -96,7 +95,7 @@ public class AdminService {
         kafkaTemplate.send(updCfgTopic, action);
     }
 
-    @KafkaListener(id = "config_updater", topics = PROP_TOPIC_UPD_CFG)
+    // @KafkaListener(id = "config_updater", topics = PROP_TOPIC_UPD_CFG)
     public void reloadConfig(Action action) {
         logger.debug("Reload configuration");
         if (action.type().equals(Action.Type.UPDATE_FEE)) {
