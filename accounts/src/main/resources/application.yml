@@ -30,13 +30,13 @@ spring:
     consumer:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        "[spring.json.trusted.packages]": "edu.vl4ds4m.tbank.dto"
+        "[spring.json.trusted.packages]": "edu.vl4ds4m.banking.admin.dto"
 
 services:
   timeout: 5
 
   kafka:
-    topic: ${KAFKA_TOPIC}
+    topic.update-config: ${KAFKA_TOPIC_UPD_CFG}
 
 messaging:
   endpoint: /ws

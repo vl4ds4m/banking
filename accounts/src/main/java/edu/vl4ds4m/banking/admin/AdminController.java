@@ -1,9 +1,10 @@
 package edu.vl4ds4m.banking.admin;
 
-import edu.vl4ds4m.banking.admin.dto.UpdateConfigsRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/admin")
@@ -16,9 +17,9 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    @PostMapping("/configs")
-    public void updateConfigs(@RequestBody UpdateConfigsRequest request) {
-        logger.info("Accept a request to update configuration");
-        adminService.updateConfigs(request);
+    @PostMapping("/config")
+    public void updateConfig(@RequestBody Map<String, String> request) {
+        logger.debug("Accept a request to update configuration");
+        adminService.updateConfig(request);
     }
 }
