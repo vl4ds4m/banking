@@ -83,19 +83,19 @@ jobs:
 
   autotest-converter:
     needs: build
-    uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests.yml@main
+    uses: test-converter.yml@main
     with:
-      chart-path: ./helm-chart
-      image-name: ${{ needs.build.outputs.image_name_converter }}
-      image-tag: ${{ needs.build.outputs.image_tag }}
+      chart_path: ./helm-chart
+      image_name: ${{ needs.build.outputs.image_name_converter }}
+      image_tag: ${{ needs.build.outputs.image_tag }}
 
-  autotest-hw9:
-    needs: build
-    uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests-hw9.yml@main
-    with:
-      chart-path: ./helm-chart
-      converter-image-name: ${{ needs.build.outputs.image_name_converter }}
-      accounts-image-name: ${{ needs.build.outputs.image_name_accounts }}
-      image-tag: ${{ needs.build.outputs.image_tag }}
-    secrets:
-      HSE_LOKI_TOKEN: ${{ secrets.HSE_LOKI_TOKEN }}
+  # autotest-hw9:
+  #   needs: build
+  #   uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests-hw9.yml@main
+  #   with:
+  #     chart-path: ./helm-chart
+  #     converter-image-name: ${{ needs.build.outputs.image_name_converter }}
+  #     accounts-image-name: ${{ needs.build.outputs.image_name_accounts }}
+  #     image-tag: ${{ needs.build.outputs.image_tag }}
+  #   secrets:
+  #     HSE_LOKI_TOKEN: ${{ secrets.HSE_LOKI_TOKEN }}

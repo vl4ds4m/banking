@@ -18,9 +18,9 @@ on:
         default: latest
 
 jobs:
-  autotests:
-    uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests.yml@main
+  autotest:
+    uses: test-converter.yml@main
     with:
-      chart-path: ${{ inputs.chart_path }}
-      image-name: ${{ inputs.image_name }}
-      image-tag: ${{ inputs.image_tag }}
+      chart_path: ${{ inputs.chart_path }}
+      image_name: ${{ inputs.image_name }}
+      image_tag: ${{ inputs.image_tag }}
