@@ -1,0 +1,37 @@
+role: Agent
+customConfig:
+  data_dir: /vector-data-dir
+  api:
+    enabled: true
+    address: 127.0.0.1:8686
+    playground: false
+  sources:
+    k8s:
+      type: kubernetes_logs
+
+  sinks:
+    #   stdout:
+    #     type: console
+    #     inputs: [k8s]
+    #     encoding:
+    #       codec: text
+    loki:
+      type: loki
+      out_of_order_action: accept
+      inputs:
+        - k8s
+      endpoint: https://logs-prod-025.grafana.net
+      auth:
+        strategy: basic
+        user: '877336'
+      encoding:
+        codec: text
+      labels:
+        k8s_namespace: >-
+          {{ printf "{{ kubernetes.pod_namespace }}" }}
+        k8s_pod: >-
+          {{ printf "{{ kubernetes.pod_name }}" }}
+        k8s_container: >-
+          {{ printf "{{ kubernetes.container_image }}" }}
+      request:
+        concurrency: none
