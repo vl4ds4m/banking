@@ -2,8 +2,7 @@ spring:
   application.name: accounts
 
   jpa:
-    hibernate:
-      ddl-auto: update
+    hibernate.ddl-auto: update
     show-sql: false
 
   datasource:
@@ -20,8 +19,7 @@ spring:
     caffeine:
       spec: maximumSize=1000000,expireAfterAccess=3600s
 
-  data:
-    redis:
+  data.redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
 
@@ -32,44 +30,40 @@ spring:
     consumer:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        "[spring.json.trusted.packages]": "edu.tinkoff.dto"
+        "[spring.json.trusted.packages]": "edu.vl4ds4m.banking.admin.dto"
 
 services:
   timeout: 5
 
-  notification:
-    url: ${NOTIFICATION_SERVICE_URL}
-    count: 100
-    delay: PT5S
-
   kafka:
-    topic: ${KAFKA_TOPIC}
+    topic.update-config: ${KAFKA_TOPIC_UPD_CFG}
+
+messaging:
+  endpoint: /ws
+  destination-prefix: /topic
+
+notification:
+  host: ${NOTIFICATION_SERVICE_URL}
+  url: ${notification.host}/notification
+  count: 100
+  delay: 5s
 
 idempotency:
-  ttl: PT30S
+  ttl: 30s
   paths:
     - /transfers
     - /accounts/*
 
-grpc:
-  client:
-    accounts:
-      address: ${CONVERTER_URL}
-      enableKeepAlive: true
-      keepAliveWithoutCalls: true
-      negotiation-type: plaintext
-
-logging:
-  level:
-    org:
-      springframework:
-        web:
-          socket: TRACE
+grpc.client.accounts:
+  address: ${CONVERTER_URL}
+  enableKeepAlive: true
+  keepAliveWithoutCalls: true
+  negotiation-type: plaintext
 
 bucket4j:
   enabled: true
   methods:
-    - name: customerBalance
+    - name: customer-balance
       cache-name: buckets
       rate-limit:
         bandwidths:

@@ -3,52 +3,43 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <groupId>edu.tinkoff</groupId>
-        <artifactId>ci-cd</artifactId>
-        <version>${revision}</version>
+        <groupId>edu.vl4ds4m.banking</groupId>
+        <artifactId>banking</artifactId>
+        <version>1.0</version>
     </parent>
 
     <artifactId>common</artifactId>
 
-    <properties>
-        <protobuf.version>3.23.4</protobuf.version>
-        <protobuf-plugin.version>0.6.1</protobuf-plugin.version>
-    </properties>
-
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10.1</version>
-        </dependency>
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
-            <version>2.2.20</version>
         </dependency>
         <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>1.3.2</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-core</artifactId>
-            <version>24.0.4</version>
         </dependency>
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
-            <version>4.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+        <!-- gRPC interface -->
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-stub</artifactId>
@@ -57,21 +48,12 @@
             <groupId>io.grpc</groupId>
             <artifactId>grpc-protobuf</artifactId>
         </dependency>
+        <!-- Java 9+ compatibility - Do NOT update to 2.0.0 -->
         <dependency>
-            <!-- Java 9+ compatibility - Do NOT update to 2.0.0 -->
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
             <version>1.3.5</version>
             <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-tracing</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-tracing-bridge-otel</artifactId>
         </dependency>
     </dependencies>
 
@@ -80,53 +62,33 @@
             <plugin>
                 <groupId>io.swagger.codegen.v3</groupId>
                 <artifactId>swagger-codegen-maven-plugin</artifactId>
-                <version>3.0.54</version>
                 <executions>
                     <execution>
+                        <id>generate-currency-api</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.parent.basedir}/api.yml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/openapi/currency.yml</inputSpec>
                             <language>java</language>
+                            <library>resttemplate</library>
                             <generateApis>false</generateApis>
                             <generateSupportingFiles>false</generateSupportingFiles>
-                            <modelPackage>edu.tinkoff.dto</modelPackage>
+                            <modelPackage>edu.vl4ds4m.banking.currency</modelPackage>
                             <configOptions>
-                                <sourceFolder>src/gen/java</sourceFolder>
+                                <sourceFolder>java</sourceFolder>
                             </configOptions>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
 
+            <!-- gRPC interface -->
             <plugin>
                 <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
-                <version>${protobuf-plugin.version}</version>
-                <configuration>
-                    <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>compile-custom</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
-
-        <extensions>
-            <extension>
-                <groupId>kr.motd.maven</groupId>
-                <artifactId>os-maven-plugin</artifactId>
-                <version>1.7.0</version>
-            </extension>
-        </extensions>
     </build>
 
 </project>

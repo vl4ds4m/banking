@@ -1,0 +1,6 @@
+services:
+  keycloak:
+    url: ${KEYCLOAK_URL}
+    realm: ${KEYCLOAK_REALM}
+    client-id: ${CLIENT_ID}
+    client-secret: ${CLIENT_SECRET}
