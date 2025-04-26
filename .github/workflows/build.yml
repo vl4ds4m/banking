@@ -50,6 +50,18 @@ jobs:
           echo "IMAGE_ACCOUNTS=$IMAGE_NAME_PREFIX-accounts" >> "$GITHUB_ENV"
           echo "IMAGE_TAG=$BRANCH_NAME-${SHA:0:7}" >> "$GITHUB_ENV"
 
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          daemon-config: |
+            {
+              "features": {
+                "containerd-snapshotter": true
+              }
+            }
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Build Docker images
         run: |
           docker build \
