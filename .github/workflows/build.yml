@@ -83,7 +83,7 @@ jobs:
 
   autotest-converter:
     needs: build
-    uses: test-converter.yml@main
+    uses: ./.github/workflows/test-converter.yml
     with:
       chart_path: ./helm-chart
       image_name: ${{ needs.build.outputs.image_name_converter }}

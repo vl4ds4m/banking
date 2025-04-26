@@ -19,7 +19,7 @@ on:
 
 jobs:
   autotest:
-    uses: test-converter.yml@main
+    uses: ./.github/workflows/test-converter.yml
     with:
       chart_path: ${{ inputs.chart_path }}
       image_name: ${{ inputs.image_name }}
