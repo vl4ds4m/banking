@@ -1,4 +1,4 @@
-name: Build Docker Image
+name: Build Docker Images
 
 on:
   push:
@@ -11,27 +11,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      converter_image_name: ${{ steps.image_attrs.outputs.converter_name }}
-      accounts_image_name: ${{ steps.image_attrs.outputs.accounts_name }}
+      image_name_converter: ${{ steps.image_attrs.outputs.img_converter }}
+      image_name_accounts: ${{ steps.image_attrs.outputs.img_accounts }}
       image_tag: ${{ steps.image_attrs.outputs.tag }}
 
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Build apps
-        run: mvn clean package
-
-      - name: Set branch name
-        run: echo "BRANCH_NAME=${{ github.ref_name }}" >> "$GITHUB_ENV"
-
-      - name: Set branch name on PR trigger
-        if: ${{ github.event_name == 'pull_request' }}
-        run: echo "BRANCH_NAME=${{ github.head_ref }}" >> "$GITHUB_ENV"
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -39,67 +24,69 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Build apps
+        run: mvn --batch-mode --file pom.xml package
+
+      - name: Set branch name on PR
+        if: ${{ github.event_name == 'pull_request' }}
+        run: echo "BRANCH_NAME=$GITHUB_HEAD_REF" >> "$GITHUB_ENV"
+      - name: Set branch name
+        if: ${{ github.event_name != 'pull_request' }}
+        run: echo "BRANCH_NAME=$GITHUB_REF_NAME" >> "$GITHUB_ENV"
+
       - name: Set Docker image names and tags
+        env:
+          NAMESPACE: ${{ vars.DOCKERHUB_USERNAME }}
+          SHA: ${{ github.sha }}
         run: |
-          IMAGE_NAME_PREFIX="${{ vars.DOCKERHUB_USERNAME }}/ci_cd"
-          echo "IMAGE_INTEGER_ADDER=${IMAGE_NAME_PREFIX}-integer_adder" >> "$GITHUB_ENV"
-          echo "IMAGE_RANDOM_NUMBER=${IMAGE_NAME_PREFIX}-random_number" >> "$GITHUB_ENV"
-          echo "IMAGE_CONVERTER=${IMAGE_NAME_PREFIX}-converter" >> "$GITHUB_ENV"
-          echo "IMAGE_ACCOUNTS=${IMAGE_NAME_PREFIX}-accounts" >> "$GITHUB_ENV"
-          SHA=${{ github.sha }}
-          echo "IMAGE_TAG=${BRANCH_NAME}-${SHA:0:7}" >> "$GITHUB_ENV"
+          IMAGE_NAME_PREFIX="$NAMESPACE/banking"
+          echo "IMAGE_CONVERTER=$IMAGE_NAME_PREFIX-converter" >> "$GITHUB_ENV"
+          echo "IMAGE_ACCOUNTS=$IMAGE_NAME_PREFIX-accounts" >> "$GITHUB_ENV"
+          echo "IMAGE_TAG=$BRANCH_NAME-${SHA:0:7}" >> "$GITHUB_ENV"
 
-      - name: Set outputs of image attributes
-        id: image_attrs
-        run: |
-          echo "converter_name=${IMAGE_CONVERTER}" >> "$GITHUB_OUTPUT"
-          echo "accounts_name=${IMAGE_ACCOUNTS}" >> "$GITHUB_OUTPUT"
-          echo "tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
-
-      - name: Build the Docker images
+      - name: Build Docker images
         run: |
           docker build \
-          --build-arg JAR_FILE=integer-adder/target/integer-adder.jar \
-          --platform=linux/amd64,linux/arm64/v8 \
-          -t "${IMAGE_INTEGER_ADDER}:${IMAGE_TAG}" .
+            --build-arg JAR_FILE=converter/target/converter.jar \
+            --platform=linux/amd64,linux/arm64/v8 \
+            -t "$IMAGE_CONVERTER:$IMAGE_TAG" .
           docker build \
-          --build-arg JAR_FILE=random-number/target/random-number.jar \
-          --platform=linux/amd64,linux/arm64/v8 \
-          -t "${IMAGE_RANDOM_NUMBER}:${IMAGE_TAG}" .
-          docker build \
-          --build-arg JAR_FILE=converter/target/converter.jar \
-          --platform=linux/amd64,linux/arm64/v8 \
-          -t "${IMAGE_CONVERTER}:${IMAGE_TAG}" .
-          docker build \
-          --build-arg JAR_FILE=accounts/target/accounts.jar \
-          --platform=linux/amd64,linux/arm64/v8 \
-          -t "${IMAGE_ACCOUNTS}:${IMAGE_TAG}" .
+            --build-arg JAR_FILE=accounts/target/accounts.jar \
+            --platform=linux/amd64,linux/arm64/v8 \
+            -t "$IMAGE_ACCOUNTS:$IMAGE_TAG" .
 
-      - name: Push the Docker images
+      - name: Push Docker images
         run: |
-          docker push "${IMAGE_INTEGER_ADDER}:${IMAGE_TAG}"
-          docker push "${IMAGE_RANDOM_NUMBER}:${IMAGE_TAG}"
-          docker push "${IMAGE_CONVERTER}:${IMAGE_TAG}"
-          docker push "${IMAGE_ACCOUNTS}:${IMAGE_TAG}"
+          docker push "$IMAGE_CONVERTER:$IMAGE_TAG"
+          docker push "$IMAGE_ACCOUNTS:$IMAGE_TAG"
 
-      - name: Push the latest Docker images
+      - name: Push Docker images with latest tag
         if: ${{ github.ref_name == 'main' }}
         run: |
-          docker tag "${IMAGE_INTEGER_ADDER}:${IMAGE_TAG}" "${IMAGE_INTEGER_ADDER}:latest"
-          docker push "${IMAGE_INTEGER_ADDER}:latest"
-          docker tag "${IMAGE_RANDOM_NUMBER}:${IMAGE_TAG}" "${IMAGE_RANDOM_NUMBER}:latest"
-          docker push "${IMAGE_RANDOM_NUMBER}:latest"
-          docker tag "${IMAGE_CONVERTER}:${IMAGE_TAG}" "${IMAGE_CONVERTER}:latest"
-          docker push "${IMAGE_CONVERTER}:latest"
-          docker tag "${IMAGE_ACCOUNTS}:${IMAGE_TAG}" "${IMAGE_ACCOUNTS}:latest"
-          docker push "${IMAGE_ACCOUNTS}:latest"
+          docker tag "$IMAGE_CONVERTER:$IMAGE_TAG" "$IMAGE_CONVERTER:latest"
+          docker push "$IMAGE_CONVERTER:latest"
+          docker tag "$IMAGE_ACCOUNTS:$IMAGE_TAG" "$IMAGE_ACCOUNTS:latest"
+          docker push "$IMAGE_ACCOUNTS:latest"
+
+      - name: Set Docker images outputs
+        id: image_attrs
+        run: |
+          echo "img_converter=$IMAGE_CONVERTER" >> "$GITHUB_OUTPUT"
+          echo "img_accounts=$IMAGE_ACCOUNTS" >> "$GITHUB_OUTPUT"
+          echo "tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
 
   autotest-converter:
     needs: build
     uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests.yml@main
     with:
       chart-path: ./helm-chart
-      image-name: ${{ needs.build.outputs.converter_image_name }}
+      image-name: ${{ needs.build.outputs.image_name_converter }}
       image-tag: ${{ needs.build.outputs.image_tag }}
 
   autotest-hw9:
@@ -107,8 +94,8 @@ jobs:
     uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests-hw9.yml@main
     with:
       chart-path: ./helm-chart
-      converter-image-name: ${{ needs.build.outputs.converter_image_name }}
-      accounts-image-name: ${{ needs.build.outputs.accounts_image_name }}
+      converter-image-name: ${{ needs.build.outputs.image_name_converter }}
+      accounts-image-name: ${{ needs.build.outputs.image_name_accounts }}
       image-tag: ${{ needs.build.outputs.image_tag }}
     secrets:
       HSE_LOKI_TOKEN: ${{ secrets.HSE_LOKI_TOKEN }}
