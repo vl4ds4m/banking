@@ -17,8 +17,9 @@ on:
         type: string
       image_tag:
         description: Images Tag
-        required: true
+        required: false
         type: string
+        default: latest
 
 jobs:
   autotests:
