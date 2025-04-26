@@ -1,0 +1,32 @@
+name: Run accounts tests manually
+
+on:
+  workflow_dispatch:
+    inputs:
+      chart_path:
+        description: Path to Chart
+        required: true
+        type: string
+      converter_image_name:
+        description: Converter Image Name
+        required: true
+        type: string
+      accounts_image_name:
+        description: Accounts Image Name
+        required: true
+        type: string
+      image_tag:
+        description: Images Tag
+        required: true
+        type: string
+
+jobs:
+  autotests:
+    uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests-hw9.yml@main
+    with:
+      chart-path: ${{ inputs.chart_path }}
+      converter-image-name: ${{ inputs.converter_image_name }}
+      accounts-image-name: ${{ inputs.accounts_image_name }}
+      image-tag: ${{ inputs.image_tag }}
+    secrets:
+      HSE_LOKI_TOKEN: ${{ secrets.HSE_LOKI_TOKEN }}

@@ -1,0 +1,25 @@
+name: Run converter tests manually
+
+on:
+  workflow_dispatch:
+    inputs:
+      chart_path:
+        description: Path to Chart
+        required: true
+        type: string
+      image_name:
+        description: Image Name
+        required: true
+        type: string
+      image_tag:
+        description: Images Tag
+        required: true
+        type: string
+
+jobs:
+  autotests:
+    uses: central-university-dev/hse-ab-cicd-hw/.github/workflows/autotests.yml@main
+    with:
+      chart-path: ${{ inputs.chart_path }}
+      image-name: ${{ inputs.image_name }}
+      image-tag: ${{ inputs.image_tag }}
