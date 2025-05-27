@@ -124,4 +124,4 @@ jobs:
 
       - name: Get test logs
         run: |
-          kubectl logs jobs/autotest-job
+          kubectl logs jobs/autotest-job | sed -n '/--- TEST RESULTS BEGIN ---/, /--- TEST RESULTS END ---/p' || true
