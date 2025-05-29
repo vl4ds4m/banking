@@ -29,7 +29,7 @@ public class NotificationService {
     ) {
         this.repository = repository;
         this.restTemplate = restTemplate;
-        this.url = properties.url() + "/notification";
+        this.url = properties.url();
         this.notificationCount = properties.count();
     }
 
