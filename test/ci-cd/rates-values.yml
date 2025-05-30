@@ -1,6 +1,8 @@
+fullnameOverride: rates
+
 image:
   repository: miraclewisp/hse-rates
-  tag: auth-m1
+  tag: auth-amd64
 
 replicaCount: 1
 

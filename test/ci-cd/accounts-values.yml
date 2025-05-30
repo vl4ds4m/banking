@@ -1,3 +1,8 @@
+fullnameOverride: accounts
+
+image:
+  repository: vl4ds4m/banking-accounts 
+
 replicaCount: 1
 
 extraEnv:
