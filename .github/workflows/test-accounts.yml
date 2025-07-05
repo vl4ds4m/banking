@@ -43,7 +43,7 @@ jobs:
         continue-on-error: true
         run: |
           helm upgrade --install vector vector/vector \
-            --values test/ci-cd/vector-values.yml \
+            --values test/k8s/cfg/vector-values.yml \
             --set customConfig.sinks.loki.auth.password=${{ secrets.HSE_LOKI_TOKEN }} \
             --set-string customConfig.sinks.loki.labels.repository='${{ github.repository }}' \
             --set-string customConfig.sinks.loki.labels.run_id='${{ github.run_id }}' \
@@ -52,23 +52,23 @@ jobs:
       - name: Deploy postgres
         continue-on-error: true
         run: |
-          helm install postgresql bitnami/postgresql -f test/ci-cd/postgres-values.yml --wait --timeout 180s   
+          helm install postgresql bitnami/postgresql -f test/k8s/cfg/postgres-values.yml --wait --timeout 180s   
 
       - name: Deploy redis
         continue-on-error: true
         run: |
-          helm install redis bitnami/redis -f test/ci-cd/redis-values.yml --wait --timeout 180s      
+          helm install redis bitnami/redis -f test/k8s/cfg/redis-values.yml --wait --timeout 180s      
 
       - name: Deploy kafka
         continue-on-error: true
         run: |
-          helm upgrade --install kafka bitnami/kafka -f test/ci-cd/kafka-values.yml --wait --timeout 180s
+          helm upgrade --install kafka bitnami/kafka -f test/k8s/cfg/kafka-values.yml --wait --timeout 180s
 
       - name: Deploy keycloak
         continue-on-error: true
         run: |
-          kubectl create secret generic realm-secret --from-file=test/ci-cd/realm.json
-          helm install keycloak codecentric/keycloakx --version 2.3.0 -f test/ci-cd/keycloak-values.yml --wait --timeout 180s
+          kubectl create secret generic realm-secret --from-file=test/k8s/cfg/realm.json
+          helm install keycloak codecentric/keycloakx --version 2.3.0 -f test/k8s/cfg/keycloak-values.yml --wait --timeout 180s
 
       - name: Deploy rates
         continue-on-error: true
@@ -77,7 +77,7 @@ jobs:
             --set fullnameOverride=rates \
             --set image.repository=miraclewisp/hse-rates \
             --set image.tag=auth-amd64 \
-            -f test/ci-cd/rates-values.yml \
+            -f test/k8s/cfg/rates-values.yml \
             --wait --timeout 180s
 
       - name: Deploy converter
@@ -87,7 +87,7 @@ jobs:
             --set fullnameOverride=converter \
             --set image.repository=${{ inputs.converter_image_name }} \
             --set image.tag=${{ inputs.image_tag }} \
-            -f test/ci-cd/converter-values.yml \
+            -f test/k8s/cfg/converter-values.yml \
             --wait --timeout 180s
 
       - name: Deploy accounts
@@ -97,7 +97,7 @@ jobs:
             --set fullnameOverride=accounts \
             --set image.repository=${{ inputs.accounts_image_name }} \
             --set image.tag=${{ inputs.image_tag }} \
-            -f test/ci-cd/accounts-values.yml \
+            -f test/k8s/cfg/accounts-values.yml \
             --wait --timeout 180s
 
       - name: Run tests
@@ -109,7 +109,7 @@ jobs:
             --set backoffLimit=0 \
             --set image.pullPolicy=Always \
             --set 'args={\"-ws\"\, \"-fail\"\, \"-idmp\"\, \"-kafka\"}' \
-            -f test/ci-cd/test-values.yml \
+            -f test/k8s/cfg/test-values.yml \
             --wait --wait-for-jobs --timeout 600s
 
       - name: Debug k8s entities
