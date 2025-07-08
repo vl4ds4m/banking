@@ -8,7 +8,6 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Component
 @Profile(Auth.PROFILE)
@@ -25,8 +24,8 @@ public class AuthInterceptor implements ClientHttpRequestInterceptor {
             byte[] body,
             ClientHttpRequestExecution execution
     ) throws IOException {
-        Optional<String> token = keycloakAuthClient.getToken();
-        token.ifPresent(s -> request.getHeaders().setBearerAuth(s));
+        String token = keycloakAuthClient.getToken();
+        request.getHeaders().setBearerAuth(token);
         return execution.execute(request, body);
     }
 }

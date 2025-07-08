@@ -13,7 +13,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Component
 @Profile(Auth.PROFILE)
@@ -38,16 +37,12 @@ public class KeycloakAuthClient {
         this.clientSecret = properties.clientSecret();
     }
 
-    public Optional<String> getToken() {
-        if (clientId.isEmpty()) {
-            return Optional.empty();
-        }
-
+    public String getToken() {
         if (!isTokenExpired()) {
             cachedToken = postForToken();
         }
 
-        return Optional.of(cachedToken);
+        return cachedToken;
     }
 
     private boolean isTokenExpired() {
