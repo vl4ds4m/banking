@@ -10,4 +10,4 @@ extraEnv:
   - name: KEYCLOAK_URL
     value: http://keycloak-keycloakx-http
   - name: KEYCLOAK_REALM
-    value: hse
+    value: banking

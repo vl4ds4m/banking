@@ -9,13 +9,13 @@ extraEnv:
   - name: KEYCLOAK_URL
     value: http://keycloak-keycloakx-http
   - name: KEYCLOAK_REALM
-    value: hse
+    value: banking
   - name: CONVERTER_URL
     value: converter:9090
   - name: CLIENT_ID
-    value: hse_converter
+    value: banking_service
   - name: CLIENT_SECRET
-    value: ZLM7AmkwCGsVknmqvbRSJYllwJi4zcGf
+    value: zaHH0GJMccZtdY64fa0gPe3nlEflD9vs
   - name: REDIS_HOST
     value: redis-master
   - name: REDIS_PORT
