@@ -2,6 +2,8 @@ package edu.vl4ds4m.banking.auth;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
@@ -26,6 +28,11 @@ public class AuthInterceptor implements ClientHttpRequestInterceptor {
     ) throws IOException {
         String token = keycloakAuthClient.getToken();
         request.getHeaders().setBearerAuth(token);
-        return execution.execute(request, body);
+        ClientHttpResponse response = execution.execute(request, body);
+        HttpStatusCode statusCode = response.getStatusCode();
+        if (statusCode.isSameCodeAs(HttpStatus.UNAUTHORIZED)) {
+            keycloakAuthClient.invalidateToken();
+        }
+        return response;
     }
 }

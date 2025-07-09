@@ -1,6 +1,5 @@
 package edu.vl4ds4m.banking.auth;
 
-import com.auth0.jwt.JWT;
 import org.keycloak.representations.AccessTokenResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Date;
 
 @Component
 @Profile(Auth.PROFILE)
@@ -38,19 +35,16 @@ public class KeycloakAuthClient {
     }
 
     public String getToken() {
-        if (!isTokenExpired()) {
-            cachedToken = postForToken();
+        String token = cachedToken;
+        if (token == null) {
+            token = postForToken();
+            cachedToken = token;
         }
-
-        return cachedToken;
+        return token;
     }
 
-    private boolean isTokenExpired() {
-        if (cachedToken == null) {
-            return false;
-        }
-
-        return !JWT.decode(cachedToken).getExpiresAt().after(new Date());
+    public void invalidateToken() {
+        cachedToken = null;
     }
 
     private String postForToken() {
@@ -65,9 +59,9 @@ public class KeycloakAuthClient {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         var response = restTemplate.postForObject(
-                tokenUrl,
-                new HttpEntity<>(requestBody, headers),
-                AccessTokenResponse.class
+            tokenUrl,
+            new HttpEntity<>(requestBody, headers),
+            AccessTokenResponse.class
         );
 
         return response.getToken();
