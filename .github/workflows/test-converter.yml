@@ -44,7 +44,6 @@ jobs:
             --set fullnameOverride=converter \
             --set image.repository=${{ inputs.image_name }} \
             --set image.tag=${{ inputs.image_tag }} \
-            -f test/k8s/cfg/converter-values.yml \
             --set replicaCount=2 \
             --wait --timeout 180s
 

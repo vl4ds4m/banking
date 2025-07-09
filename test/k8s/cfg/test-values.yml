@@ -1,5 +1,14 @@
 replicaCount: 1
 
+image:
+  repository: miraclewisp/hse-accounts-test
+  tag: amd64
+  pullPolicy: Always
+
+backoffLimit: 0
+
+args: ["-ws", "-fail", "-idmp", "-kafka"]
+
 environment:
   - name: KEYCLOAK_URL
     value: http://keycloak-keycloakx-http

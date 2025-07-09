@@ -52,31 +52,36 @@ jobs:
       - name: Deploy postgres
         continue-on-error: true
         run: |
-          helm install postgresql bitnami/postgresql -f test/k8s/cfg/postgres-values.yml --wait --timeout 180s   
+          helm install postgresql bitnami/postgresql \
+            -f test/k8s/cfg/postgres-values.yml \
+            --wait --timeout 180s   
 
       - name: Deploy redis
         continue-on-error: true
         run: |
-          helm install redis bitnami/redis -f test/k8s/cfg/redis-values.yml --wait --timeout 180s      
+          helm install redis bitnami/redis \
+            -f test/k8s/cfg/redis-values.yml \
+            --wait --timeout 180s      
 
       - name: Deploy kafka
         continue-on-error: true
         run: |
-          helm upgrade --install kafka bitnami/kafka -f test/k8s/cfg/kafka-values.yml --wait --timeout 180s
+          helm upgrade --install kafka bitnami/kafka \
+            -f test/k8s/cfg/kafka-values.yml \
+            --wait --timeout 180s
 
       - name: Deploy keycloak
         continue-on-error: true
         run: |
           kubectl create secret generic realm-secret --from-file=test/k8s/cfg/realm.json
-          helm install keycloak codecentric/keycloakx --version 2.3.0 -f test/k8s/cfg/keycloak-values.yml --wait --timeout 180s
+          helm install keycloak codecentric/keycloakx --version 2.3.0 \
+            -f test/k8s/cfg/keycloak-values.yml \
+            --wait --timeout 180s
 
       - name: Deploy rates
         continue-on-error: true
         run: |
           helm upgrade --install rates ${{ inputs.chart_path }} \
-            --set fullnameOverride=rates \
-            --set image.repository=miraclewisp/hse-rates \
-            --set image.tag=auth-amd64 \
             -f test/k8s/cfg/rates-values.yml \
             --wait --timeout 180s
 
@@ -84,7 +89,6 @@ jobs:
         continue-on-error: true
         run: |
           helm upgrade --install converter ${{ inputs.chart_path }} \
-            --set fullnameOverride=converter \
             --set image.repository=${{ inputs.converter_image_name }} \
             --set image.tag=${{ inputs.image_tag }} \
             -f test/k8s/cfg/converter-values.yml \
@@ -94,7 +98,6 @@ jobs:
         continue-on-error: true
         run: |
           helm upgrade --install accounts ${{ inputs.chart_path }} \
-            --set fullnameOverride=accounts \
             --set image.repository=${{ inputs.accounts_image_name }} \
             --set image.tag=${{ inputs.image_tag }} \
             -f test/k8s/cfg/accounts-values.yml \
@@ -104,11 +107,6 @@ jobs:
         continue-on-error: true
         run: |
           helm install autotest cetic/job \
-            --set image.repository=miraclewisp/hse-accounts-test \
-            --set image.tag=amd64 \
-            --set backoffLimit=0 \
-            --set image.pullPolicy=Always \
-            --set 'args={\"-ws\"\, \"-fail\"\, \"-idmp\"\, \"-kafka\"}' \
             -f test/k8s/cfg/test-values.yml \
             --wait --wait-for-jobs --timeout 600s
 
