@@ -1,6 +1,4 @@
-spring:
-  application.name: converter
-  profiles.active: auth
+spring.application.name: converter
 
 services:
   timeout: 5
