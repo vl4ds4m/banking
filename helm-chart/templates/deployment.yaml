@@ -44,14 +44,19 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
-          {{- if .Values.args }}
-          args: {{ .Values.args }}
+          {{- with .Values.args }}
+          args:
+            {{- range . }}
+            - {{ quote . }}
+            {{- end }}
           {{- end }}
+          {{- with .Values.extraEnv }}
           env:
-            {{- range .Values.extraEnv }}
+            {{- range . }}
             - name: {{ .name }}
               value: {{ .value | quote }}
             {{- end }}
+          {{- end }}
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
