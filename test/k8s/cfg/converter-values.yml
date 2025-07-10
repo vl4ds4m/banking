@@ -5,7 +5,7 @@ image:
 
 replicaCount: 1
 
-args: ["--spring.profiles.active=auth"]
+args: ["--spring.profiles.active=auth", "--logging.level.edu.vl4ds4m.banking=DEBUG"]
 
 extraEnv:
   - name: KEYCLOAK_URL

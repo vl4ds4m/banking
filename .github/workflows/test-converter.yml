@@ -44,6 +44,7 @@ jobs:
             --set fullnameOverride=converter \
             --set image.repository=${{ inputs.image_name }} \
             --set image.tag=${{ inputs.image_tag }} \
+            --set 'args={--logging.level.edu.vl4ds4m.banking=DEBUG}' \
             --set replicaCount=2 \
             --wait --timeout 180s
 

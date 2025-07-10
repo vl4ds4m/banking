@@ -5,6 +5,8 @@ image:
 
 replicaCount: 1
 
+args: ["--logging.level.edu.vl4ds4m.banking=DEBUG"]
+
 extraEnv:
   - name: KEYCLOAK_URL
     value: http://keycloak-keycloakx-http
