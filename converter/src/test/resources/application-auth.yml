@@ -1,0 +1,9 @@
+services:
+  keycloak:
+    url: http://keycloak
+    realm: abc
+    client-id: converter
+    client-secret: s3cr1t
+
+spring.security.oauth2.resourceserver.jwt:
+  jwk-set-uri: ${services.keycloak.url}/realms/${services.keycloak.realm}/protocol/openid-connect/certs
