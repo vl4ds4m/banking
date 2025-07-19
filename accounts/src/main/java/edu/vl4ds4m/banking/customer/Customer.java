@@ -5,6 +5,7 @@ import edu.vl4ds4m.banking.account.Account_;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -27,7 +28,7 @@ public class Customer {
     @OneToMany(mappedBy = Account_.CUSTOMER)
     protected Set<Account> accounts;
 
-    protected Customer() {}
+    public Customer() {}
 
     public Customer(String firstName, String lastName, LocalDate birthDate) {
         this.firstName = firstName;
@@ -39,7 +40,29 @@ public class Customer {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public Set<Account> getAccounts() {
         return accounts;
+    }
+
+    public void setAccounts(Set<Account> accounts) {
+        this.accounts = accounts;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.requireNonNullElse(this.id, 0);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        boolean eq;
+        if (obj == null) eq = false;
+        else if (this == obj) eq = true;
+        else eq = obj instanceof Customer o && Objects.equals(this.id, o.id);
+        return eq;
     }
 }
