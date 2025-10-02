@@ -1,0 +1,135 @@
+openapi: 3.0.4
+info:
+  title: Banking - Accounts
+  description: This is an accounts service API based on the OpenAPI 3.0 specification.
+  version: 1.0.0
+components:
+  schemas:
+    CustomerName:
+      type: string
+      example: ipet123
+    Currency:
+      type: string
+      enum:
+        - "USD"
+        - "RUB"
+        - "CNY"
+        - "EUR"
+        - "GBP"
+    CurrencyAmount:
+      type: number
+      example: 1234.56
+    Money:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+    AccountNumber:
+      type: integer
+      format: int64
+      example: 438832491231
+  responses:
+    InvalidRequest:
+      description: Invalid request with cause message.
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: Invalid property format
+paths:
+  /customers:
+    post:
+      description: Create a new customer.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customerName:
+                  $ref: '#/components/schemas/CustomerName'
+                firstName:
+                  type: string
+                  example: Ivan
+                lastName:
+                  type: string
+                  example: Petrov
+                birthDate:
+                  type: string
+                  format: date
+                  example: 1984-04-17
+      responses:
+        '200':
+          description: Customer created.
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+  /customers/{customerName}/balance:
+    get:
+      description: Get a customer balance over all accounts in the specified currency.
+      parameters:
+        - name: customerName
+          description: An unique name for the customer identification.
+          required: true
+          in: path
+          schema:
+            $ref: '#/components/schemas/CustomerName'
+        - name: currency
+          description: A code of the required currency for a balance representation.
+          required: true
+          in: query
+          schema:
+            $ref: '#/components/schemas/Currency'
+      responses:
+        '200':
+          description: A customer balance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Money'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+  /accounts:
+    post:
+      description: Create a new customer account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customerName:
+                  $ref: '#/components/schemas/CustomerName'
+                currency:
+                  $ref: '#/components/schemas/Currency'
+      responses:
+        '200':
+          description: A created account number.
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/AccountNumber'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+  /accounts/{accountNumber}:
+    get:
+      description: Get an amount of money in the account.
+      parameters:
+        - name: accountNumber
+          description: An account number.
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountNumber'
+      responses:
+        '200':
+          description: An amount of money in the account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Money'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
