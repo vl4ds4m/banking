@@ -9,16 +9,9 @@ components:
       type: string
       example: ipet123
     Currency:
-      type: string
-      enum:
-        - "USD"
-        - "RUB"
-        - "CNY"
-        - "EUR"
-        - "GBP"
+      $ref: './common.yaml#/components/schemas/Currency'
     CurrencyAmount:
-      type: number
-      example: 1234.56
+      $ref: './common.yaml#/components/schemas/CurrencyAmount'
     Balance:
       type: object
       properties:
