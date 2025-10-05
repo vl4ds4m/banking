@@ -13,6 +13,7 @@ components:
         - "CNY"
         - "EUR"
         - "GBP"
+      example: USD
     CurrencyAmount:
       type: number
       example: 1234.56
@@ -28,3 +29,18 @@ components:
           example:
             USD: 31.42
             RUB: 1
+      required:
+        - base
+        - rates
+  responses:
+    InvalidRequest:
+      description: Invalid request with cause message.
+      content:
+        application/json:
+          schema:
+            title: InvalidRequestResponse
+            type: object
+            properties:
+              message:
+                type: string
+                example: Property 'abc' must be positive number

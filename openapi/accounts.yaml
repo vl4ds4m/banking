@@ -19,6 +19,9 @@ components:
           $ref: '#/components/schemas/Currency'
         amount:
           $ref: '#/components/schemas/CurrencyAmount'
+      required:
+        - currency
+        - amount
     AccountNumber:
       type: integer
       format: int64
@@ -33,33 +36,34 @@ components:
         $ref: '#/components/schemas/AccountNumber'
   responses:
     InvalidRequest:
-      description: Invalid request with cause message.
-      content:
-        text/plain:
-          schema:
-            type: string
-            example: Invalid property format
+      $ref: './common.yaml#/components/responses/InvalidRequest'
     AccountOperation:
       description: Amount of money in the account after the operation.
       content:
         application/json:
           schema:
+            title: AccountOperationResponse
             type: object
             properties:
               currency:
                 $ref: '#/components/schemas/Currency'
               totalAmount:
                 $ref: '#/components/schemas/CurrencyAmount'
-
+            required:
+              - currency
+              - totalAmount
 paths:
   /customers:
     post:
+      operationId: createCustomer
+      summary: Create customer.
       description: Create a new customer.
       requestBody:
         required: true
         content:
           application/json:
             schema:
+              title: CreateCustomerRequest
               type: object
               properties:
                 customerName:
@@ -74,6 +78,11 @@ paths:
                   type: string
                   format: date
                   example: 1984-04-17
+              required:
+                - customerName
+                - firstName
+                - lastName
+                - birthDate
       responses:
         '200':
           description: Customer created.
@@ -81,6 +90,8 @@ paths:
           $ref: '#/components/responses/InvalidRequest'
   /customers/{customerName}/balance:
     get:
+      operationId: getCustomerBalance
+      summary: Get customer balance.
       description: Get the customer balance over all accounts in the specified currency.
       parameters:
         - name: customerName
@@ -106,32 +117,43 @@ paths:
           $ref: '#/components/responses/InvalidRequest'
   /accounts:
     post:
+      operationId: createAccount
+      summary: Create account.
       description: Create a new customer account.
       requestBody:
         required: true
         content:
           application/json:
             schema:
+              title: CreateAccountRequest
               type: object
               properties:
                 customerName:
                   $ref: '#/components/schemas/CustomerName'
                 currency:
                   $ref: '#/components/schemas/Currency'
+              required:
+                - customerName
+                - currency
       responses:
         '200':
           description: Created account number.
           content:
-            text/plain:
+            application/json:
               schema:
+                title: CreateAccountResponse
                 type: object
                 properties:
                   number:
                     $ref: '#/components/schemas/AccountNumber'
+                required:
+                  - number
         '400':
           $ref: '#/components/responses/InvalidRequest'
   /accounts/{accountNumber}:
     get:
+      operationId: getAccountBalance
+      summary: Get account balance.
       description: Get amount of money in the account.
       parameters:
         - $ref: '#/components/parameters/AccountNumber'
@@ -146,6 +168,8 @@ paths:
           $ref: '#/components/responses/InvalidRequest'
   /accounts/{accountNumber}/top-up:
     put:
+      operationId: topUpAccount
+      summary: Top up account.
       description: Top up the account.
       parameters:
         - $ref: '#/components/parameters/AccountNumber'
@@ -154,10 +178,13 @@ paths:
         content:
           application/json:
             schema:
+              title: TopUpAccountRequest
               type: object
               properties:
                 augend:
                   $ref: '#/components/schemas/CurrencyAmount'
+              required:
+                - augend
       responses:
         '200':
           $ref: '#/components/responses/AccountOperation'
@@ -165,6 +192,8 @@ paths:
           $ref: '#/components/responses/InvalidRequest'
   /accounts/{accountNumber}/withdraw:
     put:
+      operationId: withdrawAccount
+      summary: Withdraw account.
       description: Withdraw money from the account.
       parameters:
         - $ref: '#/components/parameters/AccountNumber'
@@ -173,10 +202,13 @@ paths:
         content:
           application/json:
             schema:
+              title: WithdrawAccountRequest
               type: object
               properties:
                 subtrahend:
                   $ref: '#/components/schemas/CurrencyAmount'
+              required:
+                - subtrahend
       responses:
         '200':
           $ref: '#/components/responses/AccountOperation'
@@ -184,12 +216,15 @@ paths:
           $ref: '#/components/responses/InvalidRequest'
   /transfer:
     put:
+      operationId: transfer
+      summary: Transfer money.
       description: Transfer money from the account to the another account.
       requestBody:
         required: true
         content:
           application/json:
             schema:
+              title: TransferRequest
               type: object
               properties:
                 senderAccountNumber:
@@ -198,17 +233,25 @@ paths:
                   $ref: '#/components/schemas/AccountNumber'
                 senderCurrencyAmount:
                   $ref: '#/components/schemas/CurrencyAmount'
+              required:
+                - senderAccountNumber
+                - receiverAccountNumber
+                - senderCurrencyAmount
       responses:
         '200':
           description: Successful transfer.
           content:
-            text/plain:
+            application/json:
               schema:
+                title: TransferResponse
                 type: object
                 properties:
                   senderCurrency:
                     $ref: '#/components/schemas/Currency'
                   totalSenderAmount:
                     $ref: '#/components/schemas/CurrencyAmount'
+                required:
+                  - senderCurrency
+                  - totalSenderAmount
         '400':
           $ref: '#/components/responses/InvalidRequest'
