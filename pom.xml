@@ -117,6 +117,7 @@
                             <configuration>
                                 <generatorName>spring</generatorName>
                                 <configOptions>
+                                    <interfaceOnly>true</interfaceOnly>
                                     <useSpringBoot3>true</useSpringBoot3>
                                 </configOptions>
                             </configuration>
