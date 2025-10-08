@@ -27,8 +27,18 @@ public record Money(BigDecimal amount) implements Comparable<Money> {
         this.amount = round(amount);
     }
 
+    public Money add(Money augend) {
+        var sum = this.amount.add(augend.amount);
+        return new Money(sum);
+    }
+
     @Override
     public int compareTo(Money o) {
         return this.amount.compareTo(o.amount);
+    }
+
+    @Override
+    public String toString() {
+        return "M[" + amount + "]";
     }
 }
