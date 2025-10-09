@@ -45,6 +45,17 @@ class MoneyTest {
         assertEquals(sum, result);
     }
 
+    @DisplayName("Вычитание Money")
+    @ParameterizedTest(name = "{0} - {1}")
+    @MethodSource("subtractProvider")
+    void testSubtractMoney(Money a, Money b, Money sub) {
+        // Act
+        var result = a.subtract(b);
+
+        // Assert
+        assertEquals(sub, result);
+    }
+
     private static Stream<Arguments> amountProvider() {
         return mapArgs(o -> new BigDecimal("" + o),
                 Arguments.of("0", "0.00"),
@@ -83,6 +94,17 @@ class MoneyTest {
                 Arguments.of("4.595", "5.395", "10"),
                 Arguments.of("8.725", "9.365", "18.08"),
                 Arguments.of("73.115", "962.845", "1035.96")
+        );
+    }
+
+    private static Stream<Arguments> subtractProvider() {
+        return mapArgs(o -> new Money(new BigDecimal("" + o)),
+                Arguments.of("3", "1", "2"),
+                Arguments.of("7.03", "2.56", "4.47"),
+                Arguments.of("8945.683", "2738.147", "6207.53"),
+                Arguments.of("5.395", "4.585", "0.82"),
+                Arguments.of("9.365", "8.735", "0.62"),
+                Arguments.of("962.845", "73.125", "889.72")
         );
     }
 

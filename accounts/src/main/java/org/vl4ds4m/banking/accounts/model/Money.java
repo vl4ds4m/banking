@@ -32,6 +32,14 @@ public record Money(BigDecimal amount) implements Comparable<Money> {
         return new Money(sum);
     }
 
+    public Money subtract(Money subtrahend) {
+        if (this.compareTo(subtrahend) < 0) {
+            throw new IllegalArgumentException("Subtrahend must be less or equal this amount");
+        }
+        var sub = this.amount.subtract(subtrahend.amount);
+        return new Money(sub);
+    }
+
     @Override
     public int compareTo(Money o) {
         return this.amount.compareTo(o.amount);
