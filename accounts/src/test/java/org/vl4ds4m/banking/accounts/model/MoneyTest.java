@@ -1,17 +1,18 @@
 package org.vl4ds4m.banking.accounts.model;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class MoneyTest {
 
@@ -31,7 +32,25 @@ class MoneyTest {
     @MethodSource("invalidAmountProvider")
     void testCreateMoneyFailed(BigDecimal amount) {
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> new Money(amount));
+        var e = assertThrows(MoneyException.class, () -> new Money(amount));
+        assertEquals("Amount must be zero or positive", e.getMessage());
+    }
+
+    @DisplayName("Сравнение Money")
+    @ParameterizedTest(name = "{0} <=> {1}")
+    @MethodSource("comparingProvider")
+    void testMoneyComparing(Money a, Money b, int cmp) {
+        // Act
+        int result = a.compareTo(b);
+
+        // Assert
+        if (cmp < 0) {
+            assertTrue(result < 0);
+        } else if (cmp > 0) {
+            assertTrue(result > 0);
+        } else {
+            assertEquals(0, result);
+        }
     }
 
     @DisplayName("Сложение Money")
@@ -54,6 +73,18 @@ class MoneyTest {
 
         // Assert
         assertEquals(sub, result);
+    }
+
+    @DisplayName("Ошибка при вычитании большего Money из меньшего")
+    @Test
+    void testSubtractMoneyWithDebtFailed() {
+        // Arrange
+        var a = new Money(new BigDecimal("63.78"));
+        var b = new Money(new BigDecimal("84.02"));
+
+        // Act & Assert
+        var e = assertThrows(MoneyException.class, () -> a.subtract(b));
+        assertEquals("Subtrahend must be less or equal this amount", e.getMessage());
     }
 
     private static Stream<Arguments> amountProvider() {
@@ -86,9 +117,28 @@ class MoneyTest {
         );
     }
 
+    private static Stream<Arguments> comparingProvider() {
+        return Stream.of(
+                List.of("1", "2", -1),
+                List.of("2", "1", 1),
+                List.of("123", "123", 0),
+                List.of("1.869324", "1.86754", 0),
+                List.of("1.86275", "1.86175", 0),
+                List.of("1.865", "1.866", -1),
+                List.of("1.865", "1.864", 0),
+                List.of("1.875", "1.876", 0),
+                List.of("1.875", "1.874", 1)
+        ).map(list -> Arguments.of(
+                new Money(new BigDecimal("" + list.get(0))),
+                new Money(new BigDecimal("" + list.get(1))),
+                list.get(2)
+        ));
+    }
+
     private static Stream<Arguments> summandsProvider() {
         return mapArgs(o -> new Money(new BigDecimal("" + o)),
                 Arguments.of("1", "2", "3"),
+                Arguments.of("7.32", "0", "7.32"),
                 Arguments.of("3.05", "8.26", "11.31"),
                 Arguments.of("4576.694", "2983.4762", "7560.17"),
                 Arguments.of("4.595", "5.395", "10"),
@@ -100,6 +150,9 @@ class MoneyTest {
     private static Stream<Arguments> subtractProvider() {
         return mapArgs(o -> new Money(new BigDecimal("" + o)),
                 Arguments.of("3", "1", "2"),
+                Arguments.of("95.25", "0", "95.25"),
+                Arguments.of("78.61", "78.61", "0"),
+                Arguments.of("52.875", "52.879", "0"),
                 Arguments.of("7.03", "2.56", "4.47"),
                 Arguments.of("8945.683", "2738.147", "6207.53"),
                 Arguments.of("5.395", "4.585", "0.82"),

@@ -22,7 +22,7 @@ public record Money(BigDecimal amount) implements Comparable<Money> {
 
     public Money(BigDecimal amount) {
         if (BigDecimal.ZERO.compareTo(amount) > 0) {
-            throw new IllegalArgumentException("Amount must be zero or positive");
+            throw new MoneyException("Amount must be zero or positive");
         }
         this.amount = round(amount);
     }
@@ -34,7 +34,7 @@ public record Money(BigDecimal amount) implements Comparable<Money> {
 
     public Money subtract(Money subtrahend) {
         if (this.compareTo(subtrahend) < 0) {
-            throw new IllegalArgumentException("Subtrahend must be less or equal this amount");
+            throw new MoneyException("Subtrahend must be less or equal this amount");
         }
         var sub = this.amount.subtract(subtrahend.amount);
         return new Money(sub);
