@@ -40,6 +40,11 @@ public record Money(BigDecimal amount) implements Comparable<Money> {
         return new Money(sub);
     }
 
+    public Money multiply(Money multiplicand) {
+        var prod = this.amount.multiply(multiplicand.amount);
+        return new Money(prod);
+    }
+
     @Override
     public int compareTo(Money o) {
         return this.amount.compareTo(o.amount);

@@ -87,8 +87,19 @@ class MoneyTest {
         assertEquals("Subtrahend must be less or equal this amount", e.getMessage());
     }
 
+    @DisplayName("Умножение Money")
+    @ParameterizedTest(name = "{0} * {1}")
+    @MethodSource("multipliersProvider")
+    void testMultiplyMoney(Money a, Money b, Money prod) {
+        // Act
+        var result = a.multiply(b);
+
+        // Assert
+        assertEquals(prod, result);
+    }
+
     private static Stream<Arguments> amountProvider() {
-        return mapArgs(o -> new BigDecimal("" + o),
+        return mapArgs((String s) -> new BigDecimal(s),
                 Arguments.of("0", "0.00"),
                 Arguments.of("-0", "0.00"),
                 Arguments.of("1", "1.00"),
@@ -136,7 +147,7 @@ class MoneyTest {
     }
 
     private static Stream<Arguments> summandsProvider() {
-        return mapArgs(o -> new Money(new BigDecimal("" + o)),
+        return mapArgs(stringToMoney(),
                 Arguments.of("1", "2", "3"),
                 Arguments.of("7.32", "0", "7.32"),
                 Arguments.of("3.05", "8.26", "11.31"),
@@ -148,7 +159,7 @@ class MoneyTest {
     }
 
     private static Stream<Arguments> subtractProvider() {
-        return mapArgs(o -> new Money(new BigDecimal("" + o)),
+        return mapArgs(stringToMoney(),
                 Arguments.of("3", "1", "2"),
                 Arguments.of("95.25", "0", "95.25"),
                 Arguments.of("78.61", "78.61", "0"),
@@ -161,10 +172,28 @@ class MoneyTest {
         );
     }
 
-    private static Stream<Arguments> mapArgs(Function<Object, Object> mapper, Arguments... argsArray) {
+    private static Stream<Arguments> multipliersProvider() {
+        return mapArgs(stringToMoney(),
+                Arguments.of("1", "2", "2"),
+                Arguments.of("6.32", "0", "0"),
+                Arguments.of("71.96", "69.12", "4973.88"),
+                Arguments.of("3", "0.33333", "0.99"),
+                Arguments.of("3", "0.66666", "2.01")
+        );
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> Stream<Arguments> mapArgs(
+            Function<? super T, ?> mapper,
+            Arguments... argsArray
+    ) {
         return Stream.of(argsArray)
                 .map(args -> Arrays.stream(args.get()))
-                .map(s -> s.map(mapper))
-                .map(s -> s::toArray);
+                .map(s -> s.map(o -> mapper.apply((T) o)))
+                .map(l -> l::toArray);
+    }
+
+    private static Function<String, Money> stringToMoney() {
+        return s -> new Money(new BigDecimal(s));
     }
 }
