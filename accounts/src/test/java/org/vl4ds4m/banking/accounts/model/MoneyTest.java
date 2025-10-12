@@ -98,6 +98,29 @@ class MoneyTest {
         assertEquals(prod, result);
     }
 
+    @DisplayName("Деление Money")
+    @ParameterizedTest(name = "{0} / {1}")
+    @MethodSource("divisionProvider")
+    void testDivideMoney(Money a, Money b, Money div) {
+        // Act
+        var result = a.divide(b);
+
+        // Assert
+        assertEquals(div, result);
+    }
+
+    @DisplayName("Ошибка при делении на нуль-Money")
+    @Test
+    void testDivideMoneyToZeroFailed() {
+        // Arrange
+        var a = new Money(new BigDecimal("65.12"));
+        var b = Money.ZERO;
+
+        // Act & Assert
+        var e = assertThrows(MoneyException.class, () -> a.divide(b));
+        assertEquals("Divisor must be positive", e.getMessage());
+    }
+
     private static Stream<Arguments> amountProvider() {
         return mapArgs((String s) -> new BigDecimal(s),
                 Arguments.of("0", "0.00"),
@@ -179,6 +202,18 @@ class MoneyTest {
                 Arguments.of("71.96", "69.12", "4973.88"),
                 Arguments.of("3", "0.33333", "0.99"),
                 Arguments.of("3", "0.66666", "2.01")
+        );
+    }
+
+    private static Stream<Arguments> divisionProvider() {
+        return mapArgs(stringToMoney(),
+                Arguments.of("1", "2", "0.5"),
+                Arguments.of("0", "8.91", "0"),
+                Arguments.of("69341.02", "412.97", "167.91"),
+                Arguments.of("7", "3", "2.33"),
+                Arguments.of("11", "7", "1.57"),
+                Arguments.of("0.01", "123", "0"),
+                Arguments.of("2.5", "4", "0.62")
         );
     }
 

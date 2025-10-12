@@ -45,6 +45,14 @@ public record Money(BigDecimal amount) implements Comparable<Money> {
         return new Money(prod);
     }
 
+    public Money divide(Money divisor) {
+        if (divisor.compareTo(ZERO) == 0) {
+            throw new MoneyException("Divisor must be positive");
+        }
+        var div = this.amount.divide(divisor.amount, SCALE, ROUNDING_MODE);
+        return new Money(div);
+    }
+
     @Override
     public int compareTo(Money o) {
         return this.amount.compareTo(o.amount);
