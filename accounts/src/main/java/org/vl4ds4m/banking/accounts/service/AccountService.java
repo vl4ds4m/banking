@@ -8,6 +8,8 @@ import org.vl4ds4m.banking.accounts.repository.AccountRepository;
 import org.vl4ds4m.banking.accounts.repository.CustomerRepository;
 import org.vl4ds4m.banking.accounts.repository.model.AccountPe;
 
+import java.math.BigDecimal;
+
 @RequiredArgsConstructor
 public class AccountService {
 
@@ -17,13 +19,13 @@ public class AccountService {
 
     public Account createAccount(String customerName, Currency currency) {
         var customer = customerRepository.findByName(customerName)
-                .orElseThrow(() -> new RuntimeException("Customer[name=" + customerName + "] not found"));
+                .orElseThrow(() -> new ServiceException("Customer[name=" + customerName + "] not found"));
 
         boolean existed = customer.getAccounts().stream()
                 .anyMatch(a -> a.getCurrency().equals(currency));
         if (existed) {
             var message = "Account[customerName=" + customerName + ",currency=" + currency + "] already existed";
-            throw new RuntimeException(message);
+            throw new ServiceException(message);
         }
 
         var account = new AccountPe(customer, currency, Money.ZERO.amount());
@@ -34,7 +36,33 @@ public class AccountService {
 
     public Account getAccountByNumber(Long number) {
         var account = accountRepository.findById(number)
-                .orElseThrow(() -> new RuntimeException("Account[number=" + number + "] not found"));
-        return new Account(account.getNumber(), account.getCurrency(), new Money(account.getAmount()));
+                .orElseThrow(() -> accountNotFound(number));
+        return fromPe(account);
+    }
+
+    public void topUpAccount(Long number, BigDecimal augend) {
+        var account = accountRepository.findById(number)
+                .orElseThrow(() -> accountNotFound(number));
+        var money = new Money(account.getAmount())
+                .add(new Money(augend));
+        account.setAmount(money.amount());
+        accountRepository.save(account);
+    }
+
+    public void withdrawMoneyToAccount(Long number, BigDecimal subtrahend) {
+        var account = accountRepository.findById(number)
+                .orElseThrow(() -> accountNotFound(number));
+        var money = new Money(account.getAmount())
+                .subtract(new Money(subtrahend));
+        account.setAmount(money.amount());
+        accountRepository.save(account);
+    }
+
+    private static Account fromPe(AccountPe pe) {
+        return new Account(pe.getNumber(), pe.getCurrency(), new Money(pe.getAmount()));
+    }
+
+    private static ServiceException accountNotFound(Long number) {
+        return new ServiceException("Account[number=" + number + "] not found");
     }
 }

@@ -1,7 +1,8 @@
-package edu.vl4ds4m.banking;
+package org.vl4ds4m.banking.accounts.service;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.lang.NonNull;
 import org.vl4ds4m.banking.accounts.model.Account;
 import org.vl4ds4m.banking.accounts.model.Currency;
 import org.vl4ds4m.banking.accounts.model.Money;
@@ -9,11 +10,12 @@ import org.vl4ds4m.banking.accounts.repository.AccountRepository;
 import org.vl4ds4m.banking.accounts.repository.CustomerRepository;
 import org.vl4ds4m.banking.accounts.repository.model.AccountPe;
 import org.vl4ds4m.banking.accounts.repository.model.CustomerPe;
-import org.vl4ds4m.banking.accounts.service.AccountService;
+import org.vl4ds4m.banking.accounts.util.TestRepository;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -31,15 +33,10 @@ class AccountServiceTest {
     @Test
     void testCreateAccount() {
         // Arrange
-        var accountRepository = mockAccountRepository();
-
         var createdAccount = new AccountPe();
         createdAccount.setNumber(123L);
 
-        when(accountRepository.save(any()))
-                .thenReturn(createdAccount);
-
-        var service = new AccountService(accountRepository, mockCustomerRepository());
+        var service = new AccountService(fakeAccountRepository(), mockCustomerRepository());
 
         // Act
         var account = service.createAccount(DEFAULT_CLIENT_NAME, Currency.CNY);
@@ -52,13 +49,13 @@ class AccountServiceTest {
 
     @DisplayName("Ошибка при создании имеющегося счёта")
     @Test
-    void testCreateDuplicateAccount() {
+    void testCreateDuplicateAccountFailed() {
         // Arrange
         var currency = DEFAULT_ACCOUNT.getCurrency();
         var service = new AccountService(null, mockCustomerRepository());
 
         // Act & Assert
-        var e = assertThrows(RuntimeException.class,
+        var e = assertThrows(ServiceException.class,
                 () -> service.createAccount(DEFAULT_CLIENT_NAME, currency));
         assertEquals(
                 "Account[customerName=" + DEFAULT_CLIENT_NAME +
@@ -68,12 +65,12 @@ class AccountServiceTest {
 
     @DisplayName("Ошибка при создании счёта для несуществующего клиента")
     @Test
-    void testCreateAccountForAbsentCustomer() {
+    void testCreateAccountForAbsentCustomerFailed() {
         // Arrange
         AccountService service = new AccountService(null, mockCustomerRepository());
 
         // Act & Assert
-        var e = assertThrows(RuntimeException.class,
+        var e = assertThrows(ServiceException.class,
                 () -> service.createAccount("unknown_client", Currency.EUR));
         assertEquals("Customer[name=unknown_client] not found", e.getMessage());
     }
@@ -82,7 +79,7 @@ class AccountServiceTest {
     @Test
     void testGetAccountByNumber() {
         // Arrange
-        AccountService service = new AccountService(mockAccountRepository(), null);
+        AccountService service = new AccountService(fakeAccountRepository(), null);
 
         // Act
         Account account = service.getAccountByNumber(DEFAULT_ACCOUNT.getNumber());
@@ -95,11 +92,47 @@ class AccountServiceTest {
     @Test
     void testGetAbsentAccount() {
         // Arrange
-        AccountService service = new AccountService(mockAccountRepository(), null);
+        AccountService service = new AccountService(fakeAccountRepository(), null);
 
         // Act & Assert
-        var e = assertThrows(RuntimeException.class, () -> service.getAccountByNumber(935L));
+        var e = assertThrows(ServiceException.class, () -> service.getAccountByNumber(935L));
         assertEquals("Account[number=935] not found", e.getMessage());
+    }
+
+    @DisplayName("Пополнение счёта")
+    @Test
+    void testTopUpAccount() {
+        // Arrange
+        var number = DEFAULT_ACCOUNT.getNumber();
+        var money = new Money(BigDecimal.TWO);
+        var service = new AccountService(fakeAccountRepository(), null);
+
+        // Act
+        service.topUpAccount(number, money.amount());
+        var actual = service.getAccountByNumber(number);
+
+        // Assert
+        var expectedMoney = DEFAULT_ACCOUNT.getMoney().add(money);
+        var expected = new Account(number, DEFAULT_ACCOUNT.getCurrency(), expectedMoney);
+        assertEquals(expected, actual);
+    }
+
+    @DisplayName("Снятие денег со счёта")
+    @Test
+    void testWithdrawMoneyToAccount() {
+        // Arrange
+        var number = DEFAULT_ACCOUNT.getNumber();
+        var money = new Money(new BigDecimal("3.67"));
+        var service = new AccountService(fakeAccountRepository(), null);
+
+        // Act
+        service.withdrawMoneyToAccount(number, money.amount());
+        var account = service.getAccountByNumber(number);
+
+        // Assert
+        var expectedMoney = DEFAULT_ACCOUNT.getMoney().subtract(money);
+        var expected = new Account(number, DEFAULT_ACCOUNT.getCurrency(), expectedMoney);
+        assertEquals(expected, account);
     }
 
     private static Account createDefaultAccount() {
@@ -109,19 +142,15 @@ class AccountServiceTest {
                 new Money(new BigDecimal("7529.83")));
     }
 
-    private static AccountRepository mockAccountRepository() {
-        AccountRepository repository = mock();
-
-        when(repository.findById(any()))
-                .thenReturn(Optional.empty());
+    private static AccountRepository fakeAccountRepository() {
+        AccountRepository repository = new AccountTestRepository();
 
         var account = new AccountPe();
         account.setNumber(DEFAULT_ACCOUNT.getNumber());
         account.setCurrency(DEFAULT_ACCOUNT.getCurrency());
         account.setAmount(DEFAULT_ACCOUNT.getMoney().amount());
 
-        when(repository.findById(DEFAULT_ACCOUNT.getNumber()))
-                .thenReturn(Optional.of(account));
+        repository.save(account);
 
         return repository;
     }
@@ -147,5 +176,29 @@ class AccountServiceTest {
                 .thenReturn(Optional.of(customer));
 
         return repository;
+    }
+
+    private static class AccountTestRepository
+            extends TestRepository<AccountPe, Long>
+            implements AccountRepository
+    {
+        private final AtomicLong nextId = new AtomicLong();
+
+        @Override
+        @NonNull
+        protected Optional<Long> extractId(@NonNull AccountPe entity) {
+            return Optional.ofNullable(entity.getNumber());
+        }
+
+        @Override
+        protected void setId(@NonNull Long id, @NonNull AccountPe entity) {
+            entity.setNumber(id);
+        }
+
+        @Override
+        @NonNull
+        protected Long produceNextId() {
+            return nextId.incrementAndGet();
+        }
     }
 }
