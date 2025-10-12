@@ -35,14 +35,12 @@ public class AccountService {
     }
 
     public Account getAccountByNumber(Long number) {
-        var account = accountRepository.findById(number)
-                .orElseThrow(() -> accountNotFound(number));
+        var account = getAccountPe(number);
         return fromPe(account);
     }
 
     public void topUpAccount(Long number, BigDecimal augend) {
-        var account = accountRepository.findById(number)
-                .orElseThrow(() -> accountNotFound(number));
+        var account = getAccountPe(number);
         var money = new Money(account.getAmount())
                 .add(new Money(augend));
         account.setAmount(money.amount());
@@ -50,19 +48,36 @@ public class AccountService {
     }
 
     public void withdrawMoneyToAccount(Long number, BigDecimal subtrahend) {
-        var account = accountRepository.findById(number)
-                .orElseThrow(() -> accountNotFound(number));
+        var account = getAccountPe(number);
         var money = new Money(account.getAmount())
                 .subtract(new Money(subtrahend));
         account.setAmount(money.amount());
         accountRepository.save(account);
     }
 
-    private static Account fromPe(AccountPe pe) {
-        return new Account(pe.getNumber(), pe.getCurrency(), new Money(pe.getAmount()));
+    public void transferMoney(Long senderNumber, Long receiverNumber, BigDecimal amount) {
+        final var money = new Money(amount);
+        var sender = getAccountPe(senderNumber);
+        var receiver = getAccountPe(receiverNumber);
+
+        final var senderMoneyBefore = new Money(sender.getAmount());
+        final var senderMoneyAfter = senderMoneyBefore.subtract(money);
+        sender.setAmount(senderMoneyAfter.amount());
+
+        final var receiverMoneyBefore = new Money(receiver.getAmount());
+        final var receiverMoneyAfter = receiverMoneyBefore.add(money);
+        receiver.setAmount(receiverMoneyAfter.amount());
+
+        accountRepository.save(sender);
+        accountRepository.save(receiver);
     }
 
-    private static ServiceException accountNotFound(Long number) {
-        return new ServiceException("Account[number=" + number + "] not found");
+    private AccountPe getAccountPe(Long number) {
+        return accountRepository.findById(number)
+                .orElseThrow(() -> new ServiceException("Account[number=" + number + "] not found"));
+    }
+
+    private static Account fromPe(AccountPe pe) {
+        return new Account(pe.getNumber(), pe.getCurrency(), new Money(pe.getAmount()));
     }
 }

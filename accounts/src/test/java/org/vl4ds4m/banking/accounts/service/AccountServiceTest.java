@@ -1,5 +1,6 @@
 package org.vl4ds4m.banking.accounts.service;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.lang.NonNull;
@@ -134,6 +135,39 @@ class AccountServiceTest {
         var expected = new Account(number, DEFAULT_ACCOUNT.getCurrency(), expectedMoney);
         assertEquals(expected, account);
     }
+
+    @DisplayName("Перевод денег с одного счёта на другой в одной валюте")
+    @Test
+    void testTransferMoneyForEqualCurrencies() {
+        // Arrange
+        var currency = DEFAULT_ACCOUNT.getCurrency();
+        var money = new Money(new BigDecimal("276.13"));
+        var senderNumber = DEFAULT_ACCOUNT.getNumber();
+        var accountRepository = fakeAccountRepository();
+        var receiverMoney = new Money(new BigDecimal("751.02"));
+        var receiverNumber = accountRepository.save(
+                new AccountPe(null, currency, receiverMoney.amount())
+        ).getNumber();
+        var service = new AccountService(accountRepository, null);
+
+        // Act
+        service.transferMoney(senderNumber, receiverNumber, money.amount());
+        var sender = service.getAccountByNumber(senderNumber);
+        var receiver = service.getAccountByNumber(receiverNumber);
+
+        // Arrange
+        var expectedSender = new Account(senderNumber, currency,
+                DEFAULT_ACCOUNT.getMoney().subtract(money));
+        var expectedReceiver = new Account(receiverNumber, currency,
+                receiverMoney.add(money));
+        assertEquals(expectedSender, sender);
+        assertEquals(expectedReceiver, receiver);
+    }
+
+    @DisplayName("Перевод денег с одного счёта на другой в разных валютах")
+    @Test
+    @Disabled("Необходимо реализовать ConverterService")
+    void testTransferMoneyForDifferentCurrencies() {}
 
     private static Account createDefaultAccount() {
         return new Account(

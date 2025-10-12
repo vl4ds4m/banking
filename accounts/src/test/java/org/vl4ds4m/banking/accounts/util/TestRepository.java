@@ -8,6 +8,8 @@ public abstract class TestRepository<T, ID> implements CrudRepository<T, ID> {
 
     private final Map<ID, T> storage = new HashMap<>();
 
+    private final Set<ID> readBeforeUpdate = new HashSet<>();
+
     protected abstract Optional<ID> extractId(T entity);
 
     protected abstract void setId(ID id, T entity);
@@ -22,6 +24,7 @@ public abstract class TestRepository<T, ID> implements CrudRepository<T, ID> {
             return newId;
         });
         storage.put(id, entity);
+        readBeforeUpdate.remove(id);
         return entity;
     }
 
@@ -34,8 +37,17 @@ public abstract class TestRepository<T, ID> implements CrudRepository<T, ID> {
     @Override
     public Optional<T> findById(ID id) {
         return existsById(id)
-                ? Optional.of(storage.get(id))
+                ? Optional.of(extract(id))
                 : Optional.empty();
+    }
+
+    private T extract(ID id) {
+        var entity = storage.get(id);
+        if (readBeforeUpdate.contains(id)) {
+            throw new IllegalStateException("Repeated read entity by id=" + id + " without update");
+        }
+        readBeforeUpdate.add(id);
+        return entity;
     }
 
     @Override
@@ -45,7 +57,7 @@ public abstract class TestRepository<T, ID> implements CrudRepository<T, ID> {
 
     @Override
     public Iterable<T> findAll() {
-        return storage.values();
+        return findAllById(storage.keySet());
     }
 
     @Override
@@ -65,6 +77,7 @@ public abstract class TestRepository<T, ID> implements CrudRepository<T, ID> {
     @Override
     public void deleteById(ID id) {
         storage.remove(id);
+        readBeforeUpdate.remove(id);
     }
 
     @Override
@@ -84,6 +97,6 @@ public abstract class TestRepository<T, ID> implements CrudRepository<T, ID> {
 
     @Override
     public void deleteAll() {
-        storage.clear();
+        storage.keySet().forEach(this::deleteById);
     }
 }
