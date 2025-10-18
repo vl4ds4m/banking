@@ -70,7 +70,7 @@
                             <library>resttemplate</library>
                             <generateApis>false</generateApis>
                             <generateSupportingFiles>false</generateSupportingFiles>
-                            <modelPackage>edu.vl4ds4m.banking.currency</modelPackage>
+                            <modelPackage>org.vl4ds4m.banking.currency</modelPackage>
                             <configOptions>
                                 <sourceFolder>java</sourceFolder>
                             </configOptions>
