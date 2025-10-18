@@ -34,7 +34,5 @@ build/
 ### Mac OS ###
 .DS_Store
 
-### Local files ###
-/mi-md/
-/run/
-/**/bin/
+### Testing ###
+test/local
