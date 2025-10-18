@@ -80,6 +80,23 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.hibernate.orm</groupId>
+                                <artifactId>hibernate-jpamodelgen</artifactId>
+                            </path>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+
+                <plugin>
                     <groupId>io.swagger.codegen.v3</groupId>
                     <artifactId>swagger-codegen-maven-plugin</artifactId>
                     <version>3.0.54</version>
@@ -116,6 +133,9 @@
                             </goals>
                             <configuration>
                                 <generatorName>spring</generatorName>
+                                <inputSpec>${project.parent.basedir}/openapi/${project.artifactId}.yaml</inputSpec>
+                                <apiPackage>${project.groupId}.api</apiPackage>
+                                <modelPackage>${project.groupId}.api.model</modelPackage>
                                 <configOptions>
                                     <interfaceOnly>true</interfaceOnly>
                                     <useSpringBoot3>true</useSpringBoot3>

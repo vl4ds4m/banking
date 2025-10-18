@@ -37,8 +37,8 @@ public class CustomerPe {
             nullable = false)
     private LocalDate birthDate;
 
-    @OneToMany(mappedBy = Account_.CUSTOMER)
-    protected Set<AccountPe> accounts;
+    @OneToMany(mappedBy = AccountPe_.CUSTOMER)
+    private Set<AccountPe> accounts;
 
     static class ColumnName {
 
