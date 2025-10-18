@@ -1,4 +1,4 @@
-name: banking-system
+name: banking
 services:
   postgres:
     image: postgres:18
