@@ -33,7 +33,7 @@ services:
       - rates
     build:
       args:
-        - JAR_FILE=./bin/converter.jar
+        - JAR_FILE=./build/converter.jar
     ports:
       - 8082:8080
     configs:
@@ -47,7 +47,7 @@ services:
       - redis
     build:
       args:
-        - JAR_FILE=./bin/accounts.jar
+        - JAR_FILE=./build/accounts.jar
     ports:
       - 8081:8080
     configs:
