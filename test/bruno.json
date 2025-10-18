@@ -1,0 +1,283 @@
+{
+  "name": "banking",
+  "version": "1",
+  "items": [
+    {
+      "type": "http",
+      "name": "Accounts balance",
+      "filename": "Accounts balance.bru",
+      "seq": 6,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:8081/accounts/8",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Accounts create",
+      "filename": "Accounts create.bru",
+      "seq": 7,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:8081/accounts0",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"customerId\": 4,\n  \"currency\": \"USD\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Accounts top up",
+      "filename": "Accounts top up.bru",
+      "seq": 8,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:8081/accounts/8/top-up0",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"amount\": 64.50\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Convert currency",
+      "filename": "Convert currency.bru",
+      "seq": 2,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:8082/convert?from=EUR&to=RUB&amount=197.45",
+        "method": "GET",
+        "headers": [],
+        "params": [
+          {
+            "name": "from",
+            "value": "EUR",
+            "type": "query",
+            "enabled": true
+          },
+          {
+            "name": "to",
+            "value": "RUB",
+            "type": "query",
+            "enabled": true
+          },
+          {
+            "name": "amount",
+            "value": "197.45",
+            "type": "query",
+            "enabled": true
+          }
+        ],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "bearer",
+          "bearer": {
+            "token": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJxWnVFYUVBZEMwQTFXRUdOemhiWm9qdXRKdkJiYUNlb0RBWHJhNV9ETDdrIn0.eyJleHAiOjE3NjA1NzMxMjIsImlhdCI6MTc2MDU3MjgyMiwianRpIjoiMjE2NTIyMTItZDEyYy00MmQyLTkzNjYtYzRmOGIzMzQxNzM1IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDg0L3JlYWxtcy9iYW5raW5nIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImI3MmYzYWYzLWE5MjMtNGVlMy04OWJmLTFhMWRhMGYwMDk3OSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImJhbmtpbmdfc2VydmljZSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiLyoiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtYmFua2luZyIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImNsaWVudEhvc3QiOiIxNzIuMjAuMC4xIiwicHJlZmVycmVkX3VzZXJuYW1lIjoic2VydmljZS1hY2NvdW50LWJhbmtpbmdfc2VydmljZSIsImNsaWVudEFkZHJlc3MiOiIxNzIuMjAuMC4xIiwiY2xpZW50X2lkIjoiYmFua2luZ19zZXJ2aWNlIn0.LeMjptUpDS-ZwqdpTNTvv9-TPcoXPRdQpqux-KInzXoPqGSRtC6tJLeCJw7NhUL6NHWDbtaAMdZjm2craC67uyBRtczyt8-dNY4Ids6C2uPEXKTNen0bL6leQ7AQ6muGz2LsgaIfj672cP_Qc4f3hva1T5PAjGKXTIuUpSmzZJXHOcyZtDTe4a_a25nFwdwQY2KmqNzQ68rwB59UKSElUUShzbHopAXpTQksnb3uQ-PJvdto8MbgzmjmKsRYxEcrUjwUyf2dyjCEYioCMK0woYYjzDcLOzbGR3LhZFH-330R9AfDf8ud-TqmtvjvfXvSgAToCTJxgV0FDlMcFo0Bug"
+          }
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Customers balance",
+      "filename": "Customers balance.bru",
+      "seq": 4,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:8081/customers/1/balance?currency=RUB",
+        "method": "GET",
+        "headers": [],
+        "params": [
+          {
+            "name": "currency",
+            "value": "RUB",
+            "type": "query",
+            "enabled": true
+          }
+        ],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Customers create",
+      "filename": "Customers create.bru",
+      "seq": 5,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:8081/customers0",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"firstName\": \"Foo\",\n  \"lastName\": \"Bar\",\n  \"birthDate\": \"2001-02-03\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Keycloak get token",
+      "filename": "Keycloak get token.bru",
+      "seq": 3,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:8084/realms/banking/protocol/openid-connect/token",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "formUrlEncoded",
+          "formUrlEncoded": [
+            {
+              "name": "client_id",
+              "value": "banking_service",
+              "enabled": true
+            },
+            {
+              "name": "client_secret",
+              "value": "zaHH0GJMccZtdY64fa0gPe3nlEflD9vs",
+              "enabled": true
+            },
+            {
+              "name": "grant_type",
+              "value": "client_credentials",
+              "enabled": true
+            }
+          ],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    }
+  ],
+  "environments": [],
+  "brunoConfig": {
+    "version": "1",
+    "name": "banking",
+    "type": "collection",
+    "ignore": [
+      "node_modules",
+      ".git"
+    ],
+    "size": 0.0029754638671875,
+    "filesCount": 7
+  }
+}
