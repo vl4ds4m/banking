@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>edu.vl4ds4m.banking</groupId>
-        <artifactId>banking</artifactId>
+        <groupId>org.vl4ds4m.banking</groupId>
+        <artifactId>banking-project</artifactId>
         <version>1.0</version>
     </parent>
 

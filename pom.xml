@@ -10,8 +10,8 @@
         <version>3.4.2</version>
     </parent>
 
-    <groupId>edu.vl4ds4m.banking</groupId>
-    <artifactId>banking</artifactId>
+    <groupId>org.vl4ds4m.banking</groupId>
+    <artifactId>banking-project</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging>
 
@@ -32,7 +32,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>edu.vl4ds4m.banking</groupId>
+                <groupId>org.vl4ds4m.banking</groupId>
                 <artifactId>common</artifactId>
                 <version>${project.version}</version>
             </dependency>

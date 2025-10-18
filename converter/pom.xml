@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>edu.vl4ds4m.banking</groupId>
-        <artifactId>banking</artifactId>
+        <groupId>org.vl4ds4m.banking</groupId>
+        <artifactId>banking-project</artifactId>
         <version>1.0</version>
     </parent>
 
@@ -17,7 +17,7 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>edu.vl4ds4m.banking</groupId>
+            <groupId>org.vl4ds4m.banking</groupId>
             <artifactId>common</artifactId>
         </dependency>
 
