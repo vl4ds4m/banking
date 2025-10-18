@@ -38,7 +38,7 @@ components:
       content:
         application/json:
           schema:
-            title: InvalidRequestResponse
+            title: InvalidRequestResBody
             type: object
             properties:
               message:

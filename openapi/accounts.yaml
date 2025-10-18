@@ -12,7 +12,7 @@ components:
       $ref: './common.yaml#/components/schemas/Currency'
     CurrencyAmount:
       $ref: './common.yaml#/components/schemas/CurrencyAmount'
-    Balance:
+    BalanceResBody:
       type: object
       properties:
         currency:
@@ -42,7 +42,7 @@ components:
       content:
         application/json:
           schema:
-            title: AccountOperationResponse
+            title: AccountOperationResBody
             type: object
             properties:
               currency:
@@ -63,7 +63,7 @@ paths:
         content:
           application/json:
             schema:
-              title: CreateCustomerRequest
+              title: CreateCustomerReqBody
               type: object
               properties:
                 customerName:
@@ -112,7 +112,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Balance'
+                $ref: '#/components/schemas/BalanceResBody'
         '400':
           $ref: '#/components/responses/InvalidRequest'
   /accounts:
@@ -125,7 +125,7 @@ paths:
         content:
           application/json:
             schema:
-              title: CreateAccountRequest
+              title: CreateAccountReqBody
               type: object
               properties:
                 customerName:
@@ -141,7 +141,7 @@ paths:
           content:
             application/json:
               schema:
-                title: CreateAccountResponse
+                title: CreateAccountResBody
                 type: object
                 properties:
                   number:
@@ -163,14 +163,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Balance'
+                $ref: '#/components/schemas/BalanceResBody'
         '400':
           $ref: '#/components/responses/InvalidRequest'
   /accounts/{accountNumber}/top-up:
     put:
       operationId: topUpAccount
       summary: Top up account.
-      description: Top up the account.
+      description: Top up the account by the passed amount.
       parameters:
         - $ref: '#/components/parameters/AccountNumber'
       requestBody:
@@ -178,7 +178,7 @@ paths:
         content:
           application/json:
             schema:
-              title: TopUpAccountRequest
+              title: TopUpAccountReqBody
               type: object
               properties:
                 augend:
@@ -202,7 +202,7 @@ paths:
         content:
           application/json:
             schema:
-              title: WithdrawAccountRequest
+              title: WithdrawAccountReqBody
               type: object
               properties:
                 subtrahend:
@@ -224,7 +224,7 @@ paths:
         content:
           application/json:
             schema:
-              title: TransferRequest
+              title: TransferReqBody
               type: object
               properties:
                 senderAccountNumber:
@@ -243,7 +243,7 @@ paths:
           content:
             application/json:
               schema:
-                title: TransferResponse
+                title: TransferResBody
                 type: object
                 properties:
                   senderCurrency:
