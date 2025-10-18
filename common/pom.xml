@@ -65,7 +65,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/openapi/currency.yml</inputSpec>
+                            <inputSpec>${project.parent.basedir}/openapi/common.yaml</inputSpec>
                             <language>java</language>
                             <library>resttemplate</library>
                             <generateApis>false</generateApis>

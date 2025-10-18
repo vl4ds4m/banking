@@ -1,0 +1,257 @@
+openapi: 3.0.4
+info:
+  title: Banking - Accounts
+  description: This is an accounts service API based on the OpenAPI 3.0 specification.
+  version: 1.0.0
+components:
+  schemas:
+    CustomerName:
+      type: string
+      example: ipet123
+    Currency:
+      $ref: './common.yaml#/components/schemas/Currency'
+    CurrencyAmount:
+      $ref: './common.yaml#/components/schemas/CurrencyAmount'
+    Balance:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+      required:
+        - currency
+        - amount
+    AccountNumber:
+      type: integer
+      format: int64
+      example: 438832491231
+  parameters:
+    AccountNumber:
+      name: accountNumber
+      description: An account number.
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/AccountNumber'
+  responses:
+    InvalidRequest:
+      $ref: './common.yaml#/components/responses/InvalidRequest'
+    AccountOperation:
+      description: Amount of money in the account after the operation.
+      content:
+        application/json:
+          schema:
+            title: AccountOperationResponse
+            type: object
+            properties:
+              currency:
+                $ref: '#/components/schemas/Currency'
+              totalAmount:
+                $ref: '#/components/schemas/CurrencyAmount'
+            required:
+              - currency
+              - totalAmount
+paths:
+  /customers:
+    post:
+      operationId: createCustomer
+      summary: Create customer.
+      description: Create a new customer.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              title: CreateCustomerRequest
+              type: object
+              properties:
+                customerName:
+                  $ref: '#/components/schemas/CustomerName'
+                firstName:
+                  type: string
+                  example: Ivan
+                lastName:
+                  type: string
+                  example: Petrov
+                birthDate:
+                  type: string
+                  format: date
+                  example: 1984-04-17
+              required:
+                - customerName
+                - firstName
+                - lastName
+                - birthDate
+      responses:
+        '200':
+          description: Customer created.
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+  /customers/{customerName}/balance:
+    get:
+      operationId: getCustomerBalance
+      summary: Get customer balance.
+      description: Get the customer balance over all accounts in the specified currency.
+      parameters:
+        - name: customerName
+          description: Customer nickname.
+          required: true
+          in: path
+          schema:
+            $ref: '#/components/schemas/CustomerName'
+        - name: currency
+          description: Currency code for the balance representation.
+          required: true
+          in: query
+          schema:
+            $ref: '#/components/schemas/Currency'
+      responses:
+        '200':
+          description: Customer balance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Balance'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+  /accounts:
+    post:
+      operationId: createAccount
+      summary: Create account.
+      description: Create a new customer account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              title: CreateAccountRequest
+              type: object
+              properties:
+                customerName:
+                  $ref: '#/components/schemas/CustomerName'
+                currency:
+                  $ref: '#/components/schemas/Currency'
+              required:
+                - customerName
+                - currency
+      responses:
+        '200':
+          description: Created account number.
+          content:
+            application/json:
+              schema:
+                title: CreateAccountResponse
+                type: object
+                properties:
+                  number:
+                    $ref: '#/components/schemas/AccountNumber'
+                required:
+                  - number
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+  /accounts/{accountNumber}:
+    get:
+      operationId: getAccountBalance
+      summary: Get account balance.
+      description: Get amount of money in the account.
+      parameters:
+        - $ref: '#/components/parameters/AccountNumber'
+      responses:
+        '200':
+          description: Amount of money in the account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Balance'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+  /accounts/{accountNumber}/top-up:
+    put:
+      operationId: topUpAccount
+      summary: Top up account.
+      description: Top up the account.
+      parameters:
+        - $ref: '#/components/parameters/AccountNumber'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              title: TopUpAccountRequest
+              type: object
+              properties:
+                augend:
+                  $ref: '#/components/schemas/CurrencyAmount'
+              required:
+                - augend
+      responses:
+        '200':
+          $ref: '#/components/responses/AccountOperation'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+  /accounts/{accountNumber}/withdraw:
+    put:
+      operationId: withdrawAccount
+      summary: Withdraw account.
+      description: Withdraw money from the account.
+      parameters:
+        - $ref: '#/components/parameters/AccountNumber'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              title: WithdrawAccountRequest
+              type: object
+              properties:
+                subtrahend:
+                  $ref: '#/components/schemas/CurrencyAmount'
+              required:
+                - subtrahend
+      responses:
+        '200':
+          $ref: '#/components/responses/AccountOperation'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+  /transfer:
+    put:
+      operationId: transfer
+      summary: Transfer money.
+      description: Transfer money from the account to the another account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              title: TransferRequest
+              type: object
+              properties:
+                senderAccountNumber:
+                  $ref: '#/components/schemas/AccountNumber'
+                receiverAccountNumber:
+                  $ref: '#/components/schemas/AccountNumber'
+                senderCurrencyAmount:
+                  $ref: '#/components/schemas/CurrencyAmount'
+              required:
+                - senderAccountNumber
+                - receiverAccountNumber
+                - senderCurrencyAmount
+      responses:
+        '200':
+          description: Successful transfer.
+          content:
+            application/json:
+              schema:
+                title: TransferResponse
+                type: object
+                properties:
+                  senderCurrency:
+                    $ref: '#/components/schemas/Currency'
+                  totalSenderAmount:
+                    $ref: '#/components/schemas/CurrencyAmount'
+                required:
+                  - senderCurrency
+                  - totalSenderAmount
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
