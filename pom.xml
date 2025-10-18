@@ -126,21 +126,21 @@
                     <groupId>org.openapitools</groupId>
                     <artifactId>openapi-generator-maven-plugin</artifactId>
                     <version>7.16.0</version>
+                    <configuration>
+                        <generatorName>spring</generatorName>
+                        <inputSpec>${project.parent.basedir}/openapi/${project.artifactId}.yaml</inputSpec>
+                        <apiPackage>${project.groupId}.api</apiPackage>
+                        <modelPackage>${project.groupId}.api.model</modelPackage>
+                        <configOptions>
+                            <interfaceOnly>true</interfaceOnly>
+                            <useSpringBoot3>true</useSpringBoot3>
+                        </configOptions>
+                    </configuration>
                     <executions>
                         <execution>
                             <goals>
                                 <goal>generate</goal>
                             </goals>
-                            <configuration>
-                                <generatorName>spring</generatorName>
-                                <inputSpec>${project.parent.basedir}/openapi/${project.artifactId}.yaml</inputSpec>
-                                <apiPackage>${project.groupId}.api</apiPackage>
-                                <modelPackage>${project.groupId}.api.model</modelPackage>
-                                <configOptions>
-                                    <interfaceOnly>true</interfaceOnly>
-                                    <useSpringBoot3>true</useSpringBoot3>
-                                </configOptions>
-                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
