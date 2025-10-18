@@ -11,7 +11,7 @@ import org.vl4ds4m.banking.transaction.TransactionResponse;
 
 import java.util.List;
 
-@RestController
+//@RestController
 @RequestMapping(AccountController.PATH)
 public class AccountController {
     static final String PATH = "/accounts";

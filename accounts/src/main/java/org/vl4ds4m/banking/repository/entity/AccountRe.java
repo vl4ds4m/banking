@@ -1,20 +1,20 @@
-package org.vl4ds4m.banking.accounts.repository.model;
+package org.vl4ds4m.banking.repository.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.vl4ds4m.banking.accounts.model.Currency;
+import org.vl4ds4m.banking.entity.Currency;
 
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = AccountPe.TABLE_NAME,
+@Table(name = AccountRe.TABLE_NAME,
         uniqueConstraints = @UniqueConstraint(columnNames = {
-                AccountPe.ColumnName.CUSTOMER_ID,
-                AccountPe.ColumnName.CURRENCY}))
+                AccountRe.ColumnName.CUSTOMER_ID,
+                AccountRe.ColumnName.CURRENCY}))
 @Data
 @NoArgsConstructor
-public class AccountPe {
+public class AccountRe {
 
     static final String TABLE_NAME = "accounts";
 
@@ -26,7 +26,7 @@ public class AccountPe {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = ColumnName.CUSTOMER_ID,
             nullable = false)
-    private CustomerPe customer;
+    private CustomerRe customer;
 
     @Enumerated(EnumType.STRING)
     @Column(name = ColumnName.CURRENCY,
@@ -37,7 +37,7 @@ public class AccountPe {
             nullable = false)
     private BigDecimal amount;
 
-    public AccountPe(CustomerPe customer, Currency currency, BigDecimal amount) {
+    public AccountRe(CustomerRe customer, Currency currency, BigDecimal amount) {
         this.customer = customer;
         this.currency = currency;
         this.amount = amount;

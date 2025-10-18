@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.vl4ds4m.banking.transaction.TransactionResponse;
 
-@RestController
+// @RestController
 @RequestMapping(TransferController.PATH)
 public class TransferController {
     static final String PATH = "/transfers";

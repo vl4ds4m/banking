@@ -10,7 +10,7 @@ import org.vl4ds4m.banking.transaction.Transaction_;
 import java.math.BigDecimal;
 import java.util.List;
 
-@Entity
+// @Entity
 @Table(name = "accounts",
     uniqueConstraints = @UniqueConstraint(
         columnNames = {Account.CUSTOMER_ID, Account.CURRENCY}))

@@ -10,7 +10,7 @@ import org.vl4ds4m.banking.customer.dto.CustomerBalanceResponse;
 import org.vl4ds4m.banking.customer.dto.CustomerCreationRequest;
 import org.vl4ds4m.banking.customer.dto.CustomerCreationResponse;
 
-@RestController
+// @RestController
 @RequestMapping(CustomerController.PATH)
 public class CustomerController {
     static final String PATH = "/customers";

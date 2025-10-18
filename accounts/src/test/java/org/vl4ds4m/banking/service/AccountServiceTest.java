@@ -4,15 +4,13 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.lang.NonNull;
-import org.vl4ds4m.banking.accounts.model.Account;
-import org.vl4ds4m.banking.accounts.model.Currency;
-import org.vl4ds4m.banking.accounts.model.Money;
-import org.vl4ds4m.banking.accounts.repository.AccountRepository;
-import org.vl4ds4m.banking.accounts.repository.CustomerRepository;
-import org.vl4ds4m.banking.accounts.repository.model.AccountPe;
-import org.vl4ds4m.banking.accounts.repository.model.CustomerPe;
-import org.vl4ds4m.banking.accounts.service.AccountService;
-import org.vl4ds4m.banking.accounts.service.ServiceException;
+import org.vl4ds4m.banking.entity.Account;
+import org.vl4ds4m.banking.entity.Currency;
+import org.vl4ds4m.banking.entity.Money;
+import org.vl4ds4m.banking.repository.AccountRepository;
+import org.vl4ds4m.banking.repository.CustomerRepository;
+import org.vl4ds4m.banking.repository.entity.AccountRe;
+import org.vl4ds4m.banking.repository.entity.CustomerRe;
 import org.vl4ds4m.banking.util.TestRepository;
 
 import java.math.BigDecimal;
@@ -36,7 +34,7 @@ class AccountServiceTest {
     @Test
     void testCreateAccount() {
         // Arrange
-        var createdAccount = new AccountPe();
+        var createdAccount = new AccountRe();
         createdAccount.setNumber(123L);
 
         var service = new AccountService(fakeAccountRepository(), mockCustomerRepository());
@@ -148,7 +146,7 @@ class AccountServiceTest {
         var accountRepository = fakeAccountRepository();
         var receiverMoney = new Money(new BigDecimal("751.02"));
         var receiverNumber = accountRepository.save(
-                new AccountPe(null, currency, receiverMoney.amount())
+                new AccountRe(null, currency, receiverMoney.amount())
         ).getNumber();
         var service = new AccountService(accountRepository, null);
 
@@ -181,7 +179,7 @@ class AccountServiceTest {
     private static AccountRepository fakeAccountRepository() {
         AccountRepository repository = new AccountTestRepository();
 
-        var account = new AccountPe();
+        var account = new AccountRe();
         account.setNumber(DEFAULT_ACCOUNT.getNumber());
         account.setCurrency(DEFAULT_ACCOUNT.getCurrency());
         account.setAmount(DEFAULT_ACCOUNT.getMoney().amount());
@@ -197,10 +195,10 @@ class AccountServiceTest {
         when(repository.findByName(any()))
                 .thenReturn(Optional.empty());
 
-        var customer = new CustomerPe();
+        var customer = new CustomerRe();
         customer.setName("my_client");
 
-        var account = new AccountPe();
+        var account = new AccountRe();
         account.setCustomer(customer);
         account.setNumber(DEFAULT_ACCOUNT.getNumber());
         account.setCurrency(DEFAULT_ACCOUNT.getCurrency());
@@ -215,19 +213,19 @@ class AccountServiceTest {
     }
 
     private static class AccountTestRepository
-            extends TestRepository<AccountPe, Long>
+            extends TestRepository<AccountRe, Long>
             implements AccountRepository
     {
         private final AtomicLong nextId = new AtomicLong();
 
         @Override
         @NonNull
-        protected Optional<Long> extractId(@NonNull AccountPe entity) {
+        protected Optional<Long> extractId(@NonNull AccountRe entity) {
             return Optional.ofNullable(entity.getNumber());
         }
 
         @Override
-        protected void setId(@NonNull Long id, @NonNull AccountPe entity) {
+        protected void setId(@NonNull Long id, @NonNull AccountRe entity) {
             entity.setNumber(id);
         }
 

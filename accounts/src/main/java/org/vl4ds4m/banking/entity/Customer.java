@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.accounts.model;
+package org.vl4ds4m.banking.entity;
 
 import lombok.Value;
 

@@ -23,7 +23,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Set;
 
-@Service
+// @Service
 @Validated
 public class CustomerService {
     private static final Logger logger = LoggerFactory.getLogger(CustomerService.class);

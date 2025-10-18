@@ -7,7 +7,7 @@ import org.vl4ds4m.banking.account.Account;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-@Entity
+// @Entity
 @Table(name = "transactions")
 public class Transaction {
     @Id

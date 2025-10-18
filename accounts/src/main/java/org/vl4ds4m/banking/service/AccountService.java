@@ -1,15 +1,17 @@
-package org.vl4ds4m.banking.accounts.service;
+package org.vl4ds4m.banking.service;
 
 import lombok.RequiredArgsConstructor;
-import org.vl4ds4m.banking.accounts.model.Account;
-import org.vl4ds4m.banking.accounts.model.Currency;
-import org.vl4ds4m.banking.accounts.model.Money;
-import org.vl4ds4m.banking.accounts.repository.AccountRepository;
-import org.vl4ds4m.banking.accounts.repository.CustomerRepository;
-import org.vl4ds4m.banking.accounts.repository.model.AccountPe;
+import org.springframework.stereotype.Service;
+import org.vl4ds4m.banking.entity.Account;
+import org.vl4ds4m.banking.entity.Currency;
+import org.vl4ds4m.banking.entity.Money;
+import org.vl4ds4m.banking.repository.AccountRepository;
+import org.vl4ds4m.banking.repository.CustomerRepository;
+import org.vl4ds4m.banking.repository.entity.AccountRe;
 
 import java.math.BigDecimal;
 
+@Service
 @RequiredArgsConstructor
 public class AccountService {
 
@@ -28,19 +30,19 @@ public class AccountService {
             throw new ServiceException(message);
         }
 
-        var account = new AccountPe(customer, currency, Money.ZERO.amount());
+        var account = new AccountRe(customer, currency, Money.ZERO.amount());
         account = accountRepository.save(account);
 
         return new Account(account.getNumber(), currency, Money.ZERO);
     }
 
     public Account getAccountByNumber(Long number) {
-        var account = getAccountPe(number);
-        return fromPe(account);
+        var account = getAccount(number);
+        return fromRe(account);
     }
 
     public void topUpAccount(Long number, BigDecimal augend) {
-        var account = getAccountPe(number);
+        var account = getAccount(number);
         var money = new Money(account.getAmount())
                 .add(new Money(augend));
         account.setAmount(money.amount());
@@ -48,7 +50,7 @@ public class AccountService {
     }
 
     public void withdrawMoneyToAccount(Long number, BigDecimal subtrahend) {
-        var account = getAccountPe(number);
+        var account = getAccount(number);
         var money = new Money(account.getAmount())
                 .subtract(new Money(subtrahend));
         account.setAmount(money.amount());
@@ -57,8 +59,8 @@ public class AccountService {
 
     public void transferMoney(Long senderNumber, Long receiverNumber, BigDecimal amount) {
         final var money = new Money(amount);
-        var sender = getAccountPe(senderNumber);
-        var receiver = getAccountPe(receiverNumber);
+        var sender = getAccount(senderNumber);
+        var receiver = getAccount(receiverNumber);
 
         final var senderMoneyBefore = new Money(sender.getAmount());
         final var senderMoneyAfter = senderMoneyBefore.subtract(money);
@@ -72,12 +74,12 @@ public class AccountService {
         accountRepository.save(receiver);
     }
 
-    private AccountPe getAccountPe(Long number) {
+    private AccountRe getAccount(Long number) {
         return accountRepository.findById(number)
                 .orElseThrow(() -> new ServiceException("Account[number=" + number + "] not found"));
     }
 
-    private static Account fromPe(AccountPe pe) {
+    private static Account fromRe(AccountRe pe) {
         return new Account(pe.getNumber(), pe.getCurrency(), new Money(pe.getAmount()));
     }
 }

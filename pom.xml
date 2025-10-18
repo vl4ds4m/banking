@@ -133,6 +133,7 @@
                         <modelPackage>${project.groupId}.api.model</modelPackage>
                         <configOptions>
                             <interfaceOnly>true</interfaceOnly>
+                            <useOptional>true</useOptional>
                             <useSpringBoot3>true</useSpringBoot3>
                         </configOptions>
                     </configuration>

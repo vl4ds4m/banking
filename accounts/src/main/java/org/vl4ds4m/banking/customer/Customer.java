@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity
+// @Entity
 @Table(name = "customers")
 public class Customer {
     @Id

@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.accounts.repository.model;
+package org.vl4ds4m.banking.repository.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -8,10 +8,10 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
-@Table(name = CustomerPe.TABLE_NAME)
+@Table(name = CustomerRe.TABLE_NAME)
 @Data
 @NoArgsConstructor
-public class CustomerPe {
+public class CustomerRe {
 
     static final String TABLE_NAME = "customers";
 
@@ -38,7 +38,7 @@ public class CustomerPe {
     private LocalDate birthDate;
 
     @OneToMany(mappedBy = AccountPe_.CUSTOMER)
-    private Set<AccountPe> accounts;
+    private Set<AccountRe> accounts;
 
     static class ColumnName {
 

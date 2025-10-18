@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.accounts.service;
+package org.vl4ds4m.banking.service;
 
 public class ServiceException extends RuntimeException {
     public ServiceException(String message) {

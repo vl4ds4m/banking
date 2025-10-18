@@ -26,7 +26,7 @@ import org.vl4ds4m.banking.transaction.TransactionService;
 import java.math.BigDecimal;
 import java.util.List;
 
-@Service
+// @Service
 @Validated
 public class AccountService {
     private static final Logger logger = LoggerFactory.getLogger(AccountService.class);

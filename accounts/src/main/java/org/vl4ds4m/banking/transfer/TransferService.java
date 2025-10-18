@@ -23,7 +23,7 @@ import org.vl4ds4m.banking.transaction.TransactionService;
 
 import java.math.BigDecimal;
 
-@Service
+// @Service
 @Validated
 public class TransferService {
     private static final Logger logger = LoggerFactory.getLogger(TransferService.class);

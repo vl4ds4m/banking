@@ -1,12 +1,10 @@
-package org.vl4ds4m.banking.model;
+package org.vl4ds4m.banking.entity;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.vl4ds4m.banking.accounts.model.Money;
-import org.vl4ds4m.banking.accounts.model.MoneyException;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
