@@ -13,7 +13,7 @@
       },
       "tags": [],
       "request": {
-        "url": "http://localhost:8081/accounts/8",
+        "url": "http://localhost:8081/accounts/1000000001",
         "method": "GET",
         "headers": [],
         "params": [],
@@ -50,7 +50,7 @@
         "params": [],
         "body": {
           "mode": "json",
-          "json": "{\n  \"customerId\": 4,\n  \"currency\": \"USD\"\n}",
+          "json": "{\n  \"customerName\": \"foo_bar\",\n  \"currency\": \"GBP\"\n}",
           "formUrlEncoded": [],
           "multipartForm": [],
           "file": []
@@ -76,13 +76,13 @@
       },
       "tags": [],
       "request": {
-        "url": "http://localhost:8081/accounts/8/top-up0",
+        "url": "http://localhost:8081/accounts/1000000008/top-up0",
         "method": "POST",
         "headers": [],
         "params": [],
         "body": {
           "mode": "json",
-          "json": "{\n  \"amount\": 64.50\n}",
+          "json": "{\n  \"augend\": 64.50\n}",
           "formUrlEncoded": [],
           "multipartForm": [],
           "file": []
@@ -161,7 +161,7 @@
       },
       "tags": [],
       "request": {
-        "url": "http://localhost:8081/customers/1/balance?currency=RUB",
+        "url": "http://localhost:8081/customers/ivanovp/balance?currency=RUB",
         "method": "GET",
         "headers": [],
         "params": [
@@ -205,7 +205,7 @@
         "params": [],
         "body": {
           "mode": "json",
-          "json": "{\n  \"firstName\": \"Foo\",\n  \"lastName\": \"Bar\",\n  \"birthDate\": \"2001-02-03\"\n}",
+          "json": "{\n  \"customerName\": \"foo_bar\",\n  \"firstName\": \"Foo\",\n  \"lastName\": \"Bar\",\n  \"birthDate\": \"2001-02-03\"\n}",
           "formUrlEncoded": [],
           "multipartForm": [],
           "file": []
@@ -266,6 +266,37 @@
           "mode": "inherit"
         }
       }
+    },
+    {
+      "type": "http",
+      "name": "Rates actuator",
+      "filename": "Rates actuator.bru",
+      "seq": 8,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "request": {
+        "url": "http://localhost:8083/actuator",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
     }
   ],
   "environments": [],
@@ -277,7 +308,11 @@
       "node_modules",
       ".git"
     ],
-    "size": 0.0029754638671875,
-    "filesCount": 7
+    "size": 0.0031423568725585938,
+    "filesCount": 9,
+    "presets": {
+      "requestType": "http",
+      "requestUrl": ""
+    }
   }
 }
