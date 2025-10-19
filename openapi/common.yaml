@@ -33,12 +33,12 @@ components:
         - base
         - rates
   responses:
-    InvalidRequest:
-      description: Invalid request with cause message.
+    InvalidQuery:
+      description: Invalid query with cause message.
       content:
         application/json:
           schema:
-            title: InvalidRequestResBody
+            title: InvalidQueryResponse
             type: object
             properties:
               message:

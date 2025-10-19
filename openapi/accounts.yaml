@@ -12,7 +12,7 @@ components:
       $ref: './common.yaml#/components/schemas/Currency'
     CurrencyAmount:
       $ref: './common.yaml#/components/schemas/CurrencyAmount'
-    BalanceResBody:
+    BalanceResponse:
       type: object
       properties:
         currency:
@@ -35,14 +35,14 @@ components:
       schema:
         $ref: '#/components/schemas/AccountNumber'
   responses:
-    InvalidRequest:
-      $ref: './common.yaml#/components/responses/InvalidRequest'
+    InvalidQuery:
+      $ref: './common.yaml#/components/responses/InvalidQuery'
     AccountOperation:
       description: Amount of money in the account after the operation.
       content:
         application/json:
           schema:
-            title: AccountOperationResBody
+            title: AccountOperationResponse
             type: object
             properties:
               currency:
@@ -63,7 +63,7 @@ paths:
         content:
           application/json:
             schema:
-              title: CreateCustomerReqBody
+              title: CreateCustomerRequest
               type: object
               properties:
                 customerName:
@@ -87,7 +87,7 @@ paths:
         '200':
           description: Customer created.
         '400':
-          $ref: '#/components/responses/InvalidRequest'
+          $ref: '#/components/responses/InvalidQuery'
   /customers/{customerName}/balance:
     get:
       operationId: getCustomerBalance
@@ -112,9 +112,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BalanceResBody'
+                $ref: '#/components/schemas/BalanceResponse'
         '400':
-          $ref: '#/components/responses/InvalidRequest'
+          $ref: '#/components/responses/InvalidQuery'
   /accounts:
     post:
       operationId: createAccount
@@ -125,7 +125,7 @@ paths:
         content:
           application/json:
             schema:
-              title: CreateAccountReqBody
+              title: CreateAccountRequest
               type: object
               properties:
                 customerName:
@@ -141,7 +141,7 @@ paths:
           content:
             application/json:
               schema:
-                title: CreateAccountResBody
+                title: CreateAccountResponse
                 type: object
                 properties:
                   number:
@@ -149,7 +149,7 @@ paths:
                 required:
                   - number
         '400':
-          $ref: '#/components/responses/InvalidRequest'
+          $ref: '#/components/responses/InvalidQuery'
   /accounts/{accountNumber}:
     get:
       operationId: getAccountBalance
@@ -163,9 +163,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BalanceResBody'
+                $ref: '#/components/schemas/BalanceResponse'
         '400':
-          $ref: '#/components/responses/InvalidRequest'
+          $ref: '#/components/responses/InvalidQuery'
   /accounts/{accountNumber}/top-up:
     put:
       operationId: topUpAccount
@@ -178,7 +178,7 @@ paths:
         content:
           application/json:
             schema:
-              title: TopUpAccountReqBody
+              title: TopUpAccountRequest
               type: object
               properties:
                 augend:
@@ -189,7 +189,7 @@ paths:
         '200':
           $ref: '#/components/responses/AccountOperation'
         '400':
-          $ref: '#/components/responses/InvalidRequest'
+          $ref: '#/components/responses/InvalidQuery'
   /accounts/{accountNumber}/withdraw:
     put:
       operationId: withdrawAccount
@@ -202,7 +202,7 @@ paths:
         content:
           application/json:
             schema:
-              title: WithdrawAccountReqBody
+              title: WithdrawAccountRequest
               type: object
               properties:
                 subtrahend:
@@ -213,7 +213,7 @@ paths:
         '200':
           $ref: '#/components/responses/AccountOperation'
         '400':
-          $ref: '#/components/responses/InvalidRequest'
+          $ref: '#/components/responses/InvalidQuery'
   /transfer:
     put:
       operationId: transfer
@@ -224,7 +224,7 @@ paths:
         content:
           application/json:
             schema:
-              title: TransferReqBody
+              title: TransferRequest
               type: object
               properties:
                 senderAccountNumber:
@@ -243,7 +243,7 @@ paths:
           content:
             application/json:
               schema:
-                title: TransferResBody
+                title: TransferResponse
                 type: object
                 properties:
                   senderCurrency:
@@ -254,4 +254,4 @@ paths:
                   - senderCurrency
                   - totalSenderAmount
         '400':
-          $ref: '#/components/responses/InvalidRequest'
+          $ref: '#/components/responses/InvalidQuery'
