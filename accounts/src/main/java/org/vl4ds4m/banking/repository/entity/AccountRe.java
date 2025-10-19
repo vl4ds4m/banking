@@ -3,7 +3,9 @@ package org.vl4ds4m.banking.repository.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.vl4ds4m.banking.entity.Account;
 import org.vl4ds4m.banking.entity.Currency;
+import org.vl4ds4m.banking.entity.Money;
 
 import java.math.BigDecimal;
 
@@ -20,7 +22,12 @@ public class AccountRe {
 
     @Id
     @GeneratedValue
-    @Column(name = ColumnName.NUMBER)
+    @Column(name = ColumnName.ID)
+    private Long id;
+
+    @Column(name = ColumnName.NUMBER,
+            nullable = false,
+            unique = true)
     private Long number;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,13 +44,13 @@ public class AccountRe {
             nullable = false)
     private BigDecimal amount;
 
-    public AccountRe(CustomerRe customer, Currency currency, BigDecimal amount) {
-        this.customer = customer;
-        this.currency = currency;
-        this.amount = amount;
+    public Account toEntity() {
+        return new Account(number, currency, Money.of(amount));
     }
 
     static class ColumnName {
+
+        static final String ID = "id";
 
         static final String NUMBER = "number";
 

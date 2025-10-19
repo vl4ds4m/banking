@@ -41,15 +41,6 @@ public abstract class TestRepository<T, ID> implements CrudRepository<T, ID> {
                 : Optional.empty();
     }
 
-    private T extract(ID id) {
-        var entity = storage.get(id);
-        if (readBeforeUpdate.contains(id)) {
-            throw new IllegalStateException("Repeated read entity by id=" + id + " without update");
-        }
-        readBeforeUpdate.add(id);
-        return entity;
-    }
-
     @Override
     public boolean existsById(ID id) {
         return storage.containsKey(id);
@@ -98,5 +89,18 @@ public abstract class TestRepository<T, ID> implements CrudRepository<T, ID> {
     @Override
     public void deleteAll() {
         storage.keySet().forEach(this::deleteById);
+    }
+
+    protected final Iterable<T> getAll() {
+        return storage.values();
+    }
+
+    protected final T extract(ID id) {
+        var entity = storage.get(id);
+        if (readBeforeUpdate.contains(id)) {
+            throw new IllegalStateException("Repeated read entity by id=" + id + " without update");
+        }
+        readBeforeUpdate.add(id);
+        return entity;
     }
 }

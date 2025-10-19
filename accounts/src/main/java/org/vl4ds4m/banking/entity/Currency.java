@@ -5,7 +5,7 @@ public enum Currency {
     RUB,
     CNY,
     EUR,
-    GBR,
+    GBP,
     ;
 
     public org.vl4ds4m.banking.api.model.Currency toApiCurrency() {

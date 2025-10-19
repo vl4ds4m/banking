@@ -5,7 +5,6 @@ import org.vl4ds4m.banking.Conversions;
 import org.vl4ds4m.banking.currency.Currency;
 import org.vl4ds4m.banking.customer.Customer;
 import org.vl4ds4m.banking.transaction.Transaction;
-import org.vl4ds4m.banking.transaction.Transaction_;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -37,7 +36,7 @@ public class Account {
         scale = Conversions.SCALE)
     private BigDecimal amount;
 
-    @OneToMany(mappedBy = Transaction_.ACCOUNT)
+    // @OneToMany(mappedBy = Transaction_.ACCOUNT)
     private List<Transaction> transactions;
 
     protected Account() {}

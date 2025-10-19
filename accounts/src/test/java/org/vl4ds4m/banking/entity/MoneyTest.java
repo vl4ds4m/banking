@@ -21,7 +21,7 @@ class MoneyTest {
     @MethodSource("amountProvider")
     void testCreateMoney(BigDecimal amount, BigDecimal expected) {
         // Act
-        var money = new Money(amount);
+        var money = Money.of(amount);
 
         // Assert
         assertEquals(expected, money.amount());
@@ -32,7 +32,7 @@ class MoneyTest {
     @MethodSource("invalidAmountProvider")
     void testCreateMoneyFailed(BigDecimal amount) {
         // Act & Assert
-        var e = assertThrows(MoneyException.class, () -> new Money(amount));
+        var e = assertThrows(MoneyException.class, () -> Money.of(amount));
         assertEquals("Amount must be zero or positive", e.getMessage());
     }
 
@@ -79,8 +79,8 @@ class MoneyTest {
     @Test
     void testSubtractMoneyWithDebtFailed() {
         // Arrange
-        var a = new Money(new BigDecimal("63.78"));
-        var b = new Money(new BigDecimal("84.02"));
+        var a = Money.of(new BigDecimal("63.78"));
+        var b = Money.of(new BigDecimal("84.02"));
 
         // Act & Assert
         var e = assertThrows(MoneyException.class, () -> a.subtract(b));
@@ -113,8 +113,8 @@ class MoneyTest {
     @Test
     void testDivideMoneyToZeroFailed() {
         // Arrange
-        var a = new Money(new BigDecimal("65.12"));
-        var b = Money.ZERO;
+        var a = Money.of(new BigDecimal("65.12"));
+        var b = Money.empty();
 
         // Act & Assert
         var e = assertThrows(MoneyException.class, () -> a.divide(b));
@@ -162,10 +162,10 @@ class MoneyTest {
                 List.of("1.865", "1.864", 0),
                 List.of("1.875", "1.876", 0),
                 List.of("1.875", "1.874", 1)
-        ).map(list -> Arguments.of(
-                new Money(new BigDecimal("" + list.get(0))),
-                new Money(new BigDecimal("" + list.get(1))),
-                list.get(2)
+        ).map(List::iterator).map(list -> Arguments.of(
+                Money.of(new BigDecimal("" + list.next())),
+                Money.of(new BigDecimal("" + list.next())),
+                list.next()
         ));
     }
 
@@ -229,6 +229,6 @@ class MoneyTest {
     }
 
     private static Function<String, Money> stringToMoney() {
-        return s -> new Money(new BigDecimal(s));
+        return s -> Money.of(new BigDecimal(s));
     }
 }

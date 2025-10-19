@@ -1,17 +1,23 @@
 package org.vl4ds4m.banking.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.vl4ds4m.banking.api.model.*;
 import org.vl4ds4m.banking.entity.Account;
 import org.vl4ds4m.banking.entity.Currency;
+import org.vl4ds4m.banking.entity.Customer;
 import org.vl4ds4m.banking.entity.Money;
 import org.vl4ds4m.banking.repository.AccountRepository;
 import org.vl4ds4m.banking.repository.CustomerRepository;
 import org.vl4ds4m.banking.repository.entity.AccountRe;
+import org.vl4ds4m.banking.service.expection.DuplicateEntityException;
+import org.vl4ds4m.banking.service.expection.EntityNotFoundException;
 
 import java.math.BigDecimal;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AccountService {
 
@@ -19,54 +25,92 @@ public class AccountService {
 
     private final CustomerRepository customerRepository;
 
-    public Account createAccount(String customerName, Currency currency) {
+    public Account getAccountByNumber(long number) {
+        return getAccountRe(number).toEntity();
+    }
+
+    public CreateAccountResponse createAccount(CreateAccountRequest request) {
+        var customerName = request.getCustomerName();
         var customer = customerRepository.findByName(customerName)
-                .orElseThrow(() -> new ServiceException("Customer[name=" + customerName + "] not found"));
+                .orElseThrow(() -> new EntityNotFoundException(Customer.logStr(customerName)));
 
-        boolean existed = customer.getAccounts().stream()
-                .anyMatch(a -> a.getCurrency().equals(currency));
-        if (existed) {
-            var message = "Account[customerName=" + customerName + ",currency=" + currency + "] already existed";
-            throw new ServiceException(message);
-        }
+        var currency = Currency.valueOf(request.getCurrency());
+        customer.getAccounts().stream()
+                .filter(a -> a.getCurrency().equals(currency))
+                .findAny()
+                .ifPresent(a -> {
+                    throw new DuplicateEntityException(
+                            Account.logStr(customerName, currency));
+                });
 
-        var account = new AccountRe(customer, currency, Money.ZERO.amount());
+        var account = new AccountRe();
+        account.setNumber(0L);
+        account.setCustomer(customer);
+        account.setCurrency(currency);
+        account.setAmount(Money.empty().amount());
         account = accountRepository.save(account);
 
-        return new Account(account.getNumber(), currency, Money.ZERO);
+        long number = generateAccountNumber(account.getId());
+        account.setNumber(number);
+
+        account = accountRepository.save(account);
+        number = account.getNumber();
+        log.info("{} created", Account.logStr(number));
+
+        return new CreateAccountResponse(number);
     }
 
-    public Account getAccountByNumber(Long number) {
-        var account = getAccount(number);
-        return fromRe(account);
+    public BalanceResponse getAccountBalance(long number) {
+        var account = getAccountRe(number);
+        return new BalanceResponse(account.getCurrency().toApiCurrency(), account.getAmount());
     }
 
-    public void topUpAccount(Long number, BigDecimal augend) {
-        var account = getAccount(number);
-        var money = new Money(account.getAmount())
-                .add(new Money(augend));
+    public AccountOperationResponse topUpAccount(long number, TopUpAccountRequest request) {
+        var account = getAccountRe(number);
+
+        var money = Money.of(account.getAmount())
+                .add(Money.of(request.getAugend()));
         account.setAmount(money.amount());
-        accountRepository.save(account);
+
+        account = accountRepository.save(account);
+        log.info("{} top up by {} {}",
+                Account.logStr(account.getNumber()),
+                request.getAugend(),
+                account.getCurrency());
+
+        return new AccountOperationResponse(
+                account.getCurrency().toApiCurrency(),
+                account.getAmount());
     }
 
-    public void withdrawMoneyToAccount(Long number, BigDecimal subtrahend) {
-        var account = getAccount(number);
-        var money = new Money(account.getAmount())
-                .subtract(new Money(subtrahend));
+    public AccountOperationResponse withdrawMoneyToAccount(long number, WithdrawAccountRequest request) {
+        var account = getAccountRe(number);
+
+        var money = Money.of(account.getAmount())
+                .subtract(Money.of(request.getSubtrahend()));
         account.setAmount(money.amount());
-        accountRepository.save(account);
+
+        account = accountRepository.save(account);
+        log.info("{} withdraw {} {}",
+                Account.logStr(account.getNumber()),
+                request.getSubtrahend(),
+                account.getCurrency());
+
+        return new AccountOperationResponse(
+                account.getCurrency().toApiCurrency(),
+                account.getAmount());
     }
 
-    public void transferMoney(Long senderNumber, Long receiverNumber, BigDecimal amount) {
-        final var money = new Money(amount);
-        var sender = getAccount(senderNumber);
-        var receiver = getAccount(receiverNumber);
+    public void transferMoney(long senderNumber, long receiverNumber, BigDecimal amount) {
+        final var money = Money.of(amount);
+        var sender = getAccountRe(senderNumber);
+        var receiver = getAccountRe(receiverNumber);
 
-        final var senderMoneyBefore = new Money(sender.getAmount());
+        final var senderMoneyBefore = Money.of(sender.getAmount());
         final var senderMoneyAfter = senderMoneyBefore.subtract(money);
         sender.setAmount(senderMoneyAfter.amount());
 
-        final var receiverMoneyBefore = new Money(receiver.getAmount());
+        final var receiverMoneyBefore = Money.of(receiver.getAmount());
         final var receiverMoneyAfter = receiverMoneyBefore.add(money);
         receiver.setAmount(receiverMoneyAfter.amount());
 
@@ -74,12 +118,18 @@ public class AccountService {
         accountRepository.save(receiver);
     }
 
-    private AccountRe getAccount(Long number) {
-        return accountRepository.findById(number)
-                .orElseThrow(() -> new ServiceException("Account[number=" + number + "] not found"));
+    private AccountRe getAccountRe(long number) {
+        return accountRepository.findByNumber(number)
+                .orElseThrow(() -> new EntityNotFoundException(Account.logStr(number)));
     }
 
-    private static Account fromRe(AccountRe pe) {
-        return new Account(pe.getNumber(), pe.getCurrency(), new Money(pe.getAmount()));
+    // ToDo implement proper generator
+    private static long generateAccountNumber(long id) {
+        long number = id + 1_000_000_000L;
+        if (number <= 0L) {
+            throw new RuntimeException("New account number must be positive. " +
+                    "Generated value = " + number);
+        }
+        return number;
     }
 }

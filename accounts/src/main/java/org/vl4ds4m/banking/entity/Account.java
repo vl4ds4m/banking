@@ -1,13 +1,18 @@
 package org.vl4ds4m.banking.entity;
 
-import lombok.Value;
+public record Account (
 
-@Value
-public class Account {
+        long number,
 
-    Long number;
+        Currency currency,
 
-    Currency currency;
+        Money money
+) {
+    public static String logStr(long number) {
+        return "Account[number=" + number + "]";
+    }
 
-    Money money;
+    public static String logStr(String customerName, Currency currency) {
+        return "Account[customerName=" + customerName + ",currency=" + currency + "]";
+    }
 }

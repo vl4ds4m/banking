@@ -3,6 +3,7 @@ package org.vl4ds4m.banking.repository.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.vl4ds4m.banking.entity.Customer;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -37,8 +38,12 @@ public class CustomerRe {
             nullable = false)
     private LocalDate birthDate;
 
-    @OneToMany(mappedBy = AccountPe_.CUSTOMER)
+    @OneToMany(mappedBy = AccountRe_.CUSTOMER)
     private Set<AccountRe> accounts;
+
+    public Customer toEntity() {
+        return new Customer(name, firstName, lastName, birthDate);
+    }
 
     static class ColumnName {
 

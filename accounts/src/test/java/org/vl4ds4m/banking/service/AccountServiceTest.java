@@ -4,13 +4,20 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.lang.NonNull;
+import org.vl4ds4m.banking.api.model.CreateAccountRequest;
+import org.vl4ds4m.banking.api.model.TopUpAccountRequest;
+import org.vl4ds4m.banking.api.model.WithdrawAccountRequest;
 import org.vl4ds4m.banking.entity.Account;
 import org.vl4ds4m.banking.entity.Currency;
+import org.vl4ds4m.banking.entity.Customer;
 import org.vl4ds4m.banking.entity.Money;
 import org.vl4ds4m.banking.repository.AccountRepository;
 import org.vl4ds4m.banking.repository.CustomerRepository;
 import org.vl4ds4m.banking.repository.entity.AccountRe;
 import org.vl4ds4m.banking.repository.entity.CustomerRe;
+import org.vl4ds4m.banking.service.expection.DuplicateEntityException;
+import org.vl4ds4m.banking.service.expection.EntityNotFoundException;
+import org.vl4ds4m.banking.util.TestEntity;
 import org.vl4ds4m.banking.util.TestRepository;
 
 import java.math.BigDecimal;
@@ -23,67 +30,20 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-
 class AccountServiceTest {
 
-    private static final Account DEFAULT_ACCOUNT = createDefaultAccount();
+    private static final Account DEFAULT_ACCOUNT = TestEntity.createDefaultAccount();
 
-    private static final String DEFAULT_CLIENT_NAME = "my_client";
-
-    @DisplayName("Создание счёта")
-    @Test
-    void testCreateAccount() {
-        // Arrange
-        var createdAccount = new AccountRe();
-        createdAccount.setNumber(123L);
-
-        var service = new AccountService(fakeAccountRepository(), mockCustomerRepository());
-
-        // Act
-        var account = service.createAccount(DEFAULT_CLIENT_NAME, Currency.CNY);
-
-        // Assert
-        assertNotNull(account.getNumber());
-        assertEquals(Currency.CNY, account.getCurrency());
-        assertEquals(Money.ZERO, account.getMoney());
-    }
-
-    @DisplayName("Ошибка при создании имеющегося счёта")
-    @Test
-    void testCreateDuplicateAccountFailed() {
-        // Arrange
-        var currency = DEFAULT_ACCOUNT.getCurrency();
-        var service = new AccountService(null, mockCustomerRepository());
-
-        // Act & Assert
-        var e = assertThrows(ServiceException.class,
-                () -> service.createAccount(DEFAULT_CLIENT_NAME, currency));
-        assertEquals(
-                "Account[customerName=" + DEFAULT_CLIENT_NAME +
-                        ",currency=" + currency + "] already existed",
-                e.getMessage());
-    }
-
-    @DisplayName("Ошибка при создании счёта для несуществующего клиента")
-    @Test
-    void testCreateAccountForAbsentCustomerFailed() {
-        // Arrange
-        AccountService service = new AccountService(null, mockCustomerRepository());
-
-        // Act & Assert
-        var e = assertThrows(ServiceException.class,
-                () -> service.createAccount("unknown_client", Currency.EUR));
-        assertEquals("Customer[name=unknown_client] not found", e.getMessage());
-    }
+    private static final Customer DEFAULT_CUSTOMER = TestEntity.createDefaultCustomer();
 
     @DisplayName("Получение счёта по его номеру")
     @Test
     void testGetAccountByNumber() {
         // Arrange
-        AccountService service = new AccountService(fakeAccountRepository(), null);
+        var service = new AccountService(fakeAccountRepository(), null);
 
         // Act
-        Account account = service.getAccountByNumber(DEFAULT_ACCOUNT.getNumber());
+        var account = service.getAccountByNumber(DEFAULT_ACCOUNT.number());
 
         // Assert
         assertEquals(DEFAULT_ACCOUNT, account);
@@ -91,77 +51,154 @@ class AccountServiceTest {
 
     @DisplayName("Ошибка при запросе несуществующего счёта")
     @Test
-    void testGetAbsentAccount() {
+    void testGetAbsentAccountFailed() {
         // Arrange
         AccountService service = new AccountService(fakeAccountRepository(), null);
 
         // Act & Assert
-        var e = assertThrows(ServiceException.class, () -> service.getAccountByNumber(935L));
+        var e = assertThrows(EntityNotFoundException.class, () -> service.getAccountByNumber(935L));
         assertEquals("Account[number=935] not found", e.getMessage());
+    }
+
+    @DisplayName("Создание счёта")
+    @Test
+    void testCreateAccount() {
+        // Arrange
+        var service = new AccountService(fakeAccountRepository(), mockCustomerRepository());
+        var request = new CreateAccountRequest(
+                DEFAULT_CUSTOMER.name(),
+                Currency.CNY.toApiCurrency());
+
+        // Act
+        var response = service.createAccount(request);
+
+        // Assert
+        assertTrue(response.getNumber() > 0L);
+
+        var account = service.getAccountByNumber(response.getNumber());
+        assertEquals(response.getNumber(), account.number());
+        assertEquals(Currency.CNY, account.currency());
+        assertEquals(Money.empty(), account.money());
+    }
+
+    @DisplayName("Ошибка при создании имеющегося счёта")
+    @Test
+    void testCreateDuplicateAccountFailed() {
+        // Arrange
+        var service = new AccountService(null, mockCustomerRepository());
+        var request = new CreateAccountRequest(
+                DEFAULT_CUSTOMER.name(),
+                DEFAULT_ACCOUNT.currency().toApiCurrency());
+
+        // Act & Assert
+        var e = assertThrows(DuplicateEntityException.class, () -> service.createAccount(request));
+        assertEquals(
+                "Account[customerName=" + DEFAULT_CUSTOMER.name() +
+                        ",currency=" + DEFAULT_ACCOUNT.currency() +
+                        "] already exists",
+                e.getMessage());
+    }
+
+    @DisplayName("Ошибка при создании счёта для несуществующего клиента")
+    @Test
+    void testCreateAccountForAbsentCustomerFailed() {
+        // Arrange
+        var service = new AccountService(null, mockCustomerRepository());
+        var request = new CreateAccountRequest("unknown_client", Currency.EUR.toApiCurrency());
+
+        // Act & Assert
+        var e = assertThrows(EntityNotFoundException.class, () -> service.createAccount(request));
+        assertEquals("Customer[name=unknown_client] not found", e.getMessage());
+    }
+
+    @DisplayName("Получение баланса по счёту")
+    @Test
+    void testGetAccountBalance() {
+        // Arrange
+        var service = new AccountService(fakeAccountRepository(), null);
+
+        // Act
+        var response = service.getAccountBalance(DEFAULT_ACCOUNT.number());
+
+        // Assert
+        assertEquals(DEFAULT_ACCOUNT.currency().toApiCurrency(), response.getCurrency());
+        assertEquals(DEFAULT_ACCOUNT.money().amount(), response.getAmount());
     }
 
     @DisplayName("Пополнение счёта")
     @Test
     void testTopUpAccount() {
         // Arrange
-        var number = DEFAULT_ACCOUNT.getNumber();
-        var money = new Money(BigDecimal.TWO);
         var service = new AccountService(fakeAccountRepository(), null);
+        var number = DEFAULT_ACCOUNT.number();
+        var money = Money.of(BigDecimal.TWO);
+        var request = new TopUpAccountRequest(money.amount());
 
         // Act
-        service.topUpAccount(number, money.amount());
-        var actual = service.getAccountByNumber(number);
+        var response = service.topUpAccount(number, request);
 
         // Assert
-        var expectedMoney = DEFAULT_ACCOUNT.getMoney().add(money);
-        var expected = new Account(number, DEFAULT_ACCOUNT.getCurrency(), expectedMoney);
-        assertEquals(expected, actual);
+        var expectedCurrency = DEFAULT_ACCOUNT.currency().toApiCurrency();
+        var expectedAmount = DEFAULT_ACCOUNT.money().add(money).amount();
+        assertEquals(expectedCurrency, response.getCurrency());
+        assertEquals(expectedAmount, response.getTotalAmount());
     }
 
     @DisplayName("Снятие денег со счёта")
     @Test
     void testWithdrawMoneyToAccount() {
         // Arrange
-        var number = DEFAULT_ACCOUNT.getNumber();
-        var money = new Money(new BigDecimal("3.67"));
         var service = new AccountService(fakeAccountRepository(), null);
+        var number = DEFAULT_ACCOUNT.number();
+        var money = Money.of(new BigDecimal("3.67"));
+        var request = new WithdrawAccountRequest(money.amount());
 
         // Act
-        service.withdrawMoneyToAccount(number, money.amount());
-        var account = service.getAccountByNumber(number);
+        var response = service.withdrawMoneyToAccount(number, request);
 
         // Assert
-        var expectedMoney = DEFAULT_ACCOUNT.getMoney().subtract(money);
-        var expected = new Account(number, DEFAULT_ACCOUNT.getCurrency(), expectedMoney);
-        assertEquals(expected, account);
+        var expectedCurrency = DEFAULT_ACCOUNT.currency().toApiCurrency();
+        var expectedAmount = DEFAULT_ACCOUNT.money().subtract(money).amount();
+        assertEquals(expectedCurrency, response.getCurrency());
+        assertEquals(expectedAmount, response.getTotalAmount());
     }
 
     @DisplayName("Перевод денег с одного счёта на другой в одной валюте")
     @Test
     void testTransferMoneyForEqualCurrencies() {
         // Arrange
-        var currency = DEFAULT_ACCOUNT.getCurrency();
-        var money = new Money(new BigDecimal("276.13"));
-        var senderNumber = DEFAULT_ACCOUNT.getNumber();
+        var currency = DEFAULT_ACCOUNT.currency();
+
+        long senderNumber = DEFAULT_ACCOUNT.number();
+
+        long receiverNumber = 237371236L;
+        var receiverAccount = new AccountRe();
+        var receiverMoney = Money.of(new BigDecimal("751.02"));
+        receiverAccount.setNumber(receiverNumber);
+        receiverAccount.setCurrency(currency);
+        receiverAccount.setAmount(receiverMoney.amount());
+
         var accountRepository = fakeAccountRepository();
-        var receiverMoney = new Money(new BigDecimal("751.02"));
-        var receiverNumber = accountRepository.save(
-                new AccountRe(null, currency, receiverMoney.amount())
-        ).getNumber();
+        accountRepository.save(receiverAccount);
+
+        var money = Money.of(new BigDecimal("276.13"));
+
         var service = new AccountService(accountRepository, null);
 
         // Act
         service.transferMoney(senderNumber, receiverNumber, money.amount());
-        var sender = service.getAccountByNumber(senderNumber);
-        var receiver = service.getAccountByNumber(receiverNumber);
 
         // Arrange
         var expectedSender = new Account(senderNumber, currency,
-                DEFAULT_ACCOUNT.getMoney().subtract(money));
+                DEFAULT_ACCOUNT.money().subtract(money));
         var expectedReceiver = new Account(receiverNumber, currency,
                 receiverMoney.add(money));
-        assertEquals(expectedSender, sender);
-        assertEquals(expectedReceiver, receiver);
+
+        var actualSender = service.getAccountByNumber(senderNumber);
+        var actualReceiver = service.getAccountByNumber(receiverNumber);
+
+        assertEquals(expectedSender, actualSender);
+        assertEquals(expectedReceiver, actualReceiver);
     }
 
     @DisplayName("Перевод денег с одного счёта на другой в разных валютах")
@@ -169,20 +206,13 @@ class AccountServiceTest {
     @Disabled("Необходимо реализовать ConverterService")
     void testTransferMoneyForDifferentCurrencies() {}
 
-    private static Account createDefaultAccount() {
-        return new Account(
-                9876543210L,
-                Currency.RUB,
-                new Money(new BigDecimal("7529.83")));
-    }
-
     private static AccountRepository fakeAccountRepository() {
         AccountRepository repository = new AccountTestRepository();
 
         var account = new AccountRe();
-        account.setNumber(DEFAULT_ACCOUNT.getNumber());
-        account.setCurrency(DEFAULT_ACCOUNT.getCurrency());
-        account.setAmount(DEFAULT_ACCOUNT.getMoney().amount());
+        account.setNumber(DEFAULT_ACCOUNT.number());
+        account.setCurrency(DEFAULT_ACCOUNT.currency());
+        account.setAmount(DEFAULT_ACCOUNT.money().amount());
 
         repository.save(account);
 
@@ -192,21 +222,20 @@ class AccountServiceTest {
     private static CustomerRepository mockCustomerRepository() {
         CustomerRepository repository = mock();
 
-        when(repository.findByName(any()))
-                .thenReturn(Optional.empty());
+        when(repository.findByName(any())).thenReturn(Optional.empty());
 
         var customer = new CustomerRe();
-        customer.setName("my_client");
+        customer.setName(DEFAULT_CUSTOMER.name());
 
         var account = new AccountRe();
         account.setCustomer(customer);
-        account.setNumber(DEFAULT_ACCOUNT.getNumber());
-        account.setCurrency(DEFAULT_ACCOUNT.getCurrency());
-        account.setAmount(DEFAULT_ACCOUNT.getMoney().amount());
+        account.setNumber(DEFAULT_ACCOUNT.number());
+        account.setCurrency(DEFAULT_ACCOUNT.currency());
+        account.setAmount(DEFAULT_ACCOUNT.money().amount());
 
         customer.setAccounts(Set.of(account));
 
-        when(repository.findByName("my_client"))
+        when(repository.findByName(DEFAULT_CUSTOMER.name()))
                 .thenReturn(Optional.of(customer));
 
         return repository;
@@ -221,18 +250,28 @@ class AccountServiceTest {
         @Override
         @NonNull
         protected Optional<Long> extractId(@NonNull AccountRe entity) {
-            return Optional.ofNullable(entity.getNumber());
+            return Optional.ofNullable(entity.getId());
         }
 
         @Override
         protected void setId(@NonNull Long id, @NonNull AccountRe entity) {
-            entity.setNumber(id);
+            entity.setId(id);
         }
 
         @Override
         @NonNull
         protected Long produceNextId() {
             return nextId.incrementAndGet();
+        }
+
+        @Override
+        public Optional<AccountRe> findByNumber(Long number) {
+            for (var account : getAll()) {
+                if (account.getNumber().equals(number)) {
+                    return Optional.of(extract(account.getId()));
+                }
+            }
+            return Optional.empty();
         }
     }
 }

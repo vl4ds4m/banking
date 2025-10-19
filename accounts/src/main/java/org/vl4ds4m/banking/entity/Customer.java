@@ -1,17 +1,18 @@
 package org.vl4ds4m.banking.entity;
 
-import lombok.Value;
-
 import java.time.LocalDate;
 
-@Value
-public class Customer {
+public record Customer(
 
-    String name;
+        String name,
 
-    String firstName;
+        String firstName,
 
-    String lastName;
+        String lastName,
 
-    LocalDate birthDate;
+        LocalDate birthDate
+) {
+    public static String logStr(String name) {
+        return "Customer[name=" + name + "]";
+    }
 }

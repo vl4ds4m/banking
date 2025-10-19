@@ -10,6 +10,7 @@ import org.vl4ds4m.banking.converter.grpc.ConverterGrpc;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpcRequest;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpcResponse;
 import org.vl4ds4m.banking.currency.Currency;
+import org.vl4ds4m.banking.entity.Money;
 
 import java.math.BigDecimal;
 
@@ -33,6 +34,10 @@ public class ConverterService {
                 reply = grpcStub.convert(request);
             })
         );
+    }
+
+    public Money convert(org.vl4ds4m.banking.entity.Currency from, org.vl4ds4m.banking.entity.Currency to, Money money) {
+        throw new UnsupportedOperationException();
     }
 
     public BigDecimal convert(Currency from, Currency to, BigDecimal amount) {

@@ -2,7 +2,6 @@ package org.vl4ds4m.banking.customer;
 
 import jakarta.persistence.*;
 import org.vl4ds4m.banking.account.Account;
-import org.vl4ds4m.banking.account.Account_;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -25,7 +24,7 @@ public class Customer {
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 
-    @OneToMany(mappedBy = Account_.CUSTOMER)
+    // @OneToMany(mappedBy = Account_.CUSTOMER)
     protected Set<Account> accounts;
 
     public Customer() {}

@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import org.vl4ds4m.banking.entity.Currency;
 import org.vl4ds4m.banking.service.AccountService;
 import org.vl4ds4m.banking.api.model.*;
 
@@ -17,47 +16,37 @@ public class AccountController implements AccountsApi {
     private final AccountService accountService;
 
     @Override
-    public ResponseEntity<CreateAccountResBody> createAccount(CreateAccountReqBody createAccountReqBody) {
-        logRequest(HttpMethod.POST, PATH_CREATE_ACCOUNT, createAccountReqBody);
-        var account = accountService.createAccount(
-                createAccountReqBody.getCustomerName(),
-                Currency.valueOf(createAccountReqBody.getCurrency()));
-        return ResponseEntity.ok(new CreateAccountResBody(account.getNumber()));
+    public ResponseEntity<CreateAccountResponse> createAccount(CreateAccountRequest createAccountRequest) {
+        logRequest(HttpMethod.POST, PATH_CREATE_ACCOUNT, createAccountRequest);
+        var response = accountService.createAccount(createAccountRequest);
+        return ResponseEntity.ok(response);
     }
 
     @Override
-    public ResponseEntity<BalanceResBody> getAccountBalance(Long accountNumber) {
+    public ResponseEntity<BalanceResponse> getAccountBalance(Long accountNumber) {
         logRequest(HttpMethod.GET, PATH_GET_ACCOUNT_BALANCE, accountNumber);
-        var account = accountService.getAccountByNumber(accountNumber);
-        return ResponseEntity.ok(new BalanceResBody(
-                account.getCurrency().toApiCurrency(),
-                account.getMoney().amount()));
+        var response = accountService.getAccountBalance(accountNumber);
+        return ResponseEntity.ok(response);
     }
 
     @Override
-    public ResponseEntity<AccountOperationResBody> topUpAccount(
+    public ResponseEntity<AccountOperationResponse> topUpAccount(
             Long accountNumber,
-            TopUpAccountReqBody topUpAccountReqBody
+            TopUpAccountRequest topUpAccountRequest
     ) {
-        logRequest(HttpMethod.PUT, PATH_TOP_UP_ACCOUNT, accountNumber, topUpAccountReqBody);
-        accountService.topUpAccount(accountNumber, topUpAccountReqBody.getAugend());
-        var account = accountService.getAccountByNumber(accountNumber);
-        return ResponseEntity.ok(new AccountOperationResBody(
-                account.getCurrency().toApiCurrency(),
-                account.getMoney().amount()));
+        logRequest(HttpMethod.PUT, PATH_TOP_UP_ACCOUNT, accountNumber, topUpAccountRequest);
+        var response = accountService.topUpAccount(accountNumber, topUpAccountRequest);
+        return ResponseEntity.ok(response);
     }
 
     @Override
-    public ResponseEntity<AccountOperationResBody> withdrawAccount(
+    public ResponseEntity<AccountOperationResponse> withdrawAccount(
             Long accountNumber,
-            WithdrawAccountReqBody withdrawAccountReqBody
+            WithdrawAccountRequest withdrawAccountRequest
     ) {
-        logRequest(HttpMethod.PUT, PATH_WITHDRAW_ACCOUNT, accountNumber, withdrawAccountReqBody);
-        accountService.withdrawMoneyToAccount(accountNumber, withdrawAccountReqBody.getSubtrahend());
-        var account = accountService.getAccountByNumber(accountNumber);
-        return ResponseEntity.ok(new AccountOperationResBody(
-                account.getCurrency().toApiCurrency(),
-                account.getMoney().amount()));
+        logRequest(HttpMethod.PUT, PATH_WITHDRAW_ACCOUNT, accountNumber, withdrawAccountRequest);
+        var response = accountService.withdrawMoneyToAccount(accountNumber, withdrawAccountRequest);
+        return ResponseEntity.ok(response);
     }
 
     private void logRequest(HttpMethod method, String path, Object... requestArgs) {
