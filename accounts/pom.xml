@@ -161,16 +161,25 @@
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <executions>
-                    <!--<execution>
+                    <execution>
                         <id>generate-converter-api</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
+                            <inputSpec>${project.parent.basedir}/openapi/converter.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
+                            <apiPackage>${appPackage}.client.converter</apiPackage>
+                            <modelPackage>${appPackage}.client.converter.model</modelPackage>
+                            <invokerPackage>${appPackage}.client.converter.invoker</invokerPackage>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <useJakartaEe>true</useJakartaEe>
+                            </configOptions>
                         </configuration>
-                    </execution>-->
+                    </execution>
                 </executions>
             </plugin>
         </plugins>

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.vl4ds4m.banking.accounts.api.model.BalanceResponse;
 import org.vl4ds4m.banking.accounts.api.model.CreateCustomerRequest;
 import org.vl4ds4m.banking.accounts.api.model.Currency;
-import org.vl4ds4m.banking.accounts.converter.ConverterService;
 import org.vl4ds4m.banking.accounts.entity.Customer;
 import org.vl4ds4m.banking.accounts.entity.Money;
 import org.vl4ds4m.banking.accounts.repository.CustomerRepository;

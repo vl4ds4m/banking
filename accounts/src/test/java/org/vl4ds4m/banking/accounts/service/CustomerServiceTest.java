@@ -6,7 +6,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.lang.NonNull;
 import org.vl4ds4m.banking.accounts.api.model.CreateCustomerRequest;
-import org.vl4ds4m.banking.accounts.converter.ConverterService;
 import org.vl4ds4m.banking.accounts.entity.Currency;
 import org.vl4ds4m.banking.accounts.entity.Customer;
 import org.vl4ds4m.banking.accounts.entity.Money;

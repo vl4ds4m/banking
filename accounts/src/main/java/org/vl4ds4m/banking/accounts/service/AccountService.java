@@ -101,6 +101,7 @@ public class AccountService {
                 account.getAmount());
     }
 
+    // ToDo implement proper transfer
     public void transferMoney(long senderNumber, long receiverNumber, BigDecimal amount) {
         final var money = Money.of(amount);
         var sender = getAccountRe(senderNumber);
