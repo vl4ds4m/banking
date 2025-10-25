@@ -3,8 +3,8 @@ package org.vl4ds4m.banking.accounts.repository.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.vl4ds4m.banking.accounts.entity.Account;
-import org.vl4ds4m.banking.accounts.entity.Currency;
-import org.vl4ds4m.banking.accounts.entity.Money;
+import org.vl4ds4m.banking.common.entity.Currency;
+import org.vl4ds4m.banking.common.entity.Money;
 
 import java.math.BigDecimal;
 

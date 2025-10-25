@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.accounts.entity;
+package org.vl4ds4m.banking.common.entity;
 
 public class MoneyException extends RuntimeException {
 

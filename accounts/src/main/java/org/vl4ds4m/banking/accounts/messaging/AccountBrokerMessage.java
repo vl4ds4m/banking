@@ -1,6 +1,6 @@
 package org.vl4ds4m.banking.accounts.messaging;
 
-import org.vl4ds4m.banking.accounts.entity.Currency;
+import org.vl4ds4m.banking.common.entity.Currency;
 
 import java.math.BigDecimal;
 

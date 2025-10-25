@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.vl4ds4m.banking.accounts.api.model.*;
+import org.vl4ds4m.banking.accounts.api.util.CurrencyConverter;
 import org.vl4ds4m.banking.accounts.entity.Account;
-import org.vl4ds4m.banking.accounts.entity.Currency;
 import org.vl4ds4m.banking.accounts.entity.Customer;
-import org.vl4ds4m.banking.accounts.entity.Money;
+import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.accounts.repository.AccountRepository;
 import org.vl4ds4m.banking.accounts.repository.CustomerRepository;
 import org.vl4ds4m.banking.accounts.repository.entity.AccountRe;
@@ -34,7 +34,7 @@ public class AccountService {
         var customer = customerRepository.findByName(customerName)
                 .orElseThrow(() -> new EntityNotFoundException(Customer.logStr(customerName)));
 
-        var currency = Currency.valueOf(request.getCurrency());
+        var currency = CurrencyConverter.toEntity(request.getCurrency());
         customer.getAccounts().stream()
                 .filter(a -> a.getCurrency().equals(currency))
                 .findAny()
@@ -62,7 +62,9 @@ public class AccountService {
 
     public BalanceResponse getAccountBalance(long number) {
         var account = getAccountRe(number);
-        return new BalanceResponse(account.getCurrency().toApiCurrency(), account.getAmount());
+        return new BalanceResponse(
+                CurrencyConverter.toApi(account.getCurrency()),
+                account.getAmount());
     }
 
     public AccountOperationResponse topUpAccount(long number, TopUpAccountRequest request) {
@@ -79,7 +81,7 @@ public class AccountService {
                 account.getCurrency());
 
         return new AccountOperationResponse(
-                account.getCurrency().toApiCurrency(),
+                CurrencyConverter.toApi(account.getCurrency()),
                 account.getAmount());
     }
 
@@ -97,7 +99,7 @@ public class AccountService {
                 account.getCurrency());
 
         return new AccountOperationResponse(
-                account.getCurrency().toApiCurrency(),
+                CurrencyConverter.toApi(account.getCurrency()),
                 account.getAmount());
     }
 

@@ -7,10 +7,11 @@ import org.springframework.lang.NonNull;
 import org.vl4ds4m.banking.accounts.api.model.CreateAccountRequest;
 import org.vl4ds4m.banking.accounts.api.model.TopUpAccountRequest;
 import org.vl4ds4m.banking.accounts.api.model.WithdrawAccountRequest;
+import org.vl4ds4m.banking.accounts.api.util.CurrencyConverter;
 import org.vl4ds4m.banking.accounts.entity.Account;
-import org.vl4ds4m.banking.accounts.entity.Currency;
+import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.accounts.entity.Customer;
-import org.vl4ds4m.banking.accounts.entity.Money;
+import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.accounts.repository.AccountRepository;
 import org.vl4ds4m.banking.accounts.repository.CustomerRepository;
 import org.vl4ds4m.banking.accounts.repository.entity.AccountRe;
@@ -67,7 +68,7 @@ class AccountServiceTest {
         var service = new AccountService(fakeAccountRepository(), mockCustomerRepository());
         var request = new CreateAccountRequest(
                 DEFAULT_CUSTOMER.name(),
-                Currency.CNY.toApiCurrency());
+                CurrencyConverter.toApi(Currency.CNY));
 
         // Act
         var response = service.createAccount(request);
@@ -88,7 +89,7 @@ class AccountServiceTest {
         var service = new AccountService(null, mockCustomerRepository());
         var request = new CreateAccountRequest(
                 DEFAULT_CUSTOMER.name(),
-                DEFAULT_ACCOUNT.currency().toApiCurrency());
+                CurrencyConverter.toApi(DEFAULT_ACCOUNT.currency()));
 
         // Act & Assert
         var e = assertThrows(DuplicateEntityException.class, () -> service.createAccount(request));
@@ -104,7 +105,7 @@ class AccountServiceTest {
     void testCreateAccountForAbsentCustomerFailed() {
         // Arrange
         var service = new AccountService(null, mockCustomerRepository());
-        var request = new CreateAccountRequest("unknown_client", Currency.EUR.toApiCurrency());
+        var request = new CreateAccountRequest("unknown_client", CurrencyConverter.toApi(Currency.EUR));
 
         // Act & Assert
         var e = assertThrows(EntityNotFoundException.class, () -> service.createAccount(request));
@@ -121,7 +122,7 @@ class AccountServiceTest {
         var response = service.getAccountBalance(DEFAULT_ACCOUNT.number());
 
         // Assert
-        assertEquals(DEFAULT_ACCOUNT.currency().toApiCurrency(), response.getCurrency());
+        assertEquals(CurrencyConverter.toApi(DEFAULT_ACCOUNT.currency()), response.getCurrency());
         assertEquals(DEFAULT_ACCOUNT.money().amount(), response.getAmount());
     }
 
@@ -138,7 +139,7 @@ class AccountServiceTest {
         var response = service.topUpAccount(number, request);
 
         // Assert
-        var expectedCurrency = DEFAULT_ACCOUNT.currency().toApiCurrency();
+        var expectedCurrency = CurrencyConverter.toApi(DEFAULT_ACCOUNT.currency());
         var expectedAmount = DEFAULT_ACCOUNT.money().add(money).amount();
         assertEquals(expectedCurrency, response.getCurrency());
         assertEquals(expectedAmount, response.getTotalAmount());
@@ -157,7 +158,7 @@ class AccountServiceTest {
         var response = service.withdrawMoneyToAccount(number, request);
 
         // Assert
-        var expectedCurrency = DEFAULT_ACCOUNT.currency().toApiCurrency();
+        var expectedCurrency = CurrencyConverter.toApi(DEFAULT_ACCOUNT.currency());
         var expectedAmount = DEFAULT_ACCOUNT.money().subtract(money).amount();
         assertEquals(expectedCurrency, response.getCurrency());
         assertEquals(expectedAmount, response.getTotalAmount());

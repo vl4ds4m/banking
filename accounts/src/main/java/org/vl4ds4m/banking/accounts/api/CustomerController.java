@@ -21,7 +21,7 @@ public class CustomerController implements CustomersApi {
     public ResponseEntity<Void> createCustomer(CreateCustomerRequest createCustomerRequest) {
         logRequest(HttpMethod.POST, PATH_CREATE_CUSTOMER, createCustomerRequest);
         customerService.createCustomer(createCustomerRequest);
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok().build();
     }
 
     @Override

@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.vl4ds4m.banking.accounts.client.converter.ConvertApi;
-import org.vl4ds4m.banking.accounts.entity.Currency;
-import org.vl4ds4m.banking.accounts.entity.Money;
+import org.vl4ds4m.banking.common.entity.Currency;
+import org.vl4ds4m.banking.common.entity.Money;
 
 @Service
 @Slf4j

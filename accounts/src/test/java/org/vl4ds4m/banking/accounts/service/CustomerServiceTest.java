@@ -6,9 +6,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.lang.NonNull;
 import org.vl4ds4m.banking.accounts.api.model.CreateCustomerRequest;
-import org.vl4ds4m.banking.accounts.entity.Currency;
+import org.vl4ds4m.banking.accounts.api.util.CurrencyConverter;
+import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.accounts.entity.Customer;
-import org.vl4ds4m.banking.accounts.entity.Money;
+import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.accounts.repository.CustomerRepository;
 import org.vl4ds4m.banking.accounts.repository.entity.AccountRe;
 import org.vl4ds4m.banking.accounts.repository.entity.CustomerRe;
@@ -145,7 +146,7 @@ class CustomerServiceTest {
         when(converterService.convert(Currency.EUR, Currency.USD, money2))
                 .thenReturn(convertedMoney2);
 
-        var totalCurrency = Currency.USD.toApiCurrency();
+        var totalCurrency = CurrencyConverter.toApi(Currency.USD);
 
         var service = new CustomerService(customerRepository, converterService);
 
