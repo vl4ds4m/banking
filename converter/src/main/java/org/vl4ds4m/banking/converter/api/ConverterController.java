@@ -1,14 +1,16 @@
-package org.vl4ds4m.banking.converter;
+package org.vl4ds4m.banking.converter.api;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.vl4ds4m.banking.converter.ConverterExceptionHandler;
+import org.vl4ds4m.banking.converter.ConverterService;
 import org.vl4ds4m.banking.converter.exception.InvalidCurrencyException;
 import org.vl4ds4m.banking.converter.exception.NonPositiveAmountException;
 import org.vl4ds4m.banking.converter.message.CurrencyMessage;
 import org.vl4ds4m.banking.converter.message.ErrorMessage;
-import org.vl4ds4m.banking.rates.RatesServiceException;
+import org.vl4ds4m.banking.converter.rates.RatesServiceException;
 
 import java.math.BigDecimal;
 

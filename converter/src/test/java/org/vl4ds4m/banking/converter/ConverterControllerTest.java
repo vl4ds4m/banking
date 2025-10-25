@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.vl4ds4m.banking.converter.api.ConverterController;
 import org.vl4ds4m.banking.converter.exception.InvalidCurrencyException;
 import org.vl4ds4m.banking.converter.exception.NonPositiveAmountException;
 import org.vl4ds4m.banking.currency.Currency;

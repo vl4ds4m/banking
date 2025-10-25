@@ -10,7 +10,7 @@ import org.vl4ds4m.banking.converter.ConverterExceptionHandler;
 import org.vl4ds4m.banking.converter.ConverterService;
 import org.vl4ds4m.banking.converter.exception.InvalidCurrencyException;
 import org.vl4ds4m.banking.converter.exception.NonPositiveAmountException;
-import org.vl4ds4m.banking.rates.RatesServiceException;
+import org.vl4ds4m.banking.converter.rates.RatesServiceException;
 
 import java.math.BigDecimal;
 

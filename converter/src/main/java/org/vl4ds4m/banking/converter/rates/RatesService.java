@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.rates;
+package org.vl4ds4m.banking.converter.rates;
 
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;

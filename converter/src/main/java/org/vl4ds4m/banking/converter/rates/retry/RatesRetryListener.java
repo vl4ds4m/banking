@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.rates.retry;
+package org.vl4ds4m.banking.converter.rates.retry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,7 +6,7 @@ import org.springframework.retry.RetryCallback;
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.RetryListener;
 import org.springframework.stereotype.Component;
-import org.vl4ds4m.banking.rates.RatesService;
+import org.vl4ds4m.banking.converter.rates.RatesService;
 
 @Component
 public class RatesRetryListener implements RetryListener {

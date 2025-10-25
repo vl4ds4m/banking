@@ -3,7 +3,7 @@ package org.vl4ds4m.banking.converter;
 import org.slf4j.Logger;
 import org.vl4ds4m.banking.converter.exception.InvalidCurrencyException;
 import org.vl4ds4m.banking.converter.exception.NonPositiveAmountException;
-import org.vl4ds4m.banking.rates.RatesServiceException;
+import org.vl4ds4m.banking.converter.rates.RatesServiceException;
 
 public class ConverterExceptionHandler {
     private final Logger logger;
