@@ -17,21 +17,6 @@ components:
     CurrencyAmount:
       type: number
       example: 1234.56
-    RatesResponse:
-      type: object
-      properties:
-        base:
-          $ref: '#/components/schemas/Currency'
-        rates:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/CurrencyAmount'
-          example:
-            USD: 31.42
-            RUB: 1
-      required:
-        - base
-        - rates
   responses:
     InvalidQuery:
       description: Invalid query with cause message.

@@ -10,8 +10,8 @@ import org.vl4ds4m.banking.Conversions;
 import org.vl4ds4m.banking.accounts.account.Account;
 import org.vl4ds4m.banking.accounts.account.AccountRepository;
 import org.vl4ds4m.banking.accounts.admin.AdminService;
+import org.vl4ds4m.banking.accounts.api.model.Currency;
 import org.vl4ds4m.banking.accounts.converter.ConverterService;
-import org.vl4ds4m.banking.currency.Currency;
 import org.vl4ds4m.banking.accounts.exception.InvalidAccountNumberException;
 import org.vl4ds4m.banking.accounts.exception.InvalidDataException;
 import org.vl4ds4m.banking.accounts.messaging.SimpMessagingService;
@@ -70,8 +70,8 @@ public class TransferService {
     }
 
     private TransactionResponse transfer(Account sender, Account receiver, BigDecimal amount) {
-        Currency senderCurrency = sender.getCurrency();
-        Currency receiverCurrency = receiver.getCurrency();
+        Currency senderCurrency = null;
+        Currency receiverCurrency = null;
 
         BigDecimal feeRate = adminService.getFee();
         BigDecimal transferredAmount = amount.subtract(amount.multiply(feeRate));
@@ -106,8 +106,8 @@ public class TransferService {
             convertedAmount,
             receiver.getAmount());
 
-        simpMessagingService.sendMessage(sender);
-        simpMessagingService.sendMessage(receiver);
+        simpMessagingService.sendMessage(null); //sender
+        simpMessagingService.sendMessage(null); //receiver
 
         return new TransactionResponse(senderTransaction.getId(), negatedAmount);
     }

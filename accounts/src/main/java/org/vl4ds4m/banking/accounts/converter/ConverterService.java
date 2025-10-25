@@ -6,10 +6,10 @@ import io.micrometer.observation.ObservationRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vl4ds4m.banking.Conversions;
+import org.vl4ds4m.banking.accounts.api.model.Currency;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpc;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpcRequest;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpcResponse;
-import org.vl4ds4m.banking.currency.Currency;
 
 import java.math.BigDecimal;
 

@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
 import org.vl4ds4m.banking.Conversions;
 import org.vl4ds4m.banking.accounts.account.Account;
+import org.vl4ds4m.banking.accounts.api.model.Currency;
 import org.vl4ds4m.banking.accounts.converter.ConverterService;
-import org.vl4ds4m.banking.currency.Currency;
 import org.vl4ds4m.banking.accounts.customer.dto.CustomerBalanceResponse;
 import org.vl4ds4m.banking.accounts.customer.dto.CustomerCreationRequest;
 import org.vl4ds4m.banking.accounts.customer.dto.CustomerCreationResponse;
@@ -75,11 +75,11 @@ public class CustomerService {
             BigDecimal amount = account.getAmount();
             if (Conversions.ZERO.compareTo(amount) < 0) {
                 amount = converterService.convert(
-                    account.getCurrency(), currency, amount);
+                    Currency.fromValue(account.getCurrency()), currency, amount);
                 balance = balance.add(amount);
             }
         }
-        return new CustomerBalanceResponse(balance, currency);
+        return new CustomerBalanceResponse(balance, currency.getValue());
     }
 
     public CustomerBalanceResponse exceedRateOnBalance(int id, Currency currency) {

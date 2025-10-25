@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.vl4ds4m.banking.currency.Currency;
+import org.vl4ds4m.banking.accounts.api.model.Currency;
 import org.vl4ds4m.banking.accounts.customer.dto.CustomerBalanceResponse;
 import org.vl4ds4m.banking.accounts.customer.dto.CustomerCreationRequest;
 import org.vl4ds4m.banking.accounts.customer.dto.CustomerCreationResponse;

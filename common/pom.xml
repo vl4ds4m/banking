@@ -55,30 +55,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>io.swagger.codegen.v3</groupId>
-                <artifactId>swagger-codegen-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-currency-api</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>${project.parent.basedir}/openapi/common.yaml</inputSpec>
-                            <language>java</language>
-                            <library>resttemplate</library>
-                            <generateApis>false</generateApis>
-                            <generateSupportingFiles>false</generateSupportingFiles>
-                            <modelPackage>org.vl4ds4m.banking.currency</modelPackage>
-                            <configOptions>
-                                <sourceFolder>java</sourceFolder>
-                            </configOptions>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!-- gRPC interface -->
             <plugin>
                 <groupId>org.xolstice.maven.plugins</groupId>

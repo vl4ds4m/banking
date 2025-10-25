@@ -2,7 +2,6 @@ package org.vl4ds4m.banking.accounts.account;
 
 import jakarta.persistence.*;
 import org.vl4ds4m.banking.Conversions;
-import org.vl4ds4m.banking.currency.Currency;
 import org.vl4ds4m.banking.accounts.customer.Customer;
 import org.vl4ds4m.banking.accounts.transaction.Transaction;
 
@@ -26,9 +25,9 @@ public class Account {
     @JoinColumn(name = CUSTOMER_ID)
     private Customer customer;
 
-    @Enumerated(EnumType.STRING)
+    //@Enumerated(EnumType.STRING)
     @Column(name = CURRENCY, nullable = false)
-    private Currency currency;
+    private String currency;
 
     @Column(name = "amount",
         nullable = false,
@@ -41,7 +40,7 @@ public class Account {
 
     protected Account() {}
 
-    public Account(Customer customer, Currency currency) {
+    public Account(Customer customer, String currency) {
         this.amount = BigDecimal.ZERO;
         this.customer = customer;
         this.currency = currency;
@@ -55,7 +54,7 @@ public class Account {
         return customer;
     }
 
-    public Currency getCurrency() {
+    public String getCurrency() {
         return currency;
     }
 

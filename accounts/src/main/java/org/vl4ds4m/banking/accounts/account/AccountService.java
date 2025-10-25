@@ -67,7 +67,7 @@ public class AccountService {
             new Account(customer, request.currency()));
         logger.debug("Account[number={}] created", savedAccount.getNumber());
 
-        simpMessagingService.sendMessage(savedAccount);
+        simpMessagingService.sendMessage(null); //savedAccount
 
         return new AccountCreationResponse(savedAccount.getNumber());
     }
@@ -102,7 +102,7 @@ public class AccountService {
             amount,
             account.getAmount());
 
-        simpMessagingService.sendMessage(account);
+        simpMessagingService.sendMessage(null); //account
 
         Transaction transaction = transactionService.persist(
             new Transaction(account, amount));

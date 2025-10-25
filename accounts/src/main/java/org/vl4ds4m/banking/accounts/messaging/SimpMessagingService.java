@@ -5,8 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import org.vl4ds4m.banking.Conversions;
-import org.vl4ds4m.banking.accounts.account.Account;
+import org.vl4ds4m.banking.accounts.entity.Account;
 
 @Service
 public class SimpMessagingService {
@@ -23,9 +22,9 @@ public class SimpMessagingService {
     @Observed
     public void sendMessage(Account account) {
         AccountBrokerMessage message = new AccountBrokerMessage(
-                account.getNumber(),
-                account.getCurrency(),
-                Conversions.setScale(account.getAmount()));
+                account.number(),
+                account.currency(),
+                account.money().amount());
         String destination = destinationPrefix + AccountBrokerMessage.DESTINATION;
         logger.debug("Send {} to {}", message, destination);
         template.convertAndSend(destination, message);
