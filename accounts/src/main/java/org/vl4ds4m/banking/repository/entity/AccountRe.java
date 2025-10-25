@@ -1,8 +1,7 @@
 package org.vl4ds4m.banking.repository.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.vl4ds4m.banking.entity.Account;
 import org.vl4ds4m.banking.entity.Currency;
 import org.vl4ds4m.banking.entity.Money;
@@ -14,8 +13,10 @@ import java.math.BigDecimal;
         uniqueConstraints = @UniqueConstraint(columnNames = {
                 AccountRe.ColumnName.CUSTOMER_ID,
                 AccountRe.ColumnName.CURRENCY}))
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class AccountRe {
 
     static final String TABLE_NAME = "accounts";
@@ -23,6 +24,7 @@ public class AccountRe {
     @Id
     @GeneratedValue
     @Column(name = ColumnName.ID)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(name = ColumnName.NUMBER,

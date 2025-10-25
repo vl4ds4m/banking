@@ -1,8 +1,7 @@
 package org.vl4ds4m.banking.repository.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.vl4ds4m.banking.entity.Customer;
 
 import java.time.LocalDate;
@@ -10,8 +9,10 @@ import java.util.Set;
 
 @Entity
 @Table(name = CustomerRe.TABLE_NAME)
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CustomerRe {
 
     static final String TABLE_NAME = "customers";
@@ -19,6 +20,7 @@ public class CustomerRe {
     @Id
     @GeneratedValue
     @Column(name = ColumnName.ID)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(name = ColumnName.NAME,
