@@ -6,6 +6,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.vl4ds4m.banking.converter.api.util.CurrencyConverter;
 import org.vl4ds4m.banking.converter.service.ConverterService;
 import org.vl4ds4m.banking.converter.api.model.ConvertCurrencyResponse;
 import org.vl4ds4m.banking.converter.api.model.Currency;
@@ -34,8 +35,11 @@ public class ConverterController implements ConvertApi {
         log.info("Accept {} {}: {}, {} -> {}",
                 HttpMethod.GET, ConvertApi.PATH_CONVERT_CURRENCY,
                 amount, from, to);
-        var convertedAmount = service.convert(from, to, amount);
-        var response = new ConvertCurrencyResponse(convertedAmount);
+        var converted = service.convert(
+                CurrencyConverter.toEntity(from),
+                CurrencyConverter.toEntity(to),
+                amount);
+        var response = new ConvertCurrencyResponse(converted.amount());
         return ResponseEntity.ok(response);
     }
 

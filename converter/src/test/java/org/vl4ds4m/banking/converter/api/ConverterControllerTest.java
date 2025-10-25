@@ -10,9 +10,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.converter.api.model.Currency;
-import org.vl4ds4m.banking.converter.service.exception.NonPositiveAmountException;
+import org.vl4ds4m.banking.converter.api.util.CurrencyConverter;
 import org.vl4ds4m.banking.converter.service.ConverterService;
+import org.vl4ds4m.banking.converter.service.exception.NonPositiveAmountException;
 
 import java.math.BigDecimal;
 import java.util.stream.Stream;
@@ -27,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ConverterController.class)
 @Import(SecurityConfiguration.class)
 class ConverterControllerTest {
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -43,7 +46,11 @@ class ConverterControllerTest {
     ) throws Exception {
         String src = source.getValue();
         String tgt = target.getValue();
-        when(service.convert(source, target, amount)).thenReturn(result);
+        when(service.convert(
+            CurrencyConverter.toEntity(source),
+            CurrencyConverter.toEntity(target),
+            amount)
+        ).thenReturn(Money.of(result));
         doRequest(src, tgt, amount).andDo(
             print()
         ).andExpect(
@@ -66,7 +73,11 @@ class ConverterControllerTest {
         var src = Currency.CNY;
         var tgt = Currency.GBP;
         BigDecimal amount = new BigDecimal("-234.34");
-        when(service.convert(src, tgt, amount)).thenThrow(NonPositiveAmountException.class);
+        when(service.convert(
+                CurrencyConverter.toEntity(src),
+                CurrencyConverter.toEntity(tgt),
+                amount
+        )).thenThrow(NonPositiveAmountException.class);
         doRequest(src.getValue(), tgt.getValue(), amount).andDo(
             print()
         ).andExpect(

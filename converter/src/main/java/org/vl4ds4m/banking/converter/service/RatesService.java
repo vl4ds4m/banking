@@ -1,51 +1,40 @@
 package org.vl4ds4m.banking.converter.service;
 
-import io.micrometer.observation.Observation;
-import io.micrometer.observation.ObservationRegistry;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.retry.RetryCallback;
-import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
+import org.vl4ds4m.banking.common.entity.Currency;
+import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.converter.client.RatesClient;
 import org.vl4ds4m.banking.converter.client.rates.model.RatesResponse;
+import org.vl4ds4m.banking.converter.entity.CurrencyRates;
 import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
 
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class RatesService {
 
     private final RatesClient ratesClient;
 
-    private final RetryTemplate retryTemplate;
+    public CurrencyRates getRates() {
+        var response = ratesClient.getRates();
+        checkResponse(response);
 
-    private final ObservationRegistry observationRegistry;
+        var base = toEntity(response.getBase());
+        var rates = response.getRates()
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        e -> Currency.valueOf(e.getKey()),
+                        e -> Money.of(e.getValue())));
 
-    public RatesResponse getRatesResponse() {
-        RetryCallback<RatesResponse, RatesServiceException> retryCallback =
-            context -> Observation
-                .createNotStarted("rates", observationRegistry)
-                .observe(this::requestRatesResponse);
-        RatesResponse response = retryTemplate.execute(retryCallback);
-        checkRatesResponse(response);
-        return response;
+        return new CurrencyRates(base, rates);
     }
 
-    private RatesResponse requestRatesResponse() {
-        log.info("Request currency rates");
-        try {
-            return ratesClient.getRates();
-        } catch (RestClientException e) {
-            throw new RatesServiceException("Service is unavailable: " + e.getMessage());
-        }
-    }
-
-    private static void checkRatesResponse(RatesResponse response) {
+    private static void checkResponse(RatesResponse response) {
         if (response == null) {
             throw new RatesServiceException("RatesResponse is null");
         }
@@ -57,5 +46,9 @@ public class RatesService {
         if (rates == null) {
             throw new RatesServiceException("RatesResponse rates is null");
         }
+    }
+
+    public static Currency toEntity(org.vl4ds4m.banking.converter.client.rates.model.Currency currency) {
+        return Currency.valueOf(currency.getValue());
     }
 }

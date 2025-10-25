@@ -5,29 +5,32 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
-import org.vl4ds4m.banking.converter.api.model.Currency;
-import org.vl4ds4m.banking.converter.client.rates.model.RatesResponse;
+import org.vl4ds4m.banking.common.entity.Currency;
+import org.vl4ds4m.banking.common.entity.Money;
+import org.vl4ds4m.banking.converter.entity.CurrencyRates;
 import org.vl4ds4m.banking.converter.service.exception.NonPositiveAmountException;
 import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ConverterServiceTest {
-    private final RatesService rates = Mockito.mock(RatesService.class);
 
-    private final ConverterService service = new ConverterService(rates);
+    private final RatesService ratesService = Mockito.mock(RatesService.class);
+
+    private final ConverterService service = new ConverterService(ratesService);
 
     {
-        var response = new RatesResponse();
-        response.putRatesItem(org.vl4ds4m.banking.converter.client.rates.model.Currency.RUB.getValue(), new BigDecimal("1"));
-        response.putRatesItem(org.vl4ds4m.banking.converter.client.rates.model.Currency.USD.getValue(), new BigDecimal("35.47"));
-        response.putRatesItem(org.vl4ds4m.banking.converter.client.rates.model.Currency.EUR.getValue(), new BigDecimal("50.2"));
-        response.setBase(org.vl4ds4m.banking.converter.client.rates.model.Currency.RUB);
-        Mockito.when(rates.getRatesResponse()).thenReturn(response);
+        var rates = new HashMap<Currency, Money>();
+        rates.put(Currency.RUB, Money.of(new BigDecimal("1")));
+        rates.put(Currency.USD, Money.of(new BigDecimal("35.47")));
+        rates.put(Currency.EUR, Money.of(new BigDecimal("50.2")));
+        var currencyRates = new CurrencyRates(Currency.RUB, rates);
+        Mockito.when(ratesService.getRates()).thenReturn(currencyRates);
     }
 
     @ParameterizedTest
@@ -35,15 +38,14 @@ class ConverterServiceTest {
     void convert(
         Currency source,
         Currency target,
-        String amount,
-        String result
+        BigDecimal amount,
+        BigDecimal result
     ) {
-        BigDecimal actual = service.convert(
+        var actual = service.convert(
             source,
             target,
-            new BigDecimal(amount)
-        );
-        assertEquals(new BigDecimal(result), actual);
+            amount);
+        assertEquals(Money.of(result), actual);
     }
 
     static Stream<Arguments> provideConverterArguments() {

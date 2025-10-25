@@ -6,12 +6,13 @@ import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.vl4ds4m.banking.common.entity.Currency;
+import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.converter.api.ConverterExceptionHandler;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpc;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpcRequest;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpcResponse;
 import org.vl4ds4m.banking.converter.service.ConverterService;
-import org.vl4ds4m.banking.converter.api.model.Currency;
 import org.vl4ds4m.banking.converter.service.exception.InvalidCurrencyException;
 import org.vl4ds4m.banking.converter.service.exception.NonPositiveAmountException;
 import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
@@ -35,11 +36,11 @@ public class ConverterGrpcService extends ConverterGrpc.ConverterImplBase {
         StreamObserver<ConverterGrpcResponse> observer
     ) {
         log.info("Accept a request to convert currency");
-        BigDecimal converted;
+        Money converted;
         try {
             converted = service.convert(
-                Currency.fromValue(request.getFrom()),
-                Currency.fromValue(request.getTo()),
+                Currency.valueOf(request.getFrom()),
+                Currency.valueOf(request.getTo()),
                 BigDecimal.valueOf(request.getAmount()));
         } catch (RuntimeException e) {
             Status status = handleException(e);
@@ -48,7 +49,7 @@ public class ConverterGrpcService extends ConverterGrpc.ConverterImplBase {
         }
         ConverterGrpcResponse response = ConverterGrpcResponse.newBuilder()
             .setCurrency(request.getTo())
-            .setAmount(converted.doubleValue())
+            .setAmount(converted.amount().doubleValue())
             .build();
         observer.onNext(response);
         observer.onCompleted();
