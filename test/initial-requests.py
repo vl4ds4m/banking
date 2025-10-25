@@ -6,8 +6,8 @@ headers = { 'content-type': "application/json" }
 def request(method, path, body):
     conn.request(method, path, body.encode('utf-8'), headers)
     res = conn.getresponse()
-    data = res.read()
-    print(data.decode("utf-8"))
+    data = res.read().decode("utf-8").strip()
+    print(data if data else "ok")
 
 # Create customer: ivanovp
 payload = "{\n  \"customerName\": \"ivanovp\",\n  \"firstName\": \"Пётр\",\n  \"lastName\": \"Иванов\",\n  \"birthDate\": \"1985-10-06\"\n}"
