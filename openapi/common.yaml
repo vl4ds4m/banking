@@ -44,3 +44,5 @@ components:
               message:
                 type: string
                 example: Property 'abc' must be positive number
+            required:
+              - message
