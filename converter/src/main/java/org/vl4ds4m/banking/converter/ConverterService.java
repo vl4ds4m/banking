@@ -4,7 +4,7 @@ import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.vl4ds4m.banking.Conversions;
+import org.vl4ds4m.banking.common.Conversions;
 import org.vl4ds4m.banking.converter.api.model.Currency;
 import org.vl4ds4m.banking.converter.exception.NonPositiveAmountException;
 import org.vl4ds4m.banking.converter.rates.RatesService;

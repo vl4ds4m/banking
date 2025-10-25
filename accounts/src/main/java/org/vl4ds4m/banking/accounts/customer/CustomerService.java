@@ -7,7 +7,7 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
-import org.vl4ds4m.banking.Conversions;
+import org.vl4ds4m.banking.common.Conversions;
 import org.vl4ds4m.banking.accounts.account.Account;
 import org.vl4ds4m.banking.accounts.api.model.Currency;
 import org.vl4ds4m.banking.accounts.converter.ConverterService;

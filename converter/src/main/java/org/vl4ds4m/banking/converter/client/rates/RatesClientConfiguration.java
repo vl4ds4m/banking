@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestTemplate;
-import org.vl4ds4m.banking.auth.Auth;
+import org.vl4ds4m.banking.common.auth.Auth;
 import org.vl4ds4m.banking.converter.client.rates.invoker.ApiClient;
 
 @Configuration

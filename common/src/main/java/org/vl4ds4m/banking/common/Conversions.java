@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking;
+package org.vl4ds4m.banking.common;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.auth;
+package org.vl4ds4m.banking.common.auth;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;

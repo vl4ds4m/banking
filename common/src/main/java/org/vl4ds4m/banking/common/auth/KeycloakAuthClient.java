@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.auth;
+package org.vl4ds4m.banking.common.auth;
 
 import org.keycloak.representations.AccessTokenResponse;
 import org.slf4j.Logger;

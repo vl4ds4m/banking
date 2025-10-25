@@ -1,7 +1,7 @@
 package org.vl4ds4m.banking.accounts.transaction;
 
 import jakarta.persistence.*;
-import org.vl4ds4m.banking.Conversions;
+import org.vl4ds4m.banking.common.Conversions;
 import org.vl4ds4m.banking.accounts.account.Account;
 
 import java.math.BigDecimal;

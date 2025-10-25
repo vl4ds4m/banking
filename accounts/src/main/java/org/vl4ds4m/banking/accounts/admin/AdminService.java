@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import org.vl4ds4m.banking.Conversions;
+import org.vl4ds4m.banking.common.Conversions;
 import org.vl4ds4m.banking.accounts.admin.dto.Action;
 
 import java.math.BigDecimal;

@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking;
+package org.vl4ds4m.banking.common;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.convert.DurationUnit;
@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestTemplate;
-import org.vl4ds4m.banking.auth.Auth;
-import org.vl4ds4m.banking.auth.AuthInterceptor;
+import org.vl4ds4m.banking.common.auth.Auth;
+import org.vl4ds4m.banking.common.auth.AuthInterceptor;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;

@@ -1,7 +1,7 @@
 package org.vl4ds4m.banking.accounts.account;
 
 import jakarta.persistence.*;
-import org.vl4ds4m.banking.Conversions;
+import org.vl4ds4m.banking.common.Conversions;
 import org.vl4ds4m.banking.accounts.customer.Customer;
 import org.vl4ds4m.banking.accounts.transaction.Transaction;
 

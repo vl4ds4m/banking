@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.vl4ds4m.banking.auth.Auth;
+import org.vl4ds4m.banking.common.auth.Auth;
 
 @SpringBootTest
 @DirtiesContext

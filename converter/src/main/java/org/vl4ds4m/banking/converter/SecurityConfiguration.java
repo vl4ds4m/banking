@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.vl4ds4m.banking.auth.Auth;
+import org.vl4ds4m.banking.common.auth.Auth;
 
 @Configuration
 @EnableMethodSecurity
