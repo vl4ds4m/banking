@@ -1,0 +1,56 @@
+openapi: 3.0.4
+info:
+  title: Banking - Converter
+  description: This is a converter service API based on the OpenAPI 3.0 specification.
+  version: 1.0.0
+components:
+  schemas:
+    Currency:
+      $ref: './common.yaml#/components/schemas/Currency'
+    CurrencyAmount:
+      $ref: './common.yaml#/components/schemas/CurrencyAmount'
+  responses:
+    InvalidQuery:
+      $ref: './common.yaml#/components/responses/InvalidQuery'
+paths:
+  /convert:
+    get:
+      tags:
+        - convert
+      operationId: convertCurrency
+      summary: Convert currency.
+      description: Convert a currency amount from a currency to another one.
+      parameters:
+        - name: from
+          description: A currency code of a given currency amount.
+          required: true
+          in: query
+          schema:
+            $ref: '#/components/schemas/Currency'
+        - name: to
+          description: A currency code of a converted currency amount.
+          required: true
+          in: query
+          schema:
+            $ref: '#/components/schemas/Currency'
+        - name: amount
+          description: A currency amount to convert.
+          required: true
+          in: query
+          schema:
+            $ref: '#/components/schemas/CurrencyAmount'
+      responses:
+        '200':
+          description: Customer balance.
+          content:
+            application/json:
+              schema:
+                title: ConvertCurrencyResponse
+                type: object
+                properties:
+                  convertedAmount:
+                    $ref: '#/components/schemas/CurrencyAmount'
+                required:
+                  - convertedAmount
+        '400':
+          $ref: '#/components/responses/InvalidQuery'
