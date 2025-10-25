@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.converter.exception;
+package org.vl4ds4m.banking.converter.service.exception;
 
 public class InvalidCurrencyException extends RuntimeException {
     public final String currency;

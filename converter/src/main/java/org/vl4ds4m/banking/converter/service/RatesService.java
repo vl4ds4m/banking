@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.converter.rates;
+package org.vl4ds4m.banking.converter.service;
 
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
@@ -8,8 +8,9 @@ import org.springframework.retry.RetryCallback;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
-import org.vl4ds4m.banking.converter.client.rates.RatesApi;
+import org.vl4ds4m.banking.converter.client.RatesClient;
 import org.vl4ds4m.banking.converter.client.rates.model.RatesResponse;
+import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -19,7 +20,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class RatesService {
 
-    private final RatesApi ratesClient;
+    private final RatesClient ratesClient;
 
     private final RetryTemplate retryTemplate;
 

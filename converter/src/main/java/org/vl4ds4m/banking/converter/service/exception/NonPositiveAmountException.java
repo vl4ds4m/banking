@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.converter.exception;
+package org.vl4ds4m.banking.converter.service.exception;
 
 import java.math.BigDecimal;
 

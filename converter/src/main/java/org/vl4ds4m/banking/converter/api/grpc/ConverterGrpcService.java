@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.converter.grpc;
+package org.vl4ds4m.banking.converter.api.grpc;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -6,12 +6,15 @@ import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.vl4ds4m.banking.converter.ConverterExceptionHandler;
-import org.vl4ds4m.banking.converter.ConverterService;
+import org.vl4ds4m.banking.converter.api.ConverterExceptionHandler;
+import org.vl4ds4m.banking.converter.grpc.ConverterGrpc;
+import org.vl4ds4m.banking.converter.grpc.ConverterGrpcRequest;
+import org.vl4ds4m.banking.converter.grpc.ConverterGrpcResponse;
+import org.vl4ds4m.banking.converter.service.ConverterService;
 import org.vl4ds4m.banking.converter.api.model.Currency;
-import org.vl4ds4m.banking.converter.exception.InvalidCurrencyException;
-import org.vl4ds4m.banking.converter.exception.NonPositiveAmountException;
-import org.vl4ds4m.banking.converter.rates.RatesServiceException;
+import org.vl4ds4m.banking.converter.service.exception.InvalidCurrencyException;
+import org.vl4ds4m.banking.converter.service.exception.NonPositiveAmountException;
+import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
 
 import java.math.BigDecimal;
 

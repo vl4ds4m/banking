@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.converter;
+package org.vl4ds4m.banking.converter.api;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -10,9 +10,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.vl4ds4m.banking.converter.api.ConverterController;
 import org.vl4ds4m.banking.converter.api.model.Currency;
-import org.vl4ds4m.banking.converter.exception.NonPositiveAmountException;
+import org.vl4ds4m.banking.converter.service.exception.NonPositiveAmountException;
+import org.vl4ds4m.banking.converter.service.ConverterService;
 
 import java.math.BigDecimal;
 import java.util.stream.Stream;

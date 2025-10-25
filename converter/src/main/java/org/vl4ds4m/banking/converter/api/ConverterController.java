@@ -6,14 +6,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.vl4ds4m.banking.converter.ConverterExceptionHandler;
-import org.vl4ds4m.banking.converter.ConverterService;
+import org.vl4ds4m.banking.converter.service.ConverterService;
 import org.vl4ds4m.banking.converter.api.model.ConvertCurrencyResponse;
 import org.vl4ds4m.banking.converter.api.model.Currency;
 import org.vl4ds4m.banking.converter.api.model.InvalidQueryResponse;
-import org.vl4ds4m.banking.converter.exception.InvalidCurrencyException;
-import org.vl4ds4m.banking.converter.exception.NonPositiveAmountException;
-import org.vl4ds4m.banking.converter.rates.RatesServiceException;
+import org.vl4ds4m.banking.converter.service.exception.InvalidCurrencyException;
+import org.vl4ds4m.banking.converter.service.exception.NonPositiveAmountException;
+import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
 
 import java.math.BigDecimal;
 

@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.converter;
+package org.vl4ds4m.banking.converter.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -7,9 +7,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.vl4ds4m.banking.converter.api.model.Currency;
 import org.vl4ds4m.banking.converter.client.rates.model.RatesResponse;
-import org.vl4ds4m.banking.converter.exception.NonPositiveAmountException;
-import org.vl4ds4m.banking.converter.rates.RatesService;
-import org.vl4ds4m.banking.converter.rates.RatesServiceException;
+import org.vl4ds4m.banking.converter.service.exception.NonPositiveAmountException;
+import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
 
 import java.math.BigDecimal;
 import java.util.stream.Stream;

@@ -1,9 +1,9 @@
-package org.vl4ds4m.banking.converter;
+package org.vl4ds4m.banking.converter.api;
 
 import org.slf4j.Logger;
-import org.vl4ds4m.banking.converter.exception.InvalidCurrencyException;
-import org.vl4ds4m.banking.converter.exception.NonPositiveAmountException;
-import org.vl4ds4m.banking.converter.rates.RatesServiceException;
+import org.vl4ds4m.banking.converter.service.exception.InvalidCurrencyException;
+import org.vl4ds4m.banking.converter.service.exception.NonPositiveAmountException;
+import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
 
 public class ConverterExceptionHandler {
     private final Logger logger;
