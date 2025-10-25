@@ -1,0 +1,45 @@
+openapi: 3.0.4
+info:
+  title: Banking - Rates
+  description: This is a rates service API based on the OpenAPI 3.0 specification.
+  version: 1.0.0
+components:
+  schemas:
+    Currency:
+      $ref: './common.yaml#/components/schemas/Currency'
+    CurrencyAmount:
+      $ref: './common.yaml#/components/schemas/CurrencyAmount'
+  responses:
+    InvalidQuery:
+      $ref: './common.yaml#/components/responses/InvalidQuery'
+paths:
+  /rates:
+    get:
+      tags:
+        - rates
+      operationId: getRates
+      summary: Get currency rates.
+      description: Get a currency rates.
+      responses:
+        '200':
+          description: Currency rates.
+          content:
+            application/json:
+              schema:
+                title: RatesResponse
+                type: object
+                properties:
+                  base:
+                    $ref: '#/components/schemas/Currency'
+                  rates:
+                    type: object
+                    additionalProperties:
+                      $ref: '#/components/schemas/CurrencyAmount'
+                    example:
+                      USD: 31.42
+                      RUB: 1
+                required:
+                  - base
+                  - rates
+        '400':
+          $ref: '#/components/responses/InvalidQuery'

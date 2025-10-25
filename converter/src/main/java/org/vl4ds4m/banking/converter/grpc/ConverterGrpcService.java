@@ -3,11 +3,12 @@ package org.vl4ds4m.banking.converter.grpc;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import io.micrometer.observation.annotation.Observed;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.vl4ds4m.banking.converter.ConverterExceptionHandler;
 import org.vl4ds4m.banking.converter.ConverterService;
+import org.vl4ds4m.banking.converter.api.model.Currency;
 import org.vl4ds4m.banking.converter.exception.InvalidCurrencyException;
 import org.vl4ds4m.banking.converter.exception.NonPositiveAmountException;
 import org.vl4ds4m.banking.converter.rates.RatesServiceException;
@@ -15,18 +16,14 @@ import org.vl4ds4m.banking.converter.rates.RatesServiceException;
 import java.math.BigDecimal;
 
 @GrpcService
+@Slf4j
+@RequiredArgsConstructor
 public class ConverterGrpcService extends ConverterGrpc.ConverterImplBase {
-    private static final Logger logger =
-        LoggerFactory.getLogger(ConverterGrpcService.class);
 
     private static final ConverterExceptionHandler exceptionHandler =
-        new ConverterExceptionHandler(logger);
+        new ConverterExceptionHandler(log);
 
     private final ConverterService service;
-
-    public ConverterGrpcService(ConverterService service) {
-        this.service = service;
-    }
 
     @Observed
     @Override
@@ -34,12 +31,12 @@ public class ConverterGrpcService extends ConverterGrpc.ConverterImplBase {
         ConverterGrpcRequest request,
         StreamObserver<ConverterGrpcResponse> observer
     ) {
-        logger.debug("Accept a request to convert currency");
+        log.info("Accept a request to convert currency");
         BigDecimal converted;
         try {
             converted = service.convert(
-                request.getFrom(),
-                request.getTo(),
+                Currency.fromValue(request.getFrom()),
+                Currency.fromValue(request.getTo()),
                 BigDecimal.valueOf(request.getAmount()));
         } catch (RuntimeException e) {
             Status status = handleException(e);

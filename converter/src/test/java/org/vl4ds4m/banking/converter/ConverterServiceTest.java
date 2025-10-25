@@ -5,10 +5,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
-import org.vl4ds4m.banking.converter.exception.InvalidCurrencyException;
+import org.vl4ds4m.banking.converter.api.model.Currency;
+import org.vl4ds4m.banking.converter.client.rates.model.RatesResponse;
 import org.vl4ds4m.banking.converter.exception.NonPositiveAmountException;
-import org.vl4ds4m.banking.currency.Currency;
-import org.vl4ds4m.banking.currency.RatesResponse;
 import org.vl4ds4m.banking.converter.rates.RatesService;
 import org.vl4ds4m.banking.converter.rates.RatesServiceException;
 
@@ -24,11 +23,11 @@ class ConverterServiceTest {
     private final ConverterService service = new ConverterService(rates);
 
     {
-        RatesResponse response = new RatesResponse();
-        response.putRatesItem(Currency.RUB.getValue(), new BigDecimal("1"));
-        response.putRatesItem(Currency.USD.getValue(), new BigDecimal("35.47"));
-        response.putRatesItem(Currency.EUR.getValue(), new BigDecimal("50.2"));
-        response.setBase(Currency.RUB);
+        var response = new RatesResponse();
+        response.putRatesItem(org.vl4ds4m.banking.converter.client.rates.model.Currency.RUB.getValue(), new BigDecimal("1"));
+        response.putRatesItem(org.vl4ds4m.banking.converter.client.rates.model.Currency.USD.getValue(), new BigDecimal("35.47"));
+        response.putRatesItem(org.vl4ds4m.banking.converter.client.rates.model.Currency.EUR.getValue(), new BigDecimal("50.2"));
+        response.setBase(org.vl4ds4m.banking.converter.client.rates.model.Currency.RUB);
         Mockito.when(rates.getRatesResponse()).thenReturn(response);
     }
 
@@ -41,8 +40,8 @@ class ConverterServiceTest {
         String result
     ) {
         BigDecimal actual = service.convert(
-            source.getValue(),
-            target.getValue(),
+            source,
+            target,
             new BigDecimal(amount)
         );
         assertEquals(new BigDecimal(result), actual);
@@ -58,8 +57,8 @@ class ConverterServiceTest {
 
     @Test
     void tryConvertInaccessibleCurrency() {
-        String inaccessible = Currency.CNY.getValue();
-        String usd = Currency.USD.getValue();
+        var inaccessible = Currency.CNY;
+        var usd = Currency.USD;
         BigDecimal amount = BigDecimal.ONE;
         assertThrows(RatesServiceException.class,
             () -> service.convert(inaccessible, usd, amount));
@@ -68,20 +67,9 @@ class ConverterServiceTest {
     }
 
     @Test
-    void tryConvertUnknownCurrency() {
-        String unknown = "FOO";
-        String usd = Currency.USD.getValue();
-        BigDecimal amount = BigDecimal.ONE;
-        assertThrows(InvalidCurrencyException.class,
-            () -> service.convert(unknown, usd, amount));
-        assertThrows(InvalidCurrencyException.class,
-            () -> service.convert(usd, unknown, amount));
-    }
-
-    @Test
     void tryConvertNonPositiveAmount() {
-        String source = Currency.USD.getValue();
-        String target = Currency.RUB.getValue();
+        var source = Currency.USD;
+        var target = Currency.RUB;
         assertThrows(NonPositiveAmountException.class,
             () -> service.convert(source, target, BigDecimal.ZERO));
         assertThrows(NonPositiveAmountException.class,

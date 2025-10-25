@@ -35,7 +35,7 @@ public class ConverterController implements ConvertApi {
         log.info("Accept {} {}: {}, {} -> {}",
                 HttpMethod.GET, ConvertApi.PATH_CONVERT_CURRENCY,
                 amount, from, to);
-        var convertedAmount = service.convert(from.getValue(), to.getValue(), amount);
+        var convertedAmount = service.convert(from, to, amount);
         var response = new ConvertCurrencyResponse(convertedAmount);
         return ResponseEntity.ok(response);
     }

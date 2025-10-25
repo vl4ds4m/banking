@@ -11,9 +11,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.vl4ds4m.banking.converter.api.ConverterController;
-import org.vl4ds4m.banking.converter.exception.InvalidCurrencyException;
+import org.vl4ds4m.banking.converter.api.model.Currency;
 import org.vl4ds4m.banking.converter.exception.NonPositiveAmountException;
-import org.vl4ds4m.banking.currency.Currency;
 
 import java.math.BigDecimal;
 import java.util.stream.Stream;
@@ -44,15 +43,13 @@ class ConverterControllerTest {
     ) throws Exception {
         String src = source.getValue();
         String tgt = target.getValue();
-        when(service.convert(src, tgt, amount)).thenReturn(result);
+        when(service.convert(source, target, amount)).thenReturn(result);
         doRequest(src, tgt, amount).andDo(
             print()
         ).andExpect(
             status().isOk()
         ).andExpect(
             content().string(containsString(result.toString()))
-        ).andExpect(
-            content().string(containsString(tgt))
         );
     }
 
@@ -66,30 +63,28 @@ class ConverterControllerTest {
 
     @Test
     void tryConvertNegativeAmount() throws Exception {
-        String src = "A";
-        String tgt = "B";
+        var src = Currency.CNY;
+        var tgt = Currency.GBP;
         BigDecimal amount = new BigDecimal("-234.34");
         when(service.convert(src, tgt, amount)).thenThrow(NonPositiveAmountException.class);
-        doRequest(src, tgt, amount).andDo(
+        doRequest(src.getValue(), tgt.getValue(), amount).andDo(
             print()
         ).andExpect(
             status().isBadRequest()
+        ).andExpect(
+            content().string(containsString("Отрицательная сумма"))
         );
     }
 
     @Test
     void tryConvertInvalidCurrency() throws Exception {
-        String src = "A";
+        String src = Currency.EUR.getValue();
         String tgt = "Magic dollars";
         BigDecimal amount = new BigDecimal("834.34");
-        when(service.convert(src, tgt, amount))
-            .thenThrow(new InvalidCurrencyException(tgt));
         doRequest(src, tgt, amount).andDo(
             print()
         ).andExpect(
             status().isBadRequest()
-        ).andExpect(
-            content().string(containsString(tgt))
         );
     }
 

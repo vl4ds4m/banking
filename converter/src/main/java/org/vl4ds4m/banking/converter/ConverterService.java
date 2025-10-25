@@ -1,14 +1,12 @@
 package org.vl4ds4m.banking.converter;
 
 import io.micrometer.observation.annotation.Observed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.vl4ds4m.banking.Conversions;
-import org.vl4ds4m.banking.converter.exception.InvalidCurrencyException;
+import org.vl4ds4m.banking.converter.api.model.Currency;
 import org.vl4ds4m.banking.converter.exception.NonPositiveAmountException;
-import org.vl4ds4m.banking.currency.Currency;
-import org.vl4ds4m.banking.currency.RatesResponse;
 import org.vl4ds4m.banking.converter.rates.RatesService;
 import org.vl4ds4m.banking.converter.rates.RatesServiceException;
 
@@ -16,40 +14,25 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class ConverterService {
-    private static final Logger logger = LoggerFactory.getLogger(ConverterService.class);
 
     private final RatesService service;
 
-    public ConverterService(RatesService service) {
-        this.service = service;
-    }
-
     @Observed
-    public BigDecimal convert(String sourceValue, String targetValue, BigDecimal amount) {
-        Currency source = Currency.fromValue(sourceValue);
-        if (source == null) {
-            throw new InvalidCurrencyException(sourceValue);
-        }
-        Currency target = Currency.fromValue(targetValue);
-        if (target == null) {
-            throw new InvalidCurrencyException(targetValue);
-        }
+    public BigDecimal convert(Currency source, Currency target, BigDecimal amount) {
         amount = Conversions.setScale(amount);
         if (BigDecimal.ZERO.compareTo(amount) >= 0) {
             throw new NonPositiveAmountException(amount);
         }
-        return convert(source, target, amount);
-    }
-
-    private BigDecimal convert(Currency source, Currency target, BigDecimal amount) {
         BigDecimal converted;
         if (target.equals(source)) {
             converted = amount;
-            logger.debug("Return passed amount as source currency equals target currency");
+            log.info("Return passed amount as source currency equals target currency");
         } else {
-            RatesResponse ratesResponse = service.getRatesResponse();
-            Currency base = ratesResponse.getBase();
+            var ratesResponse = service.getRatesResponse();
+            var base = Currency.fromValue(ratesResponse.getBase().getValue());
             Map<String, BigDecimal> rates = ratesResponse.getRates();
             BigDecimal rate;
             if (base.equals(source)) {
@@ -65,7 +48,7 @@ public class ConverterService {
                 rate = requireRate(rates, target);
                 converted = converted.divide(rate, Conversions.SCALE, Conversions.ROUNDING_MODE);
             }
-            logger.debug("Convert [{} {}] to [{} {}]", amount, source, converted, target);
+            log.info("Convert [{} {}] to [{} {}]", amount, source, converted, target);
         }
         return converted;
     }
