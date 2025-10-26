@@ -12,11 +12,11 @@ public class ConverterClientConfiguration {
 
     @Bean
     public ConverterClient converterClient(
-            @Value("${converter.url}") String url,
+            @Value("${services.converter.address}") String address,
             RestTemplate restTemplate
     ) {
         var client = new ApiClient(restTemplate);
-        client.setBasePath(url);
+        client.setBasePath("http://" + address);
         var api = new ConvertApi(client);
         return new ConverterClient(api);
     }
