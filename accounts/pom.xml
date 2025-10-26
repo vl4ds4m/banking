@@ -162,7 +162,24 @@
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>generate-converter-api</id>
+                        <id>generate-api</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.parent.basedir}/openapi/${project.artifactId}.yaml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <apiPackage>${appPackage}.api</apiPackage>
+                            <modelPackage>${appPackage}.api.model</modelPackage>
+                            <configOptions>
+                                <interfaceOnly>true</interfaceOnly>
+                                <useOptional>true</useOptional>
+                                <useSpringBoot3>true</useSpringBoot3>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-converter-client</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
