@@ -3,16 +3,12 @@ package org.vl4ds4m.banking.accounts.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.vl4ds4m.banking.accounts.api.model.BalanceResponse;
-import org.vl4ds4m.banking.accounts.api.model.CreateCustomerRequest;
-import org.vl4ds4m.banking.accounts.api.model.Currency;
-import org.vl4ds4m.banking.accounts.api.util.CurrencyConverter;
+import org.vl4ds4m.banking.accounts.dao.CustomerDao;
 import org.vl4ds4m.banking.accounts.entity.Customer;
-import org.vl4ds4m.banking.common.entity.Money;
-import org.vl4ds4m.banking.accounts.repository.CustomerRepository;
-import org.vl4ds4m.banking.accounts.repository.entity.CustomerRe;
-import org.vl4ds4m.banking.accounts.service.expection.DuplicateEntityException;
 import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
+import org.vl4ds4m.banking.common.entity.Currency;
+import org.vl4ds4m.banking.common.entity.Money;
+import org.vl4ds4m.banking.accounts.service.expection.DuplicateEntityException;
 import org.vl4ds4m.banking.accounts.service.expection.ServiceException;
 
 import java.time.LocalDate;
@@ -22,67 +18,44 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class CustomerService {
 
-    private final CustomerRepository customerRepository;
+    private final CustomerDao customerDao;
 
     private final ConverterService converterService;
 
-    public Customer getCustomerByName(String name) {
-        return getCustomerRe(name).toEntity();
-    }
+    public void createCustomer(
+            String name,
+            String firstName,
+            String lastName,
+            LocalDate birthDate
+    ) {
+        if (customerDao.existsByName(name)) {
+            throw new DuplicateEntityException(Customer.logStr(name));
+        }
 
-    public void createCustomer(CreateCustomerRequest request) {
-        customerRepository.findByName(request.getCustomerName()).ifPresent(c -> {
-            var customerStr = Customer.logStr(request.getCustomerName());
-            throw new DuplicateEntityException(customerStr);
-        });
-
-        LocalDate now = LocalDate.now();
-        LocalDate maxBirthDate = now.minusYears(14);
-        LocalDate minBirthDate = now.minusYears(121).plusDays(1);
-        LocalDate birthDate = request.getBirthDate();
+        var now = LocalDate.now();
+        var maxBirthDate = now.minusYears(14);
+        var minBirthDate = now.minusYears(121).plusDays(1);
 
         if (birthDate.isAfter(maxBirthDate) || birthDate.isBefore(minBirthDate)) {
             throw new ServiceException("Customer age must be in range of 14 to 120 years. " +
                     "Passed birth date = " + birthDate);
         }
 
-        var name = request.getCustomerName();
-        var customer = new CustomerRe();
-        customer.setName(name);
-        customer.setFirstName(request.getFirstName());
-        customer.setLastName(request.getLastName());
-        customer.setBirthDate(birthDate);
-        customer = customerRepository.save(customer);
-
-        name = customer.getName();
+        var customer = new Customer(name, firstName, lastName, birthDate);
+        customerDao.create(customer);
         log.info("{} created", Customer.logStr(name));
     }
 
-    public BalanceResponse getCustomerBalance(String customerName, Currency currency) {
-        var customer = getCustomerRe(customerName);
-
-        var accounts = customer.getAccounts();
-        var balance = Money.empty();
-        var totalCurrency = CurrencyConverter.toEntity(currency);
-
-        for (var account : accounts) {
-            var money = Money.of(account.getAmount());
-
-            if (money.isEmpty()) continue;
-
-            Money converted = money;
-            if (!account.getCurrency().equals(totalCurrency)) {
-                converted = converterService.convert(account.getCurrency(), totalCurrency, money);
-            }
-
-            balance = balance.add(converted);
+    public Money getCustomerBalance(String customerName, Currency currency) {
+        if (!customerDao.existsByName(customerName)) {
+            throw new EntityNotFoundException(Customer.logStr(customerName));
         }
 
-        return new BalanceResponse(currency, balance.amount());
-    }
-
-    private CustomerRe getCustomerRe(String name) {
-        return customerRepository.findByName(name)
-                .orElseThrow(() -> new EntityNotFoundException(Customer.logStr(name)));
+        return customerDao.getAccounts(customerName).stream()
+                .map(a -> converterService.convert(
+                        a.currency(),
+                        currency,
+                        a.money()))
+                .reduce(Money.empty(), Money::add);
     }
 }

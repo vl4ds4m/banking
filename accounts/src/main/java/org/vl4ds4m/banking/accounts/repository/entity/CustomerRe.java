@@ -2,7 +2,6 @@ package org.vl4ds4m.banking.accounts.repository.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.vl4ds4m.banking.accounts.entity.Customer;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -42,10 +41,6 @@ public class CustomerRe {
 
     @OneToMany(mappedBy = AccountRe_.CUSTOMER)
     private Set<AccountRe> accounts;
-
-    public Customer toEntity() {
-        return new Customer(name, firstName, lastName, birthDate);
-    }
 
     static class ColumnName {
 

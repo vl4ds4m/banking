@@ -3,136 +3,98 @@ package org.vl4ds4m.banking.accounts.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.vl4ds4m.banking.accounts.api.model.*;
-import org.vl4ds4m.banking.accounts.api.util.CurrencyConverter;
+import org.vl4ds4m.banking.accounts.dao.AccountDao;
+import org.vl4ds4m.banking.accounts.dao.CustomerDao;
 import org.vl4ds4m.banking.accounts.entity.Account;
 import org.vl4ds4m.banking.accounts.entity.Customer;
+import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
-import org.vl4ds4m.banking.accounts.repository.AccountRepository;
-import org.vl4ds4m.banking.accounts.repository.CustomerRepository;
-import org.vl4ds4m.banking.accounts.repository.entity.AccountRe;
 import org.vl4ds4m.banking.accounts.service.expection.DuplicateEntityException;
 import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
-
-import java.math.BigDecimal;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class AccountService {
 
-    private final AccountRepository accountRepository;
+    private final AccountDao accountDao;
 
-    private final CustomerRepository customerRepository;
+    private final CustomerDao customerDao;
 
-    public Account getAccountByNumber(long number) {
-        return getAccountRe(number).toEntity();
-    }
+    public long createAccount(String customerName, Currency currency) {
+        if (!customerDao.existsByName(customerName)) {
+            throw new EntityNotFoundException(Customer.logStr(customerName));
+        }
 
-    public CreateAccountResponse createAccount(CreateAccountRequest request) {
-        var customerName = request.getCustomerName();
-        var customer = customerRepository.findByName(customerName)
-                .orElseThrow(() -> new EntityNotFoundException(Customer.logStr(customerName)));
+        boolean exists = customerDao.getAccounts(customerName).stream()
+                .map(Account::currency)
+                .anyMatch(currency::equals);
 
-        var currency = CurrencyConverter.toEntity(request.getCurrency());
-        customer.getAccounts().stream()
-                .filter(a -> a.getCurrency().equals(currency))
-                .findAny()
-                .ifPresent(a -> {
-                    throw new DuplicateEntityException(
-                            Account.logStr(customerName, currency));
-                });
+        if (exists) {
+            throw new DuplicateEntityException(Account.logStr(customerName, currency));
+        }
 
-        var account = new AccountRe();
-        account.setNumber(0L);
-        account.setCustomer(customer);
-        account.setCurrency(currency);
-        account.setAmount(Money.empty().amount());
-        account = accountRepository.save(account);
-
-        long number = generateAccountNumber(account.getId());
-        account.setNumber(number);
-
-        account = accountRepository.save(account);
-        number = account.getNumber();
+        long number = accountDao.create(customerName, currency, Money.empty());
         log.info("{} created", Account.logStr(number));
 
-        return new CreateAccountResponse(number);
+        return number;
     }
 
-    public BalanceResponse getAccountBalance(long number) {
-        var account = getAccountRe(number);
-        return new BalanceResponse(
-                CurrencyConverter.toApi(account.getCurrency()),
-                account.getAmount());
+    public Account getAccount(long accountNumber) {
+        checkAccountExists(accountNumber);
+        return accountDao.getByNumber(accountNumber);
     }
 
-    public AccountOperationResponse topUpAccount(long number, TopUpAccountRequest request) {
-        var account = getAccountRe(number);
+    public Account topUpAccount(long accountNumber, Money augend) {
+        checkAccountExists(accountNumber);
 
-        var money = Money.of(account.getAmount())
-                .add(Money.of(request.getAugend()));
-        account.setAmount(money.amount());
+        var account = accountDao.getByNumber(accountNumber);
+        var money = account.money().add(augend);
 
-        account = accountRepository.save(account);
+        accountDao.updateMoney(accountNumber, money);
         log.info("{} top up by {} {}",
-                Account.logStr(account.getNumber()),
-                request.getAugend(),
-                account.getCurrency());
+                Account.logStr(accountNumber),
+                augend,
+                account.currency());
 
-        return new AccountOperationResponse(
-                CurrencyConverter.toApi(account.getCurrency()),
-                account.getAmount());
+        return new Account(accountNumber, account.currency(), money);
     }
 
-    public AccountOperationResponse withdrawMoneyToAccount(long number, WithdrawAccountRequest request) {
-        var account = getAccountRe(number);
+    public Account withdrawMoneyToAccount(long accountNumber, Money subtrahend) {
+        checkAccountExists(accountNumber);
 
-        var money = Money.of(account.getAmount())
-                .subtract(Money.of(request.getSubtrahend()));
-        account.setAmount(money.amount());
+        var account = accountDao.getByNumber(accountNumber);
+        var money = account.money().subtract(subtrahend);
 
-        account = accountRepository.save(account);
+        accountDao.updateMoney(accountNumber, money);
         log.info("{} withdraw {} {}",
-                Account.logStr(account.getNumber()),
-                request.getSubtrahend(),
-                account.getCurrency());
+                Account.logStr(accountNumber),
+                subtrahend,
+                account.currency());
 
-        return new AccountOperationResponse(
-                CurrencyConverter.toApi(account.getCurrency()),
-                account.getAmount());
+        return new Account(accountNumber, account.currency(), money);
     }
 
     // ToDo implement proper transfer
-    public void transferMoney(long senderNumber, long receiverNumber, BigDecimal amount) {
-        final var money = Money.of(amount);
-        var sender = getAccountRe(senderNumber);
-        var receiver = getAccountRe(receiverNumber);
+    public void transferMoney(long senderNumber, long receiverNumber, Money money) {
+        checkAccountExists(senderNumber);
+        checkAccountExists(receiverNumber);
 
-        final var senderMoneyBefore = Money.of(sender.getAmount());
+        var sender = accountDao.getByNumber(senderNumber);
+        var receiver = accountDao.getByNumber(receiverNumber);
+
+        final var senderMoneyBefore = sender.money();
         final var senderMoneyAfter = senderMoneyBefore.subtract(money);
-        sender.setAmount(senderMoneyAfter.amount());
+        accountDao.updateMoney(senderNumber, senderMoneyAfter);
 
-        final var receiverMoneyBefore = Money.of(receiver.getAmount());
+        final var receiverMoneyBefore = receiver.money();
         final var receiverMoneyAfter = receiverMoneyBefore.add(money);
-        receiver.setAmount(receiverMoneyAfter.amount());
-
-        accountRepository.save(sender);
-        accountRepository.save(receiver);
+        accountDao.updateMoney(receiverNumber, receiverMoneyAfter);
     }
 
-    private AccountRe getAccountRe(long number) {
-        return accountRepository.findByNumber(number)
-                .orElseThrow(() -> new EntityNotFoundException(Account.logStr(number)));
-    }
-
-    // ToDo implement proper generator
-    private static long generateAccountNumber(long id) {
-        long number = id + 1_000_000_000L;
-        if (number <= 0L) {
-            throw new RuntimeException("New account number must be positive. " +
-                    "Generated value = " + number);
+    private void checkAccountExists(long accountNumber) {
+        if (!accountDao.existsByNumber(accountNumber)) {
+            throw new EntityNotFoundException(Account.logStr(accountNumber));
         }
-        return number;
     }
 }

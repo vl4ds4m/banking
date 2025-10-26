@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.vl4ds4m.banking.accounts.api.model.BalanceResponse;
 import org.vl4ds4m.banking.accounts.api.model.CreateCustomerRequest;
 import org.vl4ds4m.banking.accounts.api.model.Currency;
+import org.vl4ds4m.banking.accounts.api.util.CurrencyConverter;
 import org.vl4ds4m.banking.accounts.service.CustomerService;
 
 @RestController
@@ -20,14 +21,25 @@ public class CustomerController implements CustomersApi {
     @Override
     public ResponseEntity<Void> createCustomer(CreateCustomerRequest createCustomerRequest) {
         logRequest(HttpMethod.POST, PATH_CREATE_CUSTOMER, createCustomerRequest);
-        customerService.createCustomer(createCustomerRequest);
+
+        customerService.createCustomer(
+                createCustomerRequest.getCustomerName(),
+                createCustomerRequest.getFirstName(),
+                createCustomerRequest.getLastName(),
+                createCustomerRequest.getBirthDate());
+
         return ResponseEntity.ok().build();
     }
 
     @Override
     public ResponseEntity<BalanceResponse> getCustomerBalance(String customerName, Currency currency) {
         logRequest(HttpMethod.GET, PATH_GET_CUSTOMER_BALANCE, customerName, currency);
-        var response = customerService.getCustomerBalance(customerName, currency);
+
+        var money = customerService.getCustomerBalance(
+                customerName,
+                CurrencyConverter.toEntity(currency));
+
+        var response = new BalanceResponse(currency, money.amount());
         return ResponseEntity.ok(response);
     }
 

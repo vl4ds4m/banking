@@ -7,5 +7,7 @@ import java.util.Optional;
 
 public interface CustomerRepository extends CrudRepository<CustomerRe, Long> {
 
+    boolean existsByName(String name);
+
     Optional<CustomerRe> findByName(String name);
 }

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.vl4ds4m.banking.accounts.client.ConverterClient;
-import org.vl4ds4m.banking.accounts.client.util.CurrencyConverter;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
 
@@ -16,13 +15,7 @@ public class ConverterService {
     private final ConverterClient converterClient;
 
     public Money convert(Currency from, Currency to, Money money) {
-        var apiFrom = CurrencyConverter.toApi(from);
-        var apiTo = CurrencyConverter.toApi(to);
-        var amount = money.amount();
-
-        var response = converterClient.convertCurrency(apiFrom, apiTo, amount);
-
-        var converted = response.getConvertedAmount();
-        return Money.of(converted);
+        if (money.isEmpty() || from.equals(to)) return money;
+        return converterClient.convertCurrency(from, to, money);
     }
 }

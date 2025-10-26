@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.vl4ds4m.banking.accounts.api.util.CurrencyConverter;
 import org.vl4ds4m.banking.accounts.service.AccountService;
 import org.vl4ds4m.banking.accounts.api.model.*;
+import org.vl4ds4m.banking.common.entity.Money;
 
 @RestController
 @Slf4j
@@ -18,14 +20,24 @@ public class AccountController implements AccountsApi {
     @Override
     public ResponseEntity<CreateAccountResponse> createAccount(CreateAccountRequest createAccountRequest) {
         logRequest(HttpMethod.POST, PATH_CREATE_ACCOUNT, createAccountRequest);
-        var response = accountService.createAccount(createAccountRequest);
+
+        long accountNumber = accountService.createAccount(
+                createAccountRequest.getCustomerName(),
+                CurrencyConverter.toEntity(createAccountRequest.getCurrency()));
+
+        var response = new CreateAccountResponse(accountNumber);
         return ResponseEntity.ok(response);
     }
 
     @Override
     public ResponseEntity<BalanceResponse> getAccountBalance(Long accountNumber) {
         logRequest(HttpMethod.GET, PATH_GET_ACCOUNT_BALANCE, accountNumber);
-        var response = accountService.getAccountBalance(accountNumber);
+
+        var account = accountService.getAccount(accountNumber);
+
+        var response = new BalanceResponse(
+                CurrencyConverter.toApi(account.currency()),
+                account.money().amount());
         return ResponseEntity.ok(response);
     }
 
@@ -35,7 +47,14 @@ public class AccountController implements AccountsApi {
             TopUpAccountRequest topUpAccountRequest
     ) {
         logRequest(HttpMethod.PUT, PATH_TOP_UP_ACCOUNT, accountNumber, topUpAccountRequest);
-        var response = accountService.topUpAccount(accountNumber, topUpAccountRequest);
+
+        var account = accountService.topUpAccount(
+                accountNumber,
+                Money.of(topUpAccountRequest.getAugend()));
+
+        var response = new AccountOperationResponse(
+                CurrencyConverter.toApi(account.currency()),
+                account.money().amount());
         return ResponseEntity.ok(response);
     }
 
@@ -45,7 +64,14 @@ public class AccountController implements AccountsApi {
             WithdrawAccountRequest withdrawAccountRequest
     ) {
         logRequest(HttpMethod.PUT, PATH_WITHDRAW_ACCOUNT, accountNumber, withdrawAccountRequest);
-        var response = accountService.withdrawMoneyToAccount(accountNumber, withdrawAccountRequest);
+
+        var account = accountService.withdrawMoneyToAccount(
+                accountNumber,
+                Money.of(withdrawAccountRequest.getSubtrahend()));
+
+        var response = new AccountOperationResponse(
+                CurrencyConverter.toApi(account.currency()),
+                account.money().amount());
         return ResponseEntity.ok(response);
     }
 

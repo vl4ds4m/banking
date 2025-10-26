@@ -7,5 +7,7 @@ import java.util.Optional;
 
 public interface AccountRepository extends CrudRepository<AccountRe, Long> {
 
+    boolean existsByNumber(Long number);
+
     Optional<AccountRe> findByNumber(Long number);
 }

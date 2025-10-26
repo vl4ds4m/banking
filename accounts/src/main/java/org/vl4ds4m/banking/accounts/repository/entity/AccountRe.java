@@ -2,9 +2,7 @@ package org.vl4ds4m.banking.accounts.repository.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.vl4ds4m.banking.accounts.entity.Account;
 import org.vl4ds4m.banking.common.entity.Currency;
-import org.vl4ds4m.banking.common.entity.Money;
 
 import java.math.BigDecimal;
 
@@ -45,10 +43,6 @@ public class AccountRe {
     @Column(name = ColumnName.AMOUNT,
             nullable = false)
     private BigDecimal amount;
-
-    public Account toEntity() {
-        return new Account(number, currency, Money.of(amount));
-    }
 
     static class ColumnName {
 
