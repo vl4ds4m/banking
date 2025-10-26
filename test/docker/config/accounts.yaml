@@ -1,3 +1,2 @@
-logging:
-  level:
-    edu.vl4ds4m.banking: debug
+spring:
+  main.banner-mode: off
