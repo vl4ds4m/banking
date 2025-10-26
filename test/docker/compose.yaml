@@ -7,29 +7,29 @@ services:
     ports:
       - 5432:5432
     env_file: ./env/postgres.env
-  redis:
-    image: redis:8
-    ports:
-      - 6379:6379
-  keycloak:
-    image: quay.io/keycloak/keycloak:23.0.6
-    command: ["start-dev", "--import-realm"]
-    ports:
-      - 8084:8080
-    secrets:
-      - source: keycloak-realm
-        target: /opt/keycloak/data/import/realm.json
-    env_file: ./env/keycloak.env
+#  redis:
+#    image: redis:8
+#    ports:
+#      - 6379:6379
+#  keycloak:
+#    image: quay.io/keycloak/keycloak:23.0.6
+#    command: ["start-dev", "--import-realm"]
+#    ports:
+#      - 8084:8080
+#    secrets:
+#      - source: keycloak-realm
+#        target: /opt/keycloak/data/import/realm.json
+#    env_file: ./env/keycloak.env
   rates:
-    depends_on:
-      - keycloak
-    image: miraclewisp/hse-rates:auth-amd64
+#    depends_on:
+#      - keycloak
+    image: miraclewisp/hse-rates:amd64
     ports:
       - 8083:8080
     env_file: ./env/rates.env
   converter:
     depends_on:
-      - keycloak
+#      - keycloak
       - rates
     build:
       args:
@@ -44,7 +44,7 @@ services:
     depends_on:
       - converter
       - postgres
-      - redis
+#      - redis
     build:
       args:
         - JAR_FILE=./build/accounts.jar
@@ -63,9 +63,9 @@ services:
 #    env_file: ./env/test-box.env
 volumes:
   postgres-data: {}
-secrets:
-  keycloak-realm:
-    file: ./config/realm.json
+#secrets:
+#  keycloak-realm:
+#    file: ./config/realm.json
 configs:
   converter-config:
     file: ./config/converter.yaml

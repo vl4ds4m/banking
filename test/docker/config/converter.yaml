@@ -1,7 +1,6 @@
 spring:
-  profiles:
-    active:
-      - auth
+#  profiles.active: [auth]
+
 logging:
   level:
     edu.vl4ds4m.banking: debug
