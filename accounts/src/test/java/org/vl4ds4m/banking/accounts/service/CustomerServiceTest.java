@@ -121,6 +121,7 @@ class CustomerServiceTest {
         var customer = customerRepository.findByName(DEFAULT_CUSTOMER.name()).orElseThrow();
 
         var account1 = new AccountRe();
+        account1.setId(1L);
         account1.setNumber(101L);
         account1.setCustomer(customer);
         account1.setCurrency(Currency.RUB);
@@ -128,6 +129,7 @@ class CustomerServiceTest {
         account1.setAmount(money1.amount());
 
         var account2 = new AccountRe();
+        account2.setId(2L);
         account2.setNumber(202L);
         account2.setCustomer(customer);
         account2.setCurrency(Currency.EUR);
