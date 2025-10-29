@@ -75,23 +75,6 @@ public class AccountService {
         return new Account(accountNumber, account.currency(), money);
     }
 
-    // ToDo implement proper transfer
-    public void transferMoney(long senderNumber, long receiverNumber, Money money) {
-        checkAccountExists(senderNumber);
-        checkAccountExists(receiverNumber);
-
-        var sender = accountDao.getByNumber(senderNumber);
-        var receiver = accountDao.getByNumber(receiverNumber);
-
-        final var senderMoneyBefore = sender.money();
-        final var senderMoneyAfter = senderMoneyBefore.subtract(money);
-        accountDao.updateMoney(senderNumber, senderMoneyAfter);
-
-        final var receiverMoneyBefore = receiver.money();
-        final var receiverMoneyAfter = receiverMoneyBefore.add(money);
-        accountDao.updateMoney(receiverNumber, receiverMoneyAfter);
-    }
-
     private void checkAccountExists(long accountNumber) {
         if (!accountDao.existsByNumber(accountNumber)) {
             throw new EntityNotFoundException(Account.logStr(accountNumber));

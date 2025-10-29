@@ -246,12 +246,12 @@ paths:
                 title: TransferResponse
                 type: object
                 properties:
-                  senderCurrency:
-                    $ref: '#/components/schemas/Currency'
                   totalSenderAmount:
                     $ref: '#/components/schemas/CurrencyAmount'
+                  totalReceiverAmount:
+                    $ref: '#/components/schemas/CurrencyAmount'
                 required:
-                  - senderCurrency
                   - totalSenderAmount
+                  - totalReceiverAmount
         '400':
           $ref: '#/components/responses/InvalidQuery'
