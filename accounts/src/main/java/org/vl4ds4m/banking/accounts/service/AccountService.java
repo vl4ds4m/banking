@@ -7,6 +7,7 @@ import org.vl4ds4m.banking.accounts.dao.AccountDao;
 import org.vl4ds4m.banking.accounts.dao.CustomerDao;
 import org.vl4ds4m.banking.accounts.entity.Account;
 import org.vl4ds4m.banking.accounts.entity.Customer;
+import org.vl4ds4m.banking.accounts.service.expection.ServiceException;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.accounts.service.expection.DuplicateEntityException;
@@ -20,6 +21,11 @@ public class AccountService {
     private final AccountDao accountDao;
 
     private final CustomerDao customerDao;
+
+    public Account getAccount(long accountNumber) {
+        checkAccountExists(accountNumber);
+        return accountDao.getByNumber(accountNumber);
+    }
 
     public long createAccount(String customerName, Currency currency) {
         if (!customerDao.existsByName(customerName)) {
@@ -38,11 +44,6 @@ public class AccountService {
         log.info("{} created", Account.logStr(number));
 
         return number;
-    }
-
-    public Account getAccount(long accountNumber) {
-        checkAccountExists(accountNumber);
-        return accountDao.getByNumber(accountNumber);
     }
 
     public Account topUpAccount(long accountNumber, Money augend) {
@@ -64,6 +65,11 @@ public class AccountService {
         checkAccountExists(accountNumber);
 
         var account = accountDao.getByNumber(accountNumber);
+
+        if (account.money().compareTo(subtrahend) < 0) {
+            throw new ServiceException("Account money is less then subtrahend");
+        }
+
         var money = account.money().subtract(subtrahend);
 
         accountDao.updateMoney(accountNumber, money);

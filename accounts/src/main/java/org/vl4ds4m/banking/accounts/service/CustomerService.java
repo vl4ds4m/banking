@@ -5,11 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.vl4ds4m.banking.accounts.dao.CustomerDao;
 import org.vl4ds4m.banking.accounts.entity.Customer;
+import org.vl4ds4m.banking.accounts.service.expection.DuplicateEntityException;
 import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
+import org.vl4ds4m.banking.accounts.service.expection.ServiceException;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
-import org.vl4ds4m.banking.accounts.service.expection.DuplicateEntityException;
-import org.vl4ds4m.banking.accounts.service.expection.ServiceException;
 
 import java.time.LocalDate;
 
@@ -21,6 +21,11 @@ public class CustomerService {
     private final CustomerDao customerDao;
 
     private final ConverterService converterService;
+
+    public Customer getCustomer(String customerName) {
+        checkCustomerExists(customerName);
+        return customerDao.getByName(customerName);
+    }
 
     public void createCustomer(
             String name,
@@ -47,9 +52,7 @@ public class CustomerService {
     }
 
     public Money getCustomerBalance(String customerName, Currency currency) {
-        if (!customerDao.existsByName(customerName)) {
-            throw new EntityNotFoundException(Customer.logStr(customerName));
-        }
+        checkCustomerExists(customerName);
 
         return customerDao.getAccounts(customerName).stream()
                 .map(a -> converterService.convert(
@@ -57,5 +60,11 @@ public class CustomerService {
                         currency,
                         a.money()))
                 .reduce(Money.empty(), Money::add);
+    }
+
+    private void checkCustomerExists(String customerName) {
+        if (!customerDao.existsByName(customerName)) {
+            throw new EntityNotFoundException(Customer.logStr(customerName));
+        }
     }
 }
