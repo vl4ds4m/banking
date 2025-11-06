@@ -6,11 +6,16 @@ import org.vl4ds4m.banking.common.entity.Currency;
 
 import java.math.BigDecimal;
 
+import static org.vl4ds4m.banking.accounts.repository.entity.AccountRe.ColumnName.*;
+import static org.vl4ds4m.banking.accounts.repository.entity.AccountRe.TABLE_NAME;
+
 @Entity
-@Table(name = AccountRe.TABLE_NAME,
-        uniqueConstraints = @UniqueConstraint(columnNames = {
-                AccountRe.ColumnName.CUSTOMER_ID,
-                AccountRe.ColumnName.CURRENCY}))
+@Table(name = TABLE_NAME,
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = AccountRe.ColumnName.NUMBER,
+            name = TABLE_NAME + "_natkey"),
+        @UniqueConstraint(columnNames = {CUSTOMER_ID, CURRENCY},
+            name = TABLE_NAME + "_uniqkey" + "-" + CUSTOMER_ID + "-" + CURRENCY)})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,26 +26,25 @@ public class AccountRe {
 
     @Id
     @GeneratedValue
-    @Column(name = ColumnName.ID)
+    @Column(name = ID)
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(name = ColumnName.NUMBER,
-            nullable = false,
-            unique = true)
+    @Column(name = NUMBER,
+            nullable = false)
     private Long number;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = ColumnName.CUSTOMER_ID,
+    @JoinColumn(name = CUSTOMER_ID,
             nullable = false)
     private CustomerRe customer;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = ColumnName.CURRENCY,
+    @Column(name = CURRENCY,
             nullable = false)
     private Currency currency;
 
-    @Column(name = ColumnName.AMOUNT,
+    @Column(name = AMOUNT,
             nullable = false)
     private BigDecimal amount;
 

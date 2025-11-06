@@ -6,8 +6,14 @@ import lombok.*;
 import java.time.LocalDate;
 import java.util.Set;
 
+import static org.vl4ds4m.banking.accounts.repository.entity.CustomerRe.ColumnName.*;
+import static org.vl4ds4m.banking.accounts.repository.entity.CustomerRe.TABLE_NAME;
+
 @Entity
-@Table(name = CustomerRe.TABLE_NAME)
+@Table(name = TABLE_NAME,
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = NAME,
+            name = TABLE_NAME + "_natkey")})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,24 +24,23 @@ public class CustomerRe {
 
     @Id
     @GeneratedValue
-    @Column(name = ColumnName.ID)
+    @Column(name = ID)
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(name = ColumnName.NAME,
-            nullable = false,
-            unique = true)
+    @Column(name = NAME,
+            nullable = false)
     private String name;
 
-    @Column(name = ColumnName.FIRST_NAME,
+    @Column(name = FIRST_NAME,
             nullable = false)
     private String firstName;
 
-    @Column(name = ColumnName.LAST_NAME,
+    @Column(name = LAST_NAME,
             nullable = false)
     private String lastName;
 
-    @Column(name = ColumnName.BIRTH_DATE,
+    @Column(name = BIRTH_DATE,
             nullable = false)
     private LocalDate birthDate;
 
