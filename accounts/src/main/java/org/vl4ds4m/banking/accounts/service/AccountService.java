@@ -3,6 +3,8 @@ package org.vl4ds4m.banking.accounts.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import org.vl4ds4m.banking.accounts.dao.AccountDao;
 import org.vl4ds4m.banking.accounts.dao.CustomerDao;
 import org.vl4ds4m.banking.accounts.entity.Account;
@@ -46,6 +48,7 @@ public class AccountService {
         return number;
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Account topUpAccount(long accountNumber, Money augend) {
         checkAccountExists(accountNumber);
 
@@ -61,6 +64,7 @@ public class AccountService {
         return new Account(accountNumber, account.currency(), money);
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Account withdrawMoneyToAccount(long accountNumber, Money subtrahend) {
         checkAccountExists(accountNumber);
 

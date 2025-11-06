@@ -3,6 +3,8 @@ package org.vl4ds4m.banking.accounts.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import org.vl4ds4m.banking.accounts.dao.AccountDao;
 import org.vl4ds4m.banking.accounts.entity.Account;
 import org.vl4ds4m.banking.accounts.entity.TransferResult;
@@ -19,6 +21,7 @@ public class TransferService {
 
     private final ConverterService converterService;
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TransferResult transferMoney(long senderNumber, long receiverNumber, Money money) {
         checkAccountExists(senderNumber);
         var sender = accountDao.getByNumber(senderNumber);
