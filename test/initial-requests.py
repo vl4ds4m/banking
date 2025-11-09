@@ -17,8 +17,8 @@ request("POST", "/customers", payload)
 payload = "{\n  \"customerName\": \"jsmithy\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Smith\",\n  \"birthDate\": \"1969-03-26\"\n}"
 request("POST", "/customers", payload)
 
-# Create customer: tt-goat
-payload = "{\n  \"customerName\": \"tt-goat\",\n  \"firstName\": \"Ma\",\n  \"lastName\": \"Long\",\n  \"birthDate\": \"1988-10-20\"\n}"
+# Create customer: tt_goat
+payload = "{\n  \"customerName\": \"tt_goat\",\n  \"firstName\": \"Ma\",\n  \"lastName\": \"Long\",\n  \"birthDate\": \"1988-10-20\"\n}"
 request("POST", "/customers", payload)
 
 # Create account: 1000000001
@@ -42,11 +42,11 @@ payload = "{\n  \"customerName\": \"jsmithy\",\n  \"currency\": \"GBP\"\n}"
 request("POST", "/accounts", payload)
 
 # Create account: 1000000006
-payload = "{\n  \"customerName\": \"tt-goat\",\n  \"currency\": \"CNY\"\n}"
+payload = "{\n  \"customerName\": \"tt_goat\",\n  \"currency\": \"CNY\"\n}"
 request("POST", "/accounts", payload)
 
 # Create account: 1000000007
-payload = "{\n  \"customerName\": \"tt-goat\",\n  \"currency\": \"USD\"\n}"
+payload = "{\n  \"customerName\": \"tt_goat\",\n  \"currency\": \"USD\"\n}"
 request("POST", "/accounts", payload)
 
 # Top up account: 1000000001
