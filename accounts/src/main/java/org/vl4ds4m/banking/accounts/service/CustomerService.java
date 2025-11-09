@@ -7,11 +7,10 @@ import org.vl4ds4m.banking.accounts.dao.CustomerDao;
 import org.vl4ds4m.banking.accounts.entity.Customer;
 import org.vl4ds4m.banking.accounts.service.expection.DuplicateEntityException;
 import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
-import org.vl4ds4m.banking.accounts.service.expection.ServiceException;
+import org.vl4ds4m.banking.accounts.service.expection.ValidationException;
+import org.vl4ds4m.banking.accounts.service.validation.CustomerValidator;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
-
-import java.time.LocalDate;
 
 @Service
 @Slf4j
@@ -20,6 +19,8 @@ public class CustomerService {
 
     private final CustomerDao customerDao;
 
+    private final CustomerValidator customerValidator;
+
     private final ConverterService converterService;
 
     public Customer getCustomer(String customerName) {
@@ -27,27 +28,18 @@ public class CustomerService {
         return customerDao.getByName(customerName);
     }
 
-    public void createCustomer(
-            String name,
-            String firstName,
-            String lastName,
-            LocalDate birthDate
-    ) {
+    public void createCustomer(Customer newCustomer) {
+        var name = newCustomer.name();
         if (customerDao.existsByName(name)) {
             throw new DuplicateEntityException(Customer.logStr(name));
         }
 
-        var now = LocalDate.now();
-        var maxBirthDate = now.minusYears(14);
-        var minBirthDate = now.minusYears(121).plusDays(1);
-
-        if (birthDate.isAfter(maxBirthDate) || birthDate.isBefore(minBirthDate)) {
-            throw new ServiceException("Customer age must be in range of 14 to 120 years. " +
-                    "Passed birth date = " + birthDate);
+        var errors = customerValidator.validateObject(newCustomer);
+        if (errors.hasErrors()) {
+            throw ValidationException.with(errors);
         }
 
-        var customer = new Customer(name, firstName, lastName, birthDate);
-        customerDao.create(customer);
+        customerDao.create(newCustomer);
         log.info("{} created", Customer.logStr(name));
     }
 

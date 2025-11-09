@@ -9,6 +9,7 @@ import org.vl4ds4m.banking.accounts.api.model.BalanceResponse;
 import org.vl4ds4m.banking.accounts.api.model.CreateCustomerRequest;
 import org.vl4ds4m.banking.accounts.api.model.Currency;
 import org.vl4ds4m.banking.accounts.api.util.CurrencyConverter;
+import org.vl4ds4m.banking.accounts.entity.Customer;
 import org.vl4ds4m.banking.accounts.service.CustomerService;
 
 @RestController
@@ -22,11 +23,12 @@ public class CustomerController implements CustomersApi {
     public ResponseEntity<Void> createCustomer(CreateCustomerRequest createCustomerRequest) {
         logRequest(HttpMethod.POST, PATH_CREATE_CUSTOMER, createCustomerRequest);
 
-        customerService.createCustomer(
+        var newCustomer = new Customer(
                 createCustomerRequest.getCustomerName(),
                 createCustomerRequest.getFirstName(),
                 createCustomerRequest.getLastName(),
                 createCustomerRequest.getBirthDate());
+        customerService.createCustomer(newCustomer);
 
         return ResponseEntity.ok().build();
     }

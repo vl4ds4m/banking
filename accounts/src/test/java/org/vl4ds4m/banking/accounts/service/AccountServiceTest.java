@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class AccountServiceTest {
+
     private static final Account DEFAULT_ACCOUNT = TestEntity.createDefaultAccount();
 
     private static final Customer DEFAULT_CUSTOMER = TestEntity.createDefaultCustomer();

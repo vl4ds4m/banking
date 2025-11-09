@@ -2,14 +2,15 @@ package org.vl4ds4m.banking.accounts.service;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.validation.Errors;
+import org.springframework.validation.SimpleErrors;
 import org.vl4ds4m.banking.accounts.dao.CustomerDao;
 import org.vl4ds4m.banking.accounts.entity.Account;
 import org.vl4ds4m.banking.accounts.entity.Customer;
 import org.vl4ds4m.banking.accounts.service.expection.DuplicateEntityException;
 import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
-import org.vl4ds4m.banking.accounts.service.expection.ServiceException;
+import org.vl4ds4m.banking.accounts.service.expection.ValidationException;
+import org.vl4ds4m.banking.accounts.service.validation.CustomerValidator;
 import org.vl4ds4m.banking.accounts.util.TestEntity;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
@@ -17,20 +18,20 @@ import org.vl4ds4m.banking.common.entity.Money;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class CustomerServiceTest {
+
     public static final Customer DEFAULT_CUSTOMER = TestEntity.createDefaultCustomer();
 
     @DisplayName("Получение клиента по имени")
     @Test
     void testGetCustomerByName() {
         // Arrange
-        var service = new CustomerService(mockCustomerDao(), mock());
+        var service = createCustomerService();
 
         // Act
         var customer = service.getCustomer(DEFAULT_CUSTOMER.name());
@@ -43,7 +44,7 @@ class CustomerServiceTest {
     @Test
     void testGetAbsentCustomerFailed() {
         // Arrange
-        var service = new CustomerService(mockCustomerDao(), mock());
+        var service = createCustomerService();
 
         // Act & Assert
         var e = assertThrows(EntityNotFoundException.class,
@@ -56,51 +57,58 @@ class CustomerServiceTest {
     void testCreateCustomer() {
         // Arrange
         var customer = new Customer("foo_bar", "Foo", "Bar", LocalDate.now().minusYears(45));
+
         var customerDao = mockCustomerDao();
-        var service = new CustomerService(customerDao, mock());
+
+        var errors = mock(Errors.class);
+        when(errors.hasErrors()).thenReturn(false);
+
+        var customerValidator = mock(CustomerValidator.class);
+        when(customerValidator.validateObject(any())).thenReturn(errors);
+
+        var service = new CustomerService(customerDao, customerValidator, mock());
 
         // Act
-        service.createCustomer(
-                customer.name(),
-                customer.firstName(),
-                customer.lastName(),
-                customer.birthDate());
+        service.createCustomer(customer);
 
         // Assert
         verify(customerDao).create(customer);
     }
 
-    @DisplayName("Ошибка при создании клиента с недопустимым возрастом")
-    @ParameterizedTest(name = "День рождения: {0}")
-    @MethodSource("provideCustomerBirthDates")
-    void testCreateCustomerWithInvalidAgeFailed(LocalDate birthDate) {
+    @DisplayName("Ошибка при создании клиента с некорректными данными")
+    @Test
+    void testCreateCustomerWithInvalidDataFailed() {
         // Arrange
-        var service = new CustomerService(mockCustomerDao(), mock());
+        var customer = new Customer("invalid_client",
+                DEFAULT_CUSTOMER.firstName(),
+                DEFAULT_CUSTOMER.lastName(),
+                DEFAULT_CUSTOMER.birthDate());
+
+        var errors = new SimpleErrors(customer);
+        errors.rejectValue(CustomerValidator.FORENAME_FIELD, "some.problem", "Some validation error");
+        var customerValidator = mock(CustomerValidator.class);
+        when(customerValidator.validateObject(customer)).thenReturn(errors);
+
+        var service = new CustomerService(mockCustomerDao(), customerValidator, mock());
 
         // Act & Assert
-        var e = assertThrows(ServiceException.class, () -> service.createCustomer(
-                "strange_client",
-                "Benjamin",
-                "Button",
-                birthDate));
-        assertEquals(
-                "Customer age must be in range of 14 to 120 years. " +
-                        "Passed birth date = " + birthDate,
-                e.getMessage());
+        var e = assertThrows(ValidationException.class, () -> service.createCustomer(customer));
+        assertEquals(errors, e.getErrors());
     }
 
     @DisplayName("Ошибка при создании клиента с уже занятым именем")
     @Test
     void testCreateCustomerWithExistedNameFailed() {
         // Arrange
-        var service = new CustomerService(mockCustomerDao(), mock());
-
-        // Act & Assert
-        var e = assertThrows(DuplicateEntityException.class, () -> service.createCustomer(
+        var customer = new Customer(
                 DEFAULT_CUSTOMER.name(),
                 "Yet",
                 "Another",
-                DEFAULT_CUSTOMER.birthDate()));
+                DEFAULT_CUSTOMER.birthDate());
+        var service = createCustomerService();
+
+        // Act & Assert
+        var e = assertThrows(DuplicateEntityException.class, () -> service.createCustomer(customer));
         assertEquals("Customer[name=" + DEFAULT_CUSTOMER.name() + "] already exists", e.getMessage());
     }
 
@@ -125,7 +133,7 @@ class CustomerServiceTest {
         when(converterService.convert(Currency.EUR, totalCurrency, money2))
                 .thenReturn(convertedMoney2);
 
-        var service = new CustomerService(customerDao, converterService);
+        var service = new CustomerService(customerDao, mock(), converterService);
 
         // Act
         var balance = service.getCustomerBalance(DEFAULT_CUSTOMER.name(), totalCurrency);
@@ -134,16 +142,15 @@ class CustomerServiceTest {
         assertEquals(convertedMoney1.add(convertedMoney2), balance);
     }
 
+    private static CustomerService createCustomerService() {
+        return new CustomerService(mockCustomerDao(), mock(), mock());
+    }
+
     private static CustomerDao mockCustomerDao() {
         var dao = mock(CustomerDao.class);
         when(dao.existsByName(anyString())).thenReturn(false);
         when(dao.existsByName(DEFAULT_CUSTOMER.name())).thenReturn(true);
         when(dao.getByName(DEFAULT_CUSTOMER.name())).thenReturn(DEFAULT_CUSTOMER);
         return dao;
-    }
-
-    private static Stream<LocalDate> provideCustomerBirthDates() {
-        var now = LocalDate.now();
-        return Stream.of(now.minusYears(200), now.minusYears(10));
     }
 }
