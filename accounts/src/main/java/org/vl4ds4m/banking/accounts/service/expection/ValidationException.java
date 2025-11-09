@@ -10,7 +10,19 @@ import java.util.List;
 public class ValidationException extends ServiceException {
 
     public static ValidationException with(Errors errors) {
-        StringBuilder sb = new StringBuilder();
+        return new ValidationException(errors, buildMessage(errors));
+    }
+
+    @Getter
+    private final Errors errors;
+
+    private ValidationException(Errors errors, String message) {
+        super(message);
+        this.errors = errors;
+    }
+
+    private static String buildMessage(Errors errors) {
+        var sb = new StringBuilder();
 
         sb.append("Validation errors: object = ")
                 .append(errors.getObjectName())
@@ -20,15 +32,7 @@ public class ValidationException extends ServiceException {
         appendFieldErrors(sb, errors);
         sb.append("]");
 
-        return new ValidationException(errors, sb.toString());
-    }
-
-    @Getter
-    private final Errors errors;
-
-    private ValidationException(Errors errors, String message) {
-        super(message);
-        this.errors = errors;
+        return sb.toString();
     }
 
     private static void appendFieldErrors(StringBuilder sb, Errors errors) {

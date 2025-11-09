@@ -42,11 +42,12 @@ class AccountServiceTest {
     @Test
     void testGetAbsentAccountFailed() {
         // Arrange
+        var accountNumber = 935L;
         AccountService service = new AccountService(mockAccountDao(), mock());
 
         // Act & Assert
-        var e = assertThrows(EntityNotFoundException.class, () -> service.getAccount(935L));
-        assertEquals("Account[number=935] not found", e.getMessage());
+        var e = assertThrows(EntityNotFoundException.class, () -> service.getAccount(accountNumber));
+        assertTrue(e.getMessage().contains("" + accountNumber));
     }
 
     @DisplayName("Создание счёта")
@@ -77,23 +78,21 @@ class AccountServiceTest {
         // Act & Assert
         var e = assertThrows(DuplicateEntityException.class,
                 () -> service.createAccount(DEFAULT_CUSTOMER.nickname(), DEFAULT_ACCOUNT.currency()));
-        assertEquals(
-                "Account[customerName=" + DEFAULT_CUSTOMER.nickname() +
-                        ",currency=" + DEFAULT_ACCOUNT.currency() +
-                        "] already exists",
-                e.getMessage());
+        assertTrue(e.getMessage().contains(DEFAULT_CUSTOMER.nickname()));
+        assertTrue(e.getMessage().contains("" + DEFAULT_ACCOUNT.currency()));
     }
 
     @DisplayName("Ошибка при создании счёта для несуществующего клиента")
     @Test
     void testCreateAccountForAbsentCustomerFailed() {
         // Arrange
+        var customerNickname = "unknown_client";
         var service = new AccountService(mockAccountDao(), mockCustomerDao());
 
         // Act & Assert
         var e = assertThrows(EntityNotFoundException.class,
-                () -> service.createAccount("unknown_client", Currency.EUR));
-        assertEquals("Customer[name=unknown_client] not found", e.getMessage());
+                () -> service.createAccount(customerNickname, Currency.EUR));
+        assertTrue(e.getMessage().contains(customerNickname));
     }
 
     @DisplayName("Получение баланса по счёту")

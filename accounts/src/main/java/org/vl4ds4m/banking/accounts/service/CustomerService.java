@@ -8,6 +8,7 @@ import org.vl4ds4m.banking.accounts.entity.Customer;
 import org.vl4ds4m.banking.accounts.service.expection.DuplicateEntityException;
 import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
 import org.vl4ds4m.banking.accounts.service.expection.ValidationException;
+import org.vl4ds4m.banking.accounts.service.util.LogUtils;
 import org.vl4ds4m.banking.accounts.service.validation.CustomerValidator;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
@@ -31,7 +32,7 @@ public class CustomerService {
     public void createCustomer(Customer newCustomer) {
         var nickname = newCustomer.nickname();
         if (customerDao.existsByNickname(nickname)) {
-            throw new DuplicateEntityException(Customer.logStr(nickname));
+            throw DuplicateEntityException.with(Customer.class, nickname);
         }
 
         var errors = customerValidator.validateObject(newCustomer);
@@ -40,7 +41,7 @@ public class CustomerService {
         }
 
         customerDao.create(newCustomer);
-        log.info("{} created", Customer.logStr(nickname));
+        log.info("{} created", LogUtils.entityStr(Customer.class, nickname));
     }
 
     public Money getCustomerBalance(String customerName, Currency currency) {
@@ -56,7 +57,7 @@ public class CustomerService {
 
     private void checkCustomerExists(String nickname) {
         if (!customerDao.existsByNickname(nickname)) {
-            throw new EntityNotFoundException(Customer.logStr(nickname));
+            throw EntityNotFoundException.with(Customer.class, nickname);
         }
     }
 }

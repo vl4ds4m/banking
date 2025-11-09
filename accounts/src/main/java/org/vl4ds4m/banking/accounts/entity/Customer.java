@@ -11,8 +11,4 @@ public record Customer(
         String surname,
 
         LocalDate birthdate
-) {
-    public static String logStr(String name) {
-        return "Customer[name=" + name + "]";
-    }
-}
+) {}

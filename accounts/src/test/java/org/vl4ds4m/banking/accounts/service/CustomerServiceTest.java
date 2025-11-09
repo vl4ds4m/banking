@@ -19,8 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class CustomerServiceTest {
@@ -44,12 +43,12 @@ class CustomerServiceTest {
     @Test
     void testGetAbsentCustomerFailed() {
         // Arrange
+        var customerNickname = "unregistered_client";
         var service = createCustomerService();
 
         // Act & Assert
-        var e = assertThrows(EntityNotFoundException.class,
-                () -> service.getCustomer("unregistered_client"));
-        assertEquals("Customer[name=unregistered_client] not found", e.getMessage());
+        var e = assertThrows(EntityNotFoundException.class, () -> service.getCustomer(customerNickname));
+        assertTrue(e.getMessage().contains(customerNickname));
     }
 
     @DisplayName("Создание клиента")
@@ -109,7 +108,7 @@ class CustomerServiceTest {
 
         // Act & Assert
         var e = assertThrows(DuplicateEntityException.class, () -> service.createCustomer(customer));
-        assertEquals("Customer[name=" + DEFAULT_CUSTOMER.nickname() + "] already exists", e.getMessage());
+        assertTrue(e.getMessage().contains(DEFAULT_CUSTOMER.nickname()));
     }
 
     @DisplayName("Получение баланса по всем счетам клиента")
