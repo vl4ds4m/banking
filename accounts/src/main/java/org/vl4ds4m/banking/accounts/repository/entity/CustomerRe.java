@@ -12,7 +12,7 @@ import static org.vl4ds4m.banking.accounts.repository.entity.CustomerRe.TABLE_NA
 @Entity
 @Table(name = TABLE_NAME,
     uniqueConstraints = {
-        @UniqueConstraint(columnNames = NAME,
+        @UniqueConstraint(columnNames = NICKNAME,
             name = TABLE_NAME + "_natkey")})
 @Getter
 @Setter
@@ -28,21 +28,21 @@ public class CustomerRe {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(name = NAME,
+    @Column(name = NICKNAME,
             nullable = false)
-    private String name;
+    private String nickname;
 
-    @Column(name = FIRST_NAME,
+    @Column(name = FORENAME,
             nullable = false)
-    private String firstName;
+    private String forename;
 
-    @Column(name = LAST_NAME,
+    @Column(name = SURNAME,
             nullable = false)
-    private String lastName;
+    private String surname;
 
-    @Column(name = BIRTH_DATE,
+    @Column(name = BIRTHDATE,
             nullable = false)
-    private LocalDate birthDate;
+    private LocalDate birthdate;
 
     @OneToMany(mappedBy = AccountRe_.CUSTOMER)
     private Set<AccountRe> accounts;
@@ -51,12 +51,12 @@ public class CustomerRe {
 
         static final String ID = "id";
 
-        static final String NAME = "name";
+        static final String NICKNAME = "nickname";
 
-        static final String FIRST_NAME = "first_name";
+        static final String FORENAME = "forename";
 
-        static final String LAST_NAME = "last_name";
+        static final String SURNAME = "surname";
 
-        static final String BIRTH_DATE = "birth_date";
+        static final String BIRTHDATE = "birthdate";
     }
 }

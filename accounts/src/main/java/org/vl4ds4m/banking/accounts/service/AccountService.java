@@ -29,20 +29,20 @@ public class AccountService {
         return accountDao.getByNumber(accountNumber);
     }
 
-    public long createAccount(String customerName, Currency currency) {
-        if (!customerDao.existsByName(customerName)) {
-            throw new EntityNotFoundException(Customer.logStr(customerName));
+    public long createAccount(String customerNickname, Currency currency) {
+        if (!customerDao.existsByNickname(customerNickname)) {
+            throw new EntityNotFoundException(Customer.logStr(customerNickname));
         }
 
-        boolean exists = customerDao.getAccounts(customerName).stream()
+        boolean exists = customerDao.getAccounts(customerNickname).stream()
                 .map(Account::currency)
                 .anyMatch(currency::equals);
 
         if (exists) {
-            throw new DuplicateEntityException(Account.logStr(customerName, currency));
+            throw new DuplicateEntityException(Account.logStr(customerNickname, currency));
         }
 
-        long number = accountDao.create(customerName, currency, Money.empty());
+        long number = accountDao.create(customerNickname, currency, Money.empty());
         log.info("{} created", Account.logStr(number));
 
         return number;

@@ -54,12 +54,12 @@ class AccountServiceTest {
     void testCreateAccount() {
         // Arrange
         var accountDao = mockAccountDao();
-        when(accountDao.create(DEFAULT_CUSTOMER.name(), Currency.CNY, Money.empty()))
+        when(accountDao.create(DEFAULT_CUSTOMER.nickname(), Currency.CNY, Money.empty()))
                 .thenReturn(8346L);
         var service = new AccountService(accountDao, mockCustomerDao());
 
         // Act
-        var accountNumber = service.createAccount(DEFAULT_CUSTOMER.name(), Currency.CNY);
+        var accountNumber = service.createAccount(DEFAULT_CUSTOMER.nickname(), Currency.CNY);
 
         // Assert
         assertEquals(8346L, accountNumber);
@@ -70,15 +70,15 @@ class AccountServiceTest {
     void testCreateDuplicateAccountFailed() {
         // Arrange
         var customerDao = mockCustomerDao();
-        when(customerDao.getAccounts(DEFAULT_CUSTOMER.name()))
+        when(customerDao.getAccounts(DEFAULT_CUSTOMER.nickname()))
                 .thenReturn(Set.of(DEFAULT_ACCOUNT));
         var service = new AccountService(mockAccountDao(), customerDao);
 
         // Act & Assert
         var e = assertThrows(DuplicateEntityException.class,
-                () -> service.createAccount(DEFAULT_CUSTOMER.name(), DEFAULT_ACCOUNT.currency()));
+                () -> service.createAccount(DEFAULT_CUSTOMER.nickname(), DEFAULT_ACCOUNT.currency()));
         assertEquals(
-                "Account[customerName=" + DEFAULT_CUSTOMER.name() +
+                "Account[customerName=" + DEFAULT_CUSTOMER.nickname() +
                         ",currency=" + DEFAULT_ACCOUNT.currency() +
                         "] already exists",
                 e.getMessage());
@@ -174,9 +174,9 @@ class AccountServiceTest {
 
     private static CustomerDao mockCustomerDao() {
         var dao = mock(CustomerDao.class);
-        when(dao.existsByName(anyString())).thenReturn(false);
-        when(dao.existsByName(DEFAULT_CUSTOMER.name())).thenReturn(true);
-        when(dao.getByName(DEFAULT_CUSTOMER.name())).thenReturn(DEFAULT_CUSTOMER);
+        when(dao.existsByNickname(anyString())).thenReturn(false);
+        when(dao.existsByNickname(DEFAULT_CUSTOMER.nickname())).thenReturn(true);
+        when(dao.getByNickname(DEFAULT_CUSTOMER.nickname())).thenReturn(DEFAULT_CUSTOMER);
         return dao;
     }
 }

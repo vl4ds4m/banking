@@ -35,16 +35,16 @@ class CustomerValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
-    @DisplayName("Ошибка валидации клиента с недопустимым никнеймом")
-    @ParameterizedTest(name = "Никнейм: {0}")
+    @DisplayName("Ошибка валидации клиента с недопустимым nickname")
+    @ParameterizedTest(name = "Nickname: {0}")
     @MethodSource("provideInvalidNicknames")
     void testCustomerValidationWithInvalidNicknameFailed(String nickname, String expectedMessage) {
         // Arrange
         var customer = new Customer(
                 nickname,
-                DEFAULT.firstName(),
-                DEFAULT.lastName(),
-                DEFAULT.birthDate());
+                DEFAULT.forename(),
+                DEFAULT.surname(),
+                DEFAULT.birthdate());
         var validator = new CustomerValidator();
 
         // Act
@@ -57,51 +57,51 @@ class CustomerValidatorTest {
     @DisplayName("Ошибка валидации клиента с недопустимым именем")
     @ParameterizedTest(name = "Имя: {0}")
     @MethodSource("provideInvalidRealNames")
-    void testCustomerValidationWithInvalidFirstNameFailed(String firstName, String expectedMessage) {
+    void testCustomerValidationWithInvalidForenameFailed(String forename, String expectedMessage) {
         // Arrange
         var customer = new Customer(
-                DEFAULT.name(),
-                firstName,
-                DEFAULT.lastName(),
-                DEFAULT.birthDate());
+                DEFAULT.nickname(),
+                forename,
+                DEFAULT.surname(),
+                DEFAULT.birthdate());
         var validator = new CustomerValidator();
 
         // Act
         var errors = validator.validateObject(customer);
 
         // Assert
-        assertSingleFieldError(errors, "firstName", firstName, expectedMessage);
+        assertSingleFieldError(errors, CustomerValidator.FORENAME_FIELD, forename, expectedMessage);
     }
 
     @DisplayName("Ошибка валидации клиента с недопустимой фамилией")
     @ParameterizedTest(name = "Фамилия: {0}")
     @MethodSource("provideInvalidRealNames")
-    void testCustomerValidationWithInvalidLastNameFailed(String lastName, String expectedMessage) {
+    void testCustomerValidationWithInvalidSurnameFailed(String surname, String expectedMessage) {
         // Arrange
         var customer = new Customer(
-                DEFAULT.name(),
-                DEFAULT.firstName(),
-                lastName,
-                DEFAULT.birthDate());
+                DEFAULT.nickname(),
+                DEFAULT.forename(),
+                surname,
+                DEFAULT.birthdate());
         var validator = new CustomerValidator();
 
         // Act
         var errors = validator.validateObject(customer);
 
         // Assert
-        assertSingleFieldError(errors, "lastName", lastName, expectedMessage);
+        assertSingleFieldError(errors, CustomerValidator.SURNAME_FIELD, surname, expectedMessage);
     }
 
     @DisplayName("Ошибка валидации клиента с несколькими ошибками в имени")
     @Test
-    void testCustomerValidationWithSeveralErrorsInFirstNameFailed() {
+    void testCustomerValidationWithSeveralErrorsInForenameFailed() {
         // Arrange
         var wrongName = "name with MANY_mistakes";
         var customer = new Customer(
-                DEFAULT.name(),
+                DEFAULT.nickname(),
                 wrongName,
-                DEFAULT.lastName(),
-                DEFAULT.birthDate());
+                DEFAULT.surname(),
+                DEFAULT.birthdate());
         var validator = new CustomerValidator();
 
         // Act
@@ -113,7 +113,7 @@ class CustomerValidatorTest {
 
         var fieldErrors = errors.getFieldErrors();
         fieldErrors.forEach(e -> {
-            assertEquals("firstName", e.getField());
+            assertEquals(CustomerValidator.FORENAME_FIELD, e.getField());
             assertEquals(wrongName, e.getRejectedValue());
         });
 
@@ -138,7 +138,7 @@ class CustomerValidatorTest {
         var errors = validator.validateObject(customer);
 
         // Assert
-        assertSingleFieldError(errors, "birthDate", birthDate, CustomerValidator.AGE_RANGE);
+        assertSingleFieldError(errors, CustomerValidator.BIRTHDATE_FIELD, birthDate, CustomerValidator.AGE_RANGE);
     }
 
     private static Stream<Arguments> provideInvalidNicknames() {

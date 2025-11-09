@@ -23,15 +23,15 @@ public class CustomerService {
 
     private final ConverterService converterService;
 
-    public Customer getCustomer(String customerName) {
-        checkCustomerExists(customerName);
-        return customerDao.getByName(customerName);
+    public Customer getCustomer(String nickname) {
+        checkCustomerExists(nickname);
+        return customerDao.getByNickname(nickname);
     }
 
     public void createCustomer(Customer newCustomer) {
-        var name = newCustomer.name();
-        if (customerDao.existsByName(name)) {
-            throw new DuplicateEntityException(Customer.logStr(name));
+        var nickname = newCustomer.nickname();
+        if (customerDao.existsByNickname(nickname)) {
+            throw new DuplicateEntityException(Customer.logStr(nickname));
         }
 
         var errors = customerValidator.validateObject(newCustomer);
@@ -40,7 +40,7 @@ public class CustomerService {
         }
 
         customerDao.create(newCustomer);
-        log.info("{} created", Customer.logStr(name));
+        log.info("{} created", Customer.logStr(nickname));
     }
 
     public Money getCustomerBalance(String customerName, Currency currency) {
@@ -54,9 +54,9 @@ public class CustomerService {
                 .reduce(Money.empty(), Money::add);
     }
 
-    private void checkCustomerExists(String customerName) {
-        if (!customerDao.existsByName(customerName)) {
-            throw new EntityNotFoundException(Customer.logStr(customerName));
+    private void checkCustomerExists(String nickname) {
+        if (!customerDao.existsByNickname(nickname)) {
+            throw new EntityNotFoundException(Customer.logStr(nickname));
         }
     }
 }

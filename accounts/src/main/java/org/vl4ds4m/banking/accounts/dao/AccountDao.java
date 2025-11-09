@@ -35,7 +35,7 @@ public class AccountDao {
         accountRe.setCurrency(currency);
         accountRe.setAmount(money.amount());
 
-        var customerRe = customerRepository.findByName(customerName).orElseThrow();
+        var customerRe = customerRepository.findByNickname(customerName).orElseThrow();
         accountRe.setCustomer(customerRe);
 
         accountRe = accountRepository.save(accountRe);

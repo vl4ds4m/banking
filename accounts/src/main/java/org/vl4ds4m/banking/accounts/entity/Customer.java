@@ -4,13 +4,13 @@ import java.time.LocalDate;
 
 public record Customer(
 
-        String name,
+        String nickname,
 
-        String firstName,
+        String forename,
 
-        String lastName,
+        String surname,
 
-        LocalDate birthDate
+        LocalDate birthdate
 ) {
     public static String logStr(String name) {
         return "Customer[name=" + name + "]";

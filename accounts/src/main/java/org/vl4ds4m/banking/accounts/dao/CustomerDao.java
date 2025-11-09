@@ -17,21 +17,21 @@ public class CustomerDao {
 
     private final CustomerRepository repository;
 
-    public boolean existsByName(String name) {
-        return repository.existsByName(name);
+    public boolean existsByNickname(String nickname) {
+        return repository.existsByNickname(nickname);
     }
 
-    public Customer getByName(String name) {
-        var re = getReByName(name);
+    public Customer getByNickname(String nickname) {
+        var re = getReByNickname(nickname);
         return new Customer(
-                re.getName(),
-                re.getFirstName(),
-                re.getLastName(),
-                re.getBirthDate());
+                re.getNickname(),
+                re.getForename(),
+                re.getSurname(),
+                re.getBirthdate());
     }
 
-    public Set<Account> getAccounts(String customerName) {
-        return getReByName(customerName)
+    public Set<Account> getAccounts(String nickname) {
+        return getReByNickname(nickname)
                 .getAccounts().stream()
                 .map(re -> new Account(
                         re.getNumber(),
@@ -42,14 +42,14 @@ public class CustomerDao {
 
     public void create(Customer customer) {
         var re = new CustomerRe();
-        re.setName(customer.name());
-        re.setFirstName(customer.firstName());
-        re.setLastName(customer.lastName());
-        re.setBirthDate(customer.birthDate());
+        re.setNickname(customer.nickname());
+        re.setForename(customer.forename());
+        re.setSurname(customer.surname());
+        re.setBirthdate(customer.birthdate());
         repository.save(re);
     }
 
-    private CustomerRe getReByName(String name) {
-        return repository.findByName(name).orElseThrow();
+    private CustomerRe getReByNickname(String nickname) {
+        return repository.findByNickname(nickname).orElseThrow();
     }
 }

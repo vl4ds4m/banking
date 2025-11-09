@@ -27,14 +27,14 @@ class CustomerServiceTest {
 
     public static final Customer DEFAULT_CUSTOMER = TestEntity.createDefaultCustomer();
 
-    @DisplayName("Получение клиента по имени")
+    @DisplayName("Получение клиента по nickname")
     @Test
-    void testGetCustomerByName() {
+    void testGetCustomerByNickname() {
         // Arrange
         var service = createCustomerService();
 
         // Act
-        var customer = service.getCustomer(DEFAULT_CUSTOMER.name());
+        var customer = service.getCustomer(DEFAULT_CUSTOMER.nickname());
 
         // Arrange
         assertEquals(DEFAULT_CUSTOMER, customer);
@@ -80,9 +80,9 @@ class CustomerServiceTest {
     void testCreateCustomerWithInvalidDataFailed() {
         // Arrange
         var customer = new Customer("invalid_client",
-                DEFAULT_CUSTOMER.firstName(),
-                DEFAULT_CUSTOMER.lastName(),
-                DEFAULT_CUSTOMER.birthDate());
+                DEFAULT_CUSTOMER.forename(),
+                DEFAULT_CUSTOMER.surname(),
+                DEFAULT_CUSTOMER.birthdate());
 
         var errors = new SimpleErrors(customer);
         errors.rejectValue(CustomerValidator.FORENAME_FIELD, "some.problem", "Some validation error");
@@ -96,20 +96,20 @@ class CustomerServiceTest {
         assertEquals(errors, e.getErrors());
     }
 
-    @DisplayName("Ошибка при создании клиента с уже занятым именем")
+    @DisplayName("Ошибка при создании клиента с уже занятым nickname")
     @Test
-    void testCreateCustomerWithExistedNameFailed() {
+    void testCreateCustomerWithExistedNicknameFailed() {
         // Arrange
         var customer = new Customer(
-                DEFAULT_CUSTOMER.name(),
+                DEFAULT_CUSTOMER.nickname(),
                 "Yet",
                 "Another",
-                DEFAULT_CUSTOMER.birthDate());
+                DEFAULT_CUSTOMER.birthdate());
         var service = createCustomerService();
 
         // Act & Assert
         var e = assertThrows(DuplicateEntityException.class, () -> service.createCustomer(customer));
-        assertEquals("Customer[name=" + DEFAULT_CUSTOMER.name() + "] already exists", e.getMessage());
+        assertEquals("Customer[name=" + DEFAULT_CUSTOMER.nickname() + "] already exists", e.getMessage());
     }
 
     @DisplayName("Получение баланса по всем счетам клиента")
@@ -122,7 +122,7 @@ class CustomerServiceTest {
         var accounts = Set.of(
                 new Account(101L, Currency.RUB, money1),
                 new Account(202L, Currency.EUR, money2));
-        when(customerDao.getAccounts(DEFAULT_CUSTOMER.name())).thenReturn(accounts);
+        when(customerDao.getAccounts(DEFAULT_CUSTOMER.nickname())).thenReturn(accounts);
 
         var totalCurrency = Currency.USD;
         var converterService = mock(ConverterService.class);
@@ -136,7 +136,7 @@ class CustomerServiceTest {
         var service = new CustomerService(customerDao, mock(), converterService);
 
         // Act
-        var balance = service.getCustomerBalance(DEFAULT_CUSTOMER.name(), totalCurrency);
+        var balance = service.getCustomerBalance(DEFAULT_CUSTOMER.nickname(), totalCurrency);
 
         // Assert
         assertEquals(convertedMoney1.add(convertedMoney2), balance);
@@ -148,9 +148,9 @@ class CustomerServiceTest {
 
     private static CustomerDao mockCustomerDao() {
         var dao = mock(CustomerDao.class);
-        when(dao.existsByName(anyString())).thenReturn(false);
-        when(dao.existsByName(DEFAULT_CUSTOMER.name())).thenReturn(true);
-        when(dao.getByName(DEFAULT_CUSTOMER.name())).thenReturn(DEFAULT_CUSTOMER);
+        when(dao.existsByNickname(anyString())).thenReturn(false);
+        when(dao.existsByNickname(DEFAULT_CUSTOMER.nickname())).thenReturn(true);
+        when(dao.getByNickname(DEFAULT_CUSTOMER.nickname())).thenReturn(DEFAULT_CUSTOMER);
         return dao;
     }
 }

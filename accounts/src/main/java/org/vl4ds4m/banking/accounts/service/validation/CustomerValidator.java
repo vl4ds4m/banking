@@ -18,10 +18,10 @@ public class CustomerValidator implements Validator {
 
     private static final int MAX_REAL_NAME_LENGTH = 30;
 
-    public static final String NICKNAME_FIELD = "name";
-    public static final String FORENAME_FIELD = "firstName";
-    public static final String SURNAME_FIELD = "lastName";
-    public static final String BIRTHDATE_FIELD = "birthDate";
+    public static final String NICKNAME_FIELD = "nickname";
+    public static final String FORENAME_FIELD = "forename";
+    public static final String SURNAME_FIELD = "surname";
+    public static final String BIRTHDATE_FIELD = "birthdate";
 
     public static final String NICKNAME_LENGTH = "Nickname length must be between %d and %d"
             .formatted(MIN_NICKNAME_LENGTH, MAX_NICKNAME_LENGTH);
@@ -52,12 +52,12 @@ public class CustomerValidator implements Validator {
     public void validate(Object target, Errors errors) {
         var customer = (Customer) target;
 
-        validateNickname(customer.name(), errors);
+        validateNickname(customer.nickname(), errors);
 
-        validateRealName(FORENAME_FIELD, customer.firstName(), errors);
-        validateRealName(SURNAME_FIELD, customer.lastName(), errors);
+        validateRealName(FORENAME_FIELD, customer.forename(), errors);
+        validateRealName(SURNAME_FIELD, customer.surname(), errors);
 
-        validateBirthdate(customer.birthDate(), errors);
+        validateBirthdate(customer.birthdate(), errors);
     }
 
     private void validateNickname(String value, Errors errors) {
