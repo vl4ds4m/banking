@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.accounts.service.expection;
+package org.vl4ds4m.banking.common.exception;
 
 import lombok.Getter;
 import org.springframework.validation.Errors;

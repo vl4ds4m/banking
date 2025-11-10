@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.vl4ds4m.banking.accounts.dao.AccountDao;
 import org.vl4ds4m.banking.accounts.entity.Account;
 import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
-import org.vl4ds4m.banking.accounts.service.expection.ServiceException;
+import org.vl4ds4m.banking.common.exception.ServiceException;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
 
