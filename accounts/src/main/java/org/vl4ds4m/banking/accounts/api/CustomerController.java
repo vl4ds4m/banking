@@ -48,4 +48,11 @@ public class CustomerController implements CustomersApi {
     private void logRequest(HttpMethod method, String path, Object... requestArgs) {
         log.info("Accept {} {}: {}", method, path, requestArgs);
     }
+
+    // TODO
+    // @ExceptionHandler
+    // @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    // public void handleRateLimitException(RateLimitException e) {
+    //     logger.debug("Handle RateLimitException: {}", e.getMessage());
+    // }
 }

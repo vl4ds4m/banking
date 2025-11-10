@@ -22,6 +22,8 @@ public class TransferService {
 
     private final ConverterService converterService;
 
+    // TODO
+    // @Observed
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TransferResult transferMoney(long senderNumber, long receiverNumber, Money money) {
         checkAccountExists(senderNumber);
@@ -45,6 +47,10 @@ public class TransferService {
                     " doesn't have enough money for transfer operation");
         }
 
+        // TODO
+        // BigDecimal feeRate = adminService.getFee();
+        // BigDecimal transferredAmount = amount.subtract(amount.multiply(feeRate));
+
         var converted = converterService.convert(sender.currency(), receiver.currency(), money);
 
         var totalSenderMoney = sender.money().subtract(money);
@@ -55,6 +61,27 @@ public class TransferService {
         log.info("Transfer operation {} -> {} is done",
                 To.string(Account.class, senderNumber),
                 To.string(Account.class, receiverNumber));
+
+        // TODO
+        // BigDecimal negatedAmount = amount.negate();
+        // Transaction senderTransaction = transactionService.persist(
+        //     new Transaction(sender, negatedAmount));
+        // transactionService.persist(
+        //     new Transaction(receiver, convertedAmount));
+        //
+        // notificationService.save(
+        //     sender.getCustomer().getId(),
+        //     sender.getNumber(),
+        //     negatedAmount,
+        //     sender.getAmount());
+        // notificationService.save(
+        //     receiver.getCustomer().getId(),
+        //     receiver.getNumber(),
+        //     convertedAmount,
+        //     receiver.getAmount());
+        //
+        // simpMessagingService.sendMessage(sender);
+        // simpMessagingService.sendMessage(receiver);
 
         return new TransferResult(totalSenderMoney, totalReceiverMoney);
     }

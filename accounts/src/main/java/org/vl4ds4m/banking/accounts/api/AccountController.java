@@ -82,4 +82,11 @@ public class AccountController implements AccountsApi {
     private void logRequest(HttpMethod method, String path, Object... requestArgs) {
         log.info("Accept {} {}: {}", method, path, requestArgs);
     }
+
+    // TODO
+    // @GetMapping("/{accountNumber}/transactions")
+    // public List<TransactionResponse> getTransactions(@PathVariable int accountNumber) {
+    //     logger.debug("Accept GET {}/{}/transactions", PATH, accountNumber);
+    //     return accountService.getTransactions(accountNumber);
+    // }
 }

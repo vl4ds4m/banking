@@ -25,11 +25,15 @@ public class AccountService {
 
     private final CustomerDao customerDao;
 
+    // TODO
+    // @Observed
     public Account getAccount(long accountNumber) {
         checkAccountExists(accountNumber);
         return accountDao.getByNumber(accountNumber);
     }
 
+    // TODO
+    // @Observed
     public long createAccount(String customerNickname, Currency currency) {
         if (!customerDao.existsByNickname(customerNickname)) {
             throw new EntityNotFoundException(Customer.class, customerNickname);
@@ -46,9 +50,14 @@ public class AccountService {
         long number = accountDao.create(customerNickname, currency, Money.empty());
         log.info("{} created", To.string(Account.class, number));
 
+        // TODO
+        // simpMessagingService.sendMessage(savedAccount);
+
         return number;
     }
 
+    // TODO
+    // @Observed
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Account topUpAccount(long accountNumber, Money augend) {
         checkAccountExists(accountNumber);
@@ -67,6 +76,18 @@ public class AccountService {
                 To.string(Account.class, accountNumber),
                 augend,
                 account.currency());
+
+        // TODO
+        // notificationService.save(
+        //     account.getCustomer().getId(),
+        //     account.getNumber(),
+        //     amount,
+        //     account.getAmount());
+        //
+        // simpMessagingService.sendMessage(account);
+        //
+        // Transaction transaction = transactionService.persist(
+        //     new Transaction(account, amount));
 
         return new Account(accountNumber, account.currency(), money);
     }
@@ -102,4 +123,16 @@ public class AccountService {
             throw new EntityNotFoundException(Account.class, accountNumber);
         }
     }
+
+    // TODO
+    // @Observed
+    // public List<TransactionResponse> getTransactions(int number) {
+    //     org.vl4ds4m.banking.accounts.account.Account account = accountRepository.findById(number)
+    //             .orElseThrow(() -> new InvalidAccountNumberException(number));
+    //
+    //     logger.debug("Return Account[number={}] transactions", number);
+    //     return account.getTransactions().stream()
+    //             .map(t -> new TransactionResponse(t.getId(), t.getAmount()))
+    //             .toList();
+    // }
 }

@@ -4,7 +4,6 @@ import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.grpc.Status;
 import io.grpc.StatusException;
 import io.grpc.StatusRuntimeException;
-import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.vl4ds4m.banking.accounts.api.model.InvalidQueryResponse;
-import org.vl4ds4m.banking.accounts.exception.InvalidDataException;
 import org.vl4ds4m.banking.common.exception.ServiceException;
 import org.vl4ds4m.banking.common.util.To;
 
@@ -44,17 +42,6 @@ public class ControllerExceptionHandler {
                 message);
 
         return new InvalidQueryResponse(message);
-    }
-
-    @ExceptionHandler({
-        ConstraintViolationException.class,
-        InvalidDataException.class
-    })
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleInvalidDataException(Exception e) {
-        String message = e.getMessage();
-        log.info("Handle InvalidDataException: {}", message);
-        return message;
     }
 
     @ExceptionHandler({StatusException.class, StatusRuntimeException.class})
