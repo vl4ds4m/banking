@@ -32,7 +32,7 @@ class MoneyTest {
     @MethodSource("invalidAmountProvider")
     void testCreateMoneyFailed(BigDecimal amount) {
         // Act & Assert
-        var e = assertThrows(MoneyException.class, () -> Money.of(amount));
+        var e = assertThrows(IllegalArgumentException.class, () -> Money.of(amount));
         assertEquals("Amount must be zero or positive", e.getMessage());
     }
 
@@ -83,7 +83,7 @@ class MoneyTest {
         var b = Money.of(new BigDecimal("84.02"));
 
         // Act & Assert
-        var e = assertThrows(MoneyException.class, () -> a.subtract(b));
+        var e = assertThrows(IllegalArgumentException.class, () -> a.subtract(b));
         assertEquals("Subtrahend must be less or equal this amount", e.getMessage());
     }
 
@@ -117,7 +117,7 @@ class MoneyTest {
         var b = Money.empty();
 
         // Act & Assert
-        var e = assertThrows(MoneyException.class, () -> a.divide(b));
+        var e = assertThrows(IllegalArgumentException.class, () -> a.divide(b));
         assertEquals("Divisor must be positive", e.getMessage());
     }
 

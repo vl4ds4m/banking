@@ -24,7 +24,7 @@ public final class Money implements Comparable<Money> {
     public static Money of(BigDecimal amount) {
         var zero = Money.ZERO.amount();
         if (zero.compareTo(amount) > 0) {
-            throw new MoneyException("Amount must be zero or positive");
+            throw new IllegalArgumentException("Amount must be zero or positive");
         }
         var rounded = round(amount);
         if (zero.compareTo(rounded) == 0) {
@@ -57,7 +57,7 @@ public final class Money implements Comparable<Money> {
 
     public Money subtract(Money subtrahend) {
         if (this.compareTo(subtrahend) < 0) {
-            throw new MoneyException("Subtrahend must be less or equal this amount");
+            throw new IllegalArgumentException("Subtrahend must be less or equal this amount");
         }
         var sub = this.amount.subtract(subtrahend.amount);
         return Money.of(sub);
@@ -70,7 +70,7 @@ public final class Money implements Comparable<Money> {
 
     public Money divide(Money divisor) {
         if (divisor.isEmpty()) {
-            throw new MoneyException("Divisor must be positive");
+            throw new IllegalArgumentException("Divisor must be positive");
         }
         var div = this.amount.divide(divisor.amount, SCALE, ROUNDING_MODE);
         return Money.of(div);
