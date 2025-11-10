@@ -29,7 +29,7 @@ class TransferServiceTest {
 
     @DisplayName("Перевод денег с одного счёта на другой")
     @Test
-    void testTransferMoneyForEqualCurrencies() {
+    void testTransferMoney() {
         // Arrange
         var money = Money.of(new BigDecimal("17.93"));
         var convertedMoney = Money.of(new BigDecimal("15.84"));
@@ -54,6 +54,24 @@ class TransferServiceTest {
 
         assertEquals(senderMoney, result.totalSenderMoney());
         assertEquals(receiverMoney, result.totalReceiverMoney());
+    }
+
+    @DisplayName("Перевод нулевой суммы с одного счёта на другой")
+    @Test
+    void testTransferZeroMoney() {
+        // Arrange
+        var money = Money.empty();
+        var accountDao = mockAccountDao();
+        var service = new TransferService(accountDao, mockConverterService());
+
+        // Act
+        var result = service.transferMoney(DEFAULT_SENDER.number(), DEFAULT_RECEIVER.number(), money);
+
+        // Assert
+        verify(accountDao, never()).updateMoney(anyLong(), any());
+
+        assertEquals(DEFAULT_SENDER.money(), result.totalSenderMoney());
+        assertEquals(DEFAULT_RECEIVER.money(), result.totalReceiverMoney());
     }
 
     @DisplayName("Ошибка при переводе денег с несуществующего счёта")

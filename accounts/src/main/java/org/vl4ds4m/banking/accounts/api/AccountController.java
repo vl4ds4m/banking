@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.vl4ds4m.banking.accounts.api.util.CurrencyConverter;
 import org.vl4ds4m.banking.accounts.service.AccountService;
 import org.vl4ds4m.banking.accounts.api.model.*;
-import org.vl4ds4m.banking.common.entity.Money;
+import org.vl4ds4m.banking.common.util.To;
 
 @RestController
 @Slf4j
@@ -50,7 +50,9 @@ public class AccountController implements AccountsApi {
 
         var account = accountService.topUpAccount(
                 accountNumber,
-                Money.of(topUpAccountRequest.getAugend()));
+                To.moneyOrReject(
+                        topUpAccountRequest.getAugend(),
+                        "Augend"));
 
         var response = new AccountOperationResponse(
                 CurrencyConverter.toApi(account.currency()),
@@ -67,7 +69,9 @@ public class AccountController implements AccountsApi {
 
         var account = accountService.withdrawMoneyToAccount(
                 accountNumber,
-                Money.of(withdrawAccountRequest.getSubtrahend()));
+                To.moneyOrReject(
+                        withdrawAccountRequest.getSubtrahend(),
+                        "Subtrahend"));
 
         var response = new AccountOperationResponse(
                 CurrencyConverter.toApi(account.currency()),

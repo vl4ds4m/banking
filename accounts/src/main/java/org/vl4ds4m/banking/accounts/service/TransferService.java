@@ -28,7 +28,7 @@ public class TransferService {
         var sender = accountDao.getByNumber(senderNumber);
 
         if (senderNumber == receiverNumber) {
-            log.warn("Transfer money to the same account is redundant, nothing to change.");
+            log.warn("Transfer money to the same account is redundant, nothing to change");
             return new TransferResult(sender.money(), sender.money());
         }
 
@@ -36,13 +36,13 @@ public class TransferService {
         var receiver = accountDao.getByNumber(receiverNumber);
 
         if (money.isEmpty()) {
-            log.warn("Zero money transfer is redundant, nothing to change.");
+            log.warn("Zero money transfer is redundant, nothing to change");
             return new TransferResult(sender.money(), receiver.money());
         }
 
         if (sender.money().compareTo(money) < 0) {
             throw new ServiceException("Sender " + To.string(Account.class, senderNumber) +
-                    " doesn't have enough money for transfer operation.");
+                    " doesn't have enough money for transfer operation");
         }
 
         var converted = converterService.convert(sender.currency(), receiver.currency(), money);

@@ -54,6 +54,12 @@ public class AccountService {
         checkAccountExists(accountNumber);
 
         var account = accountDao.getByNumber(accountNumber);
+
+        if (augend.isEmpty()) {
+            log.warn("Zero money top up is redundant, nothing to change");
+            return account;
+        }
+
         var money = account.money().add(augend);
 
         accountDao.updateMoney(accountNumber, money);
@@ -71,8 +77,13 @@ public class AccountService {
 
         var account = accountDao.getByNumber(accountNumber);
 
+        if (subtrahend.isEmpty()) {
+            log.warn("Zero money withdraw is redundant, nothing to change");
+            return account;
+        }
+
         if (account.money().compareTo(subtrahend) < 0) {
-            throw new ServiceException("Account money is less then subtrahend");
+            throw new ServiceException("Account money is less than subtrahend");
         }
 
         var money = account.money().subtract(subtrahend);

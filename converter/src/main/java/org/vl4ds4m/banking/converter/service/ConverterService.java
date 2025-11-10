@@ -21,13 +21,13 @@ public class ConverterService {
 
     @Observed
     public Money convert(Currency source, Currency target, BigDecimal amount) {
-        if (Money.empty().amount().compareTo(amount) >= 0) {
+        if (!Money.isValid(amount) || Money.of(amount).isEmpty()) {
             throw new NonPositiveAmountException(amount);
         }
         var money = Money.of(amount);
 
         if (target.equals(source)) {
-            log.debug("Return passed amount as source currency equals target currency");
+            log.warn("Source currency equals target currency, conversion is redundant");
             return money;
         }
 

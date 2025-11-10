@@ -22,15 +22,18 @@ public final class Money implements Comparable<Money> {
     }
 
     public static Money of(BigDecimal amount) {
-        var zero = Money.ZERO.amount();
-        if (zero.compareTo(amount) > 0) {
+        if (!isValid(amount)) {
             throw new IllegalArgumentException("Amount must be zero or positive");
         }
         var rounded = round(amount);
-        if (zero.compareTo(rounded) == 0) {
+        if (Money.ZERO.amount().compareTo(rounded) == 0) {
             return Money.ZERO;
         }
         return new Money(rounded);
+    }
+
+    public static boolean isValid(BigDecimal amount) {
+        return Money.ZERO.amount().compareTo(amount) <= 0;
     }
 
     private static BigDecimal round(BigDecimal amount) {

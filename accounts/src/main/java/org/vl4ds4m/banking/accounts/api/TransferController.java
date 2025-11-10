@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.vl4ds4m.banking.accounts.api.model.TransferRequest;
 import org.vl4ds4m.banking.accounts.api.model.TransferResponse;
 import org.vl4ds4m.banking.accounts.service.TransferService;
-import org.vl4ds4m.banking.common.entity.Money;
+import org.vl4ds4m.banking.common.util.To;
 
 @RestController
 @Slf4j
@@ -24,7 +24,9 @@ public class TransferController implements TransferApi {
         var result = service.transferMoney(
                 transferRequest.getSenderAccountNumber(),
                 transferRequest.getReceiverAccountNumber(),
-                Money.of(transferRequest.getSenderCurrencyAmount()));
+                To.moneyOrReject(
+                        transferRequest.getSenderCurrencyAmount(),
+                        "Amount to transfer"));
 
         var response = new TransferResponse(
                 result.totalSenderMoney().amount(),

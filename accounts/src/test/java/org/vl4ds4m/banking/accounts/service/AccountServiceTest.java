@@ -2,6 +2,8 @@ package org.vl4ds4m.banking.accounts.service;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.vl4ds4m.banking.accounts.dao.AccountDao;
 import org.vl4ds4m.banking.accounts.dao.CustomerDao;
 import org.vl4ds4m.banking.accounts.entity.Account;
@@ -15,6 +17,7 @@ import org.vl4ds4m.banking.common.entity.Money;
 
 import java.math.BigDecimal;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -110,40 +113,48 @@ class AccountServiceTest {
     }
 
     @DisplayName("Пополнение счёта")
-    @Test
-    void testTopUpAccount() {
+    @ParameterizedTest(name = "Пополнить на {0}")
+    @MethodSource("provideMoneyForAccountOperations")
+    void testTopUpAccount(Money money) {
         // Arrange
         var accountDao = mockAccountDao();
         var service = new AccountService(accountDao, mock());
         var number = DEFAULT_ACCOUNT.number();
-        var money = Money.of(BigDecimal.TWO);
         var sum = DEFAULT_ACCOUNT.money().add(money);
 
         // Act
         var response = service.topUpAccount(number, money);
 
         // Assert
-        verify(accountDao).updateMoney(number, sum);
+        if (money.isEmpty()) {
+            verify(accountDao, never()).updateMoney(anyLong(), any());
+        } else {
+            verify(accountDao).updateMoney(number, sum);
+        }
         assertEquals(
                 new Account(number, DEFAULT_ACCOUNT.currency(), sum),
                 response);
     }
 
     @DisplayName("Снятие денег со счёта")
-    @Test
-    void testWithdrawMoneyToAccount() {
+    @ParameterizedTest(name = "Снять {0}")
+    @MethodSource("provideMoneyForAccountOperations")
+    void testWithdrawMoneyToAccount(Money money) {
         // Arrange
         var accountDao = mockAccountDao();
         var service = new AccountService(accountDao, mock());
         var number = DEFAULT_ACCOUNT.number();
-        var money = Money.of(BigDecimal.TWO);
         var sub = DEFAULT_ACCOUNT.money().subtract(money);
 
         // Act
         var response = service.withdrawMoneyToAccount(number, money);
 
         // Assert
-        verify(accountDao).updateMoney(number, sub);
+        if (money.isEmpty()) {
+            verify(accountDao, never()).updateMoney(anyLong(), any());
+        } else {
+            verify(accountDao).updateMoney(number, sub);
+        }
         assertEquals(
                 new Account(number, DEFAULT_ACCOUNT.currency(), sub),
                 response);
@@ -158,9 +169,14 @@ class AccountServiceTest {
         var money = Money.of(BigDecimal.TWO).add(DEFAULT_ACCOUNT.money());
 
         // Act & Assert
-        var e = assertThrows(ServiceException.class,
-                () -> service.withdrawMoneyToAccount(number, money));
-        assertEquals("Account money is less then subtrahend", e.getMessage());
+        assertThrows(ServiceException.class, () -> service.withdrawMoneyToAccount(number, money));
+    }
+
+    private static Stream<Money> provideMoneyForAccountOperations() {
+        return Stream.of(
+                Money.empty(),
+                Money.of(new BigDecimal("1943.07")),
+                Money.of(new BigDecimal("0.03")));
     }
 
     private static AccountDao mockAccountDao() {

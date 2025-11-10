@@ -1,6 +1,10 @@
 package org.vl4ds4m.banking.common.util;
 
 import org.springframework.validation.Errors;
+import org.vl4ds4m.banking.common.entity.Money;
+import org.vl4ds4m.banking.common.exception.ServiceException;
+
+import java.math.BigDecimal;
 
 public class To {
 
@@ -12,5 +16,9 @@ public class To {
 
     public static String string(Errors errors) {
         return ErrorsToString.string(errors);
+    }
+
+    public static Money moneyOrReject(BigDecimal amount, String varName) throws ServiceException {
+        return MoneyConverter.convertOrReject(amount, varName);
     }
 }

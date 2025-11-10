@@ -37,9 +37,9 @@ public class CustomerValidator implements Validator {
 
     public static final String ONLY_LETTERS_IN_REAL_NAME = "Real name must contains only letters.";
 
-    public static final String REAL_NAME_FIRST_CHAR = "First character in real name must have upper case.";
+    public static final String REAL_NAME_FIRST_CHAR = "First character in real name must be uppercase.";
 
-    public static final String REAL_NAME_SUBSEQUENT_CHARS = "Subsequent characters in real name must have lower case.";
+    public static final String REAL_NAME_SUBSEQUENT_CHARS = "Subsequent characters in real name must be lowercase.";
 
     public static final String AGE_RANGE = "According to birthdate, age must be between 14 and 120 years old.";
 
