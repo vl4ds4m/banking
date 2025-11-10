@@ -1,15 +1,10 @@
 package org.vl4ds4m.banking.accounts.service.expection;
 
-import org.vl4ds4m.banking.accounts.service.util.LogUtils;
+import org.vl4ds4m.banking.common.util.To;
 
 public class DuplicateEntityException extends ServiceException {
 
-    public static DuplicateEntityException with(Class<?> cls, Object... args) {
-        var message = LogUtils.entityStr(cls, args) + " already exists";
-        return new DuplicateEntityException(message);
-    }
-
-    private DuplicateEntityException(String message) {
-        super(message);
+    public DuplicateEntityException(Class<?> cls, Object... args) {
+        super(To.string(cls, args) + " already exists");
     }
 }

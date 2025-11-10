@@ -10,11 +10,11 @@ import org.vl4ds4m.banking.accounts.dao.CustomerDao;
 import org.vl4ds4m.banking.accounts.entity.Account;
 import org.vl4ds4m.banking.accounts.entity.Customer;
 import org.vl4ds4m.banking.accounts.service.expection.ServiceException;
-import org.vl4ds4m.banking.accounts.service.util.LogUtils;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.accounts.service.expection.DuplicateEntityException;
 import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
+import org.vl4ds4m.banking.common.util.To;
 
 @Service
 @Slf4j
@@ -32,7 +32,7 @@ public class AccountService {
 
     public long createAccount(String customerNickname, Currency currency) {
         if (!customerDao.existsByNickname(customerNickname)) {
-            throw EntityNotFoundException.with(Customer.class, customerNickname);
+            throw new EntityNotFoundException(Customer.class, customerNickname);
         }
 
         boolean exists = customerDao.getAccounts(customerNickname).stream()
@@ -40,11 +40,11 @@ public class AccountService {
                 .anyMatch(currency::equals);
 
         if (exists) {
-            throw DuplicateEntityException.with(Account.class, customerNickname, currency);
+            throw new DuplicateEntityException(Account.class, customerNickname, currency);
         }
 
         long number = accountDao.create(customerNickname, currency, Money.empty());
-        log.info("{} created", LogUtils.entityStr(Account.class, number));
+        log.info("{} created", To.string(Account.class, number));
 
         return number;
     }
@@ -58,7 +58,7 @@ public class AccountService {
 
         accountDao.updateMoney(accountNumber, money);
         log.info("{} top up by {} {}",
-                LogUtils.entityStr(Account.class, accountNumber),
+                To.string(Account.class, accountNumber),
                 augend,
                 account.currency());
 
@@ -79,7 +79,7 @@ public class AccountService {
 
         accountDao.updateMoney(accountNumber, money);
         log.info("{} withdraw {} {}",
-                LogUtils.entityStr(Account.class, accountNumber),
+                To.string(Account.class, accountNumber),
                 subtrahend,
                 account.currency());
 
@@ -88,7 +88,7 @@ public class AccountService {
 
     private void checkAccountExists(long accountNumber) {
         if (!accountDao.existsByNumber(accountNumber)) {
-            throw EntityNotFoundException.with(Account.class, accountNumber);
+            throw new EntityNotFoundException(Account.class, accountNumber);
         }
     }
 }

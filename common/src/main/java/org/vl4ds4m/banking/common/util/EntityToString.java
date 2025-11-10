@@ -1,10 +1,10 @@
-package org.vl4ds4m.banking.accounts.service.util;
+package org.vl4ds4m.banking.common.util;
 
-public class LogUtils {
+class EntityToString {
 
-    private LogUtils() {}
+    private EntityToString() {}
 
-    public static String entityStr(Class<?> cls, Object... args) {
+    static String string(Class<?> cls, Object... args) {
         var sb = new StringBuilder(cls.getSimpleName());
 
         if (args.length > 0) {

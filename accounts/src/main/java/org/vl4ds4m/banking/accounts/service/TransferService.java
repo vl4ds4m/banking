@@ -10,8 +10,8 @@ import org.vl4ds4m.banking.accounts.entity.Account;
 import org.vl4ds4m.banking.accounts.entity.TransferResult;
 import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
 import org.vl4ds4m.banking.accounts.service.expection.ServiceException;
-import org.vl4ds4m.banking.accounts.service.util.LogUtils;
 import org.vl4ds4m.banking.common.entity.Money;
+import org.vl4ds4m.banking.common.util.To;
 
 @Service
 @Slf4j
@@ -41,7 +41,7 @@ public class TransferService {
         }
 
         if (sender.money().compareTo(money) < 0) {
-            throw new ServiceException("Sender " + LogUtils.entityStr(Account.class, senderNumber) +
+            throw new ServiceException("Sender " + To.string(Account.class, senderNumber) +
                     " doesn't have enough money for transfer operation.");
         }
 
@@ -53,15 +53,15 @@ public class TransferService {
         accountDao.updateMoney(senderNumber, totalSenderMoney);
         accountDao.updateMoney(receiverNumber, totalReceiverMoney);
         log.info("Transfer operation {} -> {} is done",
-                LogUtils.entityStr(Account.class, senderNumber),
-                LogUtils.entityStr(Account.class, receiverNumber));
+                To.string(Account.class, senderNumber),
+                To.string(Account.class, receiverNumber));
 
         return new TransferResult(totalSenderMoney, totalReceiverMoney);
     }
 
     private void checkAccountExists(long number) {
         if (!accountDao.existsByNumber(number)) {
-            throw EntityNotFoundException.with(Account.class, number);
+            throw new EntityNotFoundException(Account.class, number);
         }
     }
 }
