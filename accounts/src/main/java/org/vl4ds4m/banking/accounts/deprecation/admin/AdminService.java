@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.vl4ds4m.banking.common.Conversions;
 import org.vl4ds4m.banking.accounts.deprecation.admin.dto.Action;
 
 import java.math.BigDecimal;
@@ -38,7 +37,7 @@ public class AdminService {
 
     private void loadFee() {
         String value = loadParam(ConfigParam.Key.FEE);
-        this.fee = Conversions.setScale(new BigDecimal(value));
+        this.fee = new BigDecimal(value);//Conversions.setScale(new BigDecimal(value));
     }
 
     private String loadParam(ConfigParam.Key key) {
@@ -70,7 +69,7 @@ public class AdminService {
 
         BigDecimal fee;
         try {
-            fee = Conversions.setScale(value);
+            fee = new BigDecimal(value);//Conversions.setScale(value);
             if (BigDecimal.ONE.compareTo(fee) < 0 || BigDecimal.ZERO.compareTo(fee) > 0) {
                 throw new Exception("Fee isn't in range [0; 1]");
             }

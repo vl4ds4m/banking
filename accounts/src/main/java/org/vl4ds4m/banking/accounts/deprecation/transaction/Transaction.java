@@ -2,7 +2,6 @@ package org.vl4ds4m.banking.accounts.deprecation.transaction;
 
 import jakarta.persistence.*;
 import org.vl4ds4m.banking.accounts.entity.Account;
-import org.vl4ds4m.banking.common.Conversions;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -16,9 +15,9 @@ public class Transaction {
     private UUID id;
 
     @Column(name = "amount",
-        nullable = false,
-        precision = Conversions.PRECISION,
-        scale = Conversions.SCALE)
+        nullable = false)
+        //precision = Conversions.PRECISION,
+        //scale = Conversions.SCALE)
     private BigDecimal amount;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

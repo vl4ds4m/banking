@@ -5,7 +5,6 @@ import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vl4ds4m.banking.common.Conversions;
 import org.vl4ds4m.banking.accounts.api.model.Currency;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpc;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpcRequest;
@@ -42,6 +41,6 @@ public class ConverterService {
             .setAmount(amount.doubleValue())
             .build();
         conversion.run();
-        return Conversions.setScale(reply.getAmount());
+        return BigDecimal.valueOf(reply.getAmount());//Conversions.setScale(reply.getAmount());
     }
 }

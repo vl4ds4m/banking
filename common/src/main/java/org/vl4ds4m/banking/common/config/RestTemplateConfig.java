@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.common;
+package org.vl4ds4m.banking.common.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.convert.DurationUnit;
