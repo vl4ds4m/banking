@@ -6,13 +6,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.vl4ds4m.banking.common.util.To;
 import org.vl4ds4m.banking.converter.api.converter.CurrencyConverter;
 import org.vl4ds4m.banking.converter.service.ConverterService;
 import org.vl4ds4m.banking.converter.api.model.ConvertCurrencyResponse;
 import org.vl4ds4m.banking.converter.api.model.Currency;
 import org.vl4ds4m.banking.converter.api.model.InvalidQueryResponse;
-import org.vl4ds4m.banking.converter.service.exception.InvalidCurrencyException;
-import org.vl4ds4m.banking.converter.service.exception.NonPositiveAmountException;
 import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
 
 import java.math.BigDecimal;
@@ -35,26 +34,14 @@ public class ConverterController implements ConvertApi {
         log.info("Accept {} {}: {}, {} -> {}",
                 HttpMethod.GET, ConvertApi.PATH_CONVERT_CURRENCY,
                 amount, from, to);
+
         var converted = service.convert(
                 CurrencyConverter.toEntity(from),
                 CurrencyConverter.toEntity(to),
-                amount);
+                To.moneyOrReject(amount, "Amount"));
+
         var response = new ConvertCurrencyResponse(converted.amount());
         return ResponseEntity.ok(response);
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public InvalidQueryResponse returnNonPositiveAmountMessage(NonPositiveAmountException e) {
-        handler.debugNonPositiveAmount(e);
-        return new InvalidQueryResponse("Отрицательная сумма");
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public InvalidQueryResponse returnInvalidCurrencyMessage(InvalidCurrencyException e) {
-        handler.debugInvalidCurrency(e);
-        return new InvalidQueryResponse("Валюта %s недоступна".formatted(e.currency));
     }
 
     @ExceptionHandler

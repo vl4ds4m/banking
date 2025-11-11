@@ -1,27 +1,16 @@
 package org.vl4ds4m.banking.converter.api;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
-import org.vl4ds4m.banking.converter.service.exception.InvalidCurrencyException;
-import org.vl4ds4m.banking.converter.service.exception.NonPositiveAmountException;
 import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
 
+@RequiredArgsConstructor
 public class ConverterExceptionHandler {
-    private final Logger logger;
 
-    public ConverterExceptionHandler(Logger logger) {
-        this.logger = logger;
-    }
-
-    public void debugNonPositiveAmount(NonPositiveAmountException e) {
-        logger.debug("Handle NonPositiveAmountException: {}", e.getMessage());
-    }
-
-    public void debugInvalidCurrency(InvalidCurrencyException e) {
-        logger.debug("Handle InvalidCurrencyException: {}", e.getMessage());
-    }
+    private final Logger log;
 
     public String warnRatesServiceError(RatesServiceException e) {
-        logger.warn("Handle RatesServiceException: {}", e.getMessage());
+        log.warn("Handle RatesServiceException: {}", e.getMessage());
         return "Rates service is unavailable";
     }
 }

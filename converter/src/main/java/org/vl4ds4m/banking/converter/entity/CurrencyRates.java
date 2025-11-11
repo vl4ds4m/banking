@@ -10,5 +10,4 @@ public record CurrencyRates(
         Currency base,
 
         Map<Currency, Money> rates
-
 ) {}

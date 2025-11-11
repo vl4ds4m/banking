@@ -8,13 +8,13 @@ import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
+import org.vl4ds4m.banking.common.exception.ServiceException;
+import org.vl4ds4m.banking.common.util.To;
 import org.vl4ds4m.banking.converter.api.ConverterExceptionHandler;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpc;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpcRequest;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpcResponse;
 import org.vl4ds4m.banking.converter.service.ConverterService;
-import org.vl4ds4m.banking.converter.service.exception.InvalidCurrencyException;
-import org.vl4ds4m.banking.converter.service.exception.NonPositiveAmountException;
 import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
 
 import java.math.BigDecimal;
@@ -24,8 +24,7 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class ConverterGrpcService extends ConverterGrpc.ConverterImplBase {
 
-    private static final ConverterExceptionHandler exceptionHandler =
-        new ConverterExceptionHandler(log);
+    private static final ConverterExceptionHandler exceptionHandler = new ConverterExceptionHandler(log);
 
     private final ConverterService service;
 
@@ -38,10 +37,11 @@ public class ConverterGrpcService extends ConverterGrpc.ConverterImplBase {
         log.info("Accept a request to convert currency");
         Money converted;
         try {
+            var amount = BigDecimal.valueOf(request.getAmount());
             converted = service.convert(
                 Currency.valueOf(request.getFrom()),
                 Currency.valueOf(request.getTo()),
-                BigDecimal.valueOf(request.getAmount()));
+                To.moneyOrReject(amount, "Amount"));
         } catch (RuntimeException e) {
             Status status = handleException(e);
             observer.onError(status.asRuntimeException());
@@ -58,14 +58,7 @@ public class ConverterGrpcService extends ConverterGrpc.ConverterImplBase {
     private Status handleException(RuntimeException exception) {
         Status status;
         switch (exception) {
-            case NonPositiveAmountException e -> {
-                exceptionHandler.debugNonPositiveAmount(e);
-                status = Status.INVALID_ARGUMENT.withDescription(e.getMessage());
-            }
-            case InvalidCurrencyException e -> {
-                exceptionHandler.debugInvalidCurrency(e);
-                status = Status.INVALID_ARGUMENT.withDescription(e.getMessage());
-            }
+            case ServiceException e -> status = Status.INVALID_ARGUMENT.withDescription(e.getMessage());
             case RatesServiceException e -> {
                 String description = exceptionHandler.warnRatesServiceError(e);
                 status = Status.UNAVAILABLE.withDescription(description);

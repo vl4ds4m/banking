@@ -7,10 +7,7 @@ import org.springframework.stereotype.Service;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.converter.entity.CurrencyRates;
-import org.vl4ds4m.banking.converter.service.exception.NonPositiveAmountException;
 import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
-
-import java.math.BigDecimal;
 
 @Service
 @Slf4j
@@ -20,12 +17,7 @@ public class ConverterService {
     private final RatesService ratesService;
 
     @Observed
-    public Money convert(Currency source, Currency target, BigDecimal amount) {
-        if (!Money.isValid(amount) || Money.of(amount).isEmpty()) {
-            throw new NonPositiveAmountException(amount);
-        }
-        var money = Money.of(amount);
-
+    public Money convert(Currency source, Currency target, Money money) {
         if (target.equals(source)) {
             log.warn("Source currency equals target currency, conversion is redundant");
             return money;
