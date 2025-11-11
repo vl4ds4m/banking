@@ -3,7 +3,7 @@ package org.vl4ds4m.banking.accounts.client;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.vl4ds4m.banking.accounts.client.converter.ConvertApi;
-import org.vl4ds4m.banking.accounts.client.util.CurrencyConverter;
+import org.vl4ds4m.banking.accounts.client.converter.CurrencyConverter;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
 

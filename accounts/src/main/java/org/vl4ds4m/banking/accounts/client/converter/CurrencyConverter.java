@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.accounts.client.util;
+package org.vl4ds4m.banking.accounts.client.converter;
 
 import org.vl4ds4m.banking.accounts.client.converter.model.Currency;
 

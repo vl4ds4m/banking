@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.converter.api.model.Currency;
-import org.vl4ds4m.banking.converter.api.util.CurrencyConverter;
+import org.vl4ds4m.banking.converter.api.converter.CurrencyConverter;
 import org.vl4ds4m.banking.converter.service.ConverterService;
 import org.vl4ds4m.banking.converter.service.exception.NonPositiveAmountException;
 

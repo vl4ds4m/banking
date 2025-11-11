@@ -6,7 +6,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.vl4ds4m.banking.converter.api.util.CurrencyConverter;
+import org.vl4ds4m.banking.converter.api.converter.CurrencyConverter;
 import org.vl4ds4m.banking.converter.service.ConverterService;
 import org.vl4ds4m.banking.converter.api.model.ConvertCurrencyResponse;
 import org.vl4ds4m.banking.converter.api.model.Currency;

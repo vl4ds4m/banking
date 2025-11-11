@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import org.vl4ds4m.banking.accounts.api.util.CurrencyConverter;
+import org.vl4ds4m.banking.accounts.api.converter.CurrencyConverter;
 import org.vl4ds4m.banking.accounts.service.AccountService;
 import org.vl4ds4m.banking.accounts.api.model.*;
 import org.vl4ds4m.banking.common.util.To;
