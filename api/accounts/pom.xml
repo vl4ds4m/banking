@@ -7,12 +7,13 @@
         <groupId>org.vl4ds4m.banking</groupId>
         <artifactId>banking-project</artifactId>
         <version>1.0</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>accounts-api</artifactId>
 
     <properties>
-        <openapi.inputSpec>${project.parent.basedir}/openapi/accounts.yaml</openapi.inputSpec>
+        <openapi.inputSpec>${project.basedir}/../openapi/accounts.yaml</openapi.inputSpec>
         <openapi.appPackage>${project.groupId}.accounts.http</openapi.appPackage>
     </properties>
 

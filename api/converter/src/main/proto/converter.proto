@@ -1,23 +1,23 @@
 syntax = "proto3";
 
-package org.vl4ds4m.banking;
+package banking.converter;
 
 option java_multiple_files = true;
 option java_package = "org.vl4ds4m.banking.converter.grpc";
 option java_outer_classname = "ConverterProto";
 
+import "common.proto";
+
 service Converter {
-  rpc Convert (ConverterGrpcRequest) returns (ConverterGrpcResponse) {
-  }
+  rpc Convert (ConvertRequest) returns (ConvertResponse);
 }
 
-message ConverterGrpcRequest {
-  string from = 1;
-  string to = 2;
+message ConvertRequest {
+  Currency from = 1;
+  Currency to = 2;
   double amount = 3;
 }
 
-message ConverterGrpcResponse {
-  string currency = 1;
+message ConvertResponse {
   double amount = 2;
 }

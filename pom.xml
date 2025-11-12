@@ -16,12 +16,13 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>api/common</module>
+        <module>api/accounts</module>
+        <module>api/converter</module>
+        <module>api/rates</module>
         <module>common</module>
         <module>accounts</module>
-        <module>accounts-api</module>
         <module>converter</module>
-        <module>converter-api</module>
-        <module>rates-api</module>
     </modules>
 
     <properties>
@@ -34,7 +35,7 @@
         <dependencies>
             <dependency>
                 <groupId>org.vl4ds4m.banking</groupId>
-                <artifactId>common</artifactId>
+                <artifactId>common-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -50,6 +51,11 @@
             <dependency>
                 <groupId>org.vl4ds4m.banking</groupId>
                 <artifactId>rates-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.vl4ds4m.banking</groupId>
+                <artifactId>common</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

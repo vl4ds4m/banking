@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package banking;
+
+option java_multiple_files = true;
+option java_package = "org.vl4ds4m.banking.common.grpc";
+option java_outer_classname = "CommonProto";
+
+enum Currency {
+  CURRENCY_UNSPECIFIED = 0;
+  CURRENCY_USD = 1;
+  CURRENCY_RUB = 2;
+  CURRENCY_CNY = 3;
+  CURRENCY_EUR = 4;
+  CURRENCY_GBP = 5;
+}
