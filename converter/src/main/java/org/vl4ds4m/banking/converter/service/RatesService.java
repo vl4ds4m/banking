@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
-import org.vl4ds4m.banking.converter.client.RatesClient;
-import org.vl4ds4m.banking.converter.client.rates.model.RatesResponse;
 import org.vl4ds4m.banking.converter.entity.CurrencyRates;
+import org.vl4ds4m.banking.converter.http.client.RatesClient;
 import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
+import org.vl4ds4m.banking.rates.http.client.model.RatesResponse;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -23,7 +23,7 @@ public class RatesService {
         var response = ratesClient.getRates();
         checkResponse(response);
 
-        var base = toEntity(response.getBase());
+        var base = Currency.valueOf(response.getBase().getValue());
         var rates = response.getRates()
                 .entrySet()
                 .stream()
@@ -46,9 +46,5 @@ public class RatesService {
         if (rates == null) {
             throw new RatesServiceException("RatesResponse rates is null");
         }
-    }
-
-    public static Currency toEntity(org.vl4ds4m.banking.converter.client.rates.model.Currency currency) {
-        return Currency.valueOf(currency.getValue());
     }
 }
