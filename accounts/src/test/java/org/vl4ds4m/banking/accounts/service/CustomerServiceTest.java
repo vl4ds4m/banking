@@ -9,11 +9,11 @@ import org.vl4ds4m.banking.accounts.entity.Account;
 import org.vl4ds4m.banking.accounts.entity.Customer;
 import org.vl4ds4m.banking.accounts.service.expection.DuplicateEntityException;
 import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
-import org.vl4ds4m.banking.common.exception.ValidationException;
 import org.vl4ds4m.banking.accounts.service.validator.CustomerValidator;
 import org.vl4ds4m.banking.accounts.util.TestEntity;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
+import org.vl4ds4m.banking.common.exception.ValidationException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

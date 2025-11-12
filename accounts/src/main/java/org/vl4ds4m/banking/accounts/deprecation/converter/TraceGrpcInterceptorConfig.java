@@ -6,7 +6,6 @@ import io.micrometer.observation.ObservationRegistry;
 import net.devh.boot.grpc.client.interceptor.GrpcGlobalClientInterceptor;
 import net.devh.boot.grpc.common.util.InterceptorOrder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
 // @Configuration

@@ -1,6 +1,9 @@
 package org.vl4ds4m.banking.accounts.deprecation.notification;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.time.Instant;
 

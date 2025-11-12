@@ -1,8 +1,8 @@
 package org.vl4ds4m.banking.accounts.util;
 
 import org.vl4ds4m.banking.accounts.entity.Account;
-import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.accounts.entity.Customer;
+import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
 
 import java.math.BigDecimal;

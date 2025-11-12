@@ -10,10 +10,10 @@ import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.common.exception.ServiceException;
 import org.vl4ds4m.banking.common.util.To;
-import org.vl4ds4m.banking.converter.http.api.ConverterExceptionHandler;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpc;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpcRequest;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpcResponse;
+import org.vl4ds4m.banking.converter.http.api.ConverterExceptionHandler;
 import org.vl4ds4m.banking.converter.service.ConverterService;
 import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
 
