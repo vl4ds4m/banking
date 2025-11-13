@@ -8,8 +8,8 @@ import org.springframework.web.client.RestTemplate;
 import org.vl4ds4m.banking.accounts.client.grpc.ConverterGrpcClient;
 import org.vl4ds4m.banking.accounts.client.http.ConverterHttpClient;
 import org.vl4ds4m.banking.common.properties.ConverterProperties;
+import org.vl4ds4m.banking.converter.client.http.invoker.ApiClient;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpc;
-import org.vl4ds4m.banking.converter.http.client.invoker.ApiClient;
 
 @Configuration
 @EnableConfigurationProperties(ConverterProperties.class)

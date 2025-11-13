@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.converter.http.api.grpc;
+package org.vl4ds4m.banking.converter.api.grpc;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -10,10 +10,10 @@ import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.common.exception.ServiceException;
 import org.vl4ds4m.banking.common.grpc.Currency;
 import org.vl4ds4m.banking.common.util.To;
+import org.vl4ds4m.banking.converter.api.ConverterExceptionHandler;
 import org.vl4ds4m.banking.converter.grpc.ConvertRequest;
 import org.vl4ds4m.banking.converter.grpc.ConvertResponse;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpc;
-import org.vl4ds4m.banking.converter.http.api.ConverterExceptionHandler;
 import org.vl4ds4m.banking.converter.service.ConverterService;
 import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
 

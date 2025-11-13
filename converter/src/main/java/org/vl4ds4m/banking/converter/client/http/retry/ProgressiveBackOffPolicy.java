@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.converter.http.client.retry;
+package org.vl4ds4m.banking.converter.client.http.retry;
 
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.backoff.BackOffContext;

@@ -1,6 +1,6 @@
-package org.vl4ds4m.banking.converter.http.api.converter;
+package org.vl4ds4m.banking.converter.api.http.converter;
 
-import org.vl4ds4m.banking.converter.http.api.model.Currency;
+import org.vl4ds4m.banking.converter.api.http.model.Currency;
 
 public final class CurrencyConverter {
 

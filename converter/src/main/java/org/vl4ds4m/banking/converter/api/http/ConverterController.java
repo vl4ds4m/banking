@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.converter.http.api;
+package org.vl4ds4m.banking.converter.api.http;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,10 +9,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.vl4ds4m.banking.common.util.To;
-import org.vl4ds4m.banking.converter.http.api.converter.CurrencyConverter;
-import org.vl4ds4m.banking.converter.http.api.model.ConvertCurrencyResponse;
-import org.vl4ds4m.banking.converter.http.api.model.Currency;
-import org.vl4ds4m.banking.converter.http.api.model.InvalidQueryResponse;
+import org.vl4ds4m.banking.converter.api.ConverterExceptionHandler;
+import org.vl4ds4m.banking.converter.api.http.converter.CurrencyConverter;
+import org.vl4ds4m.banking.converter.api.http.model.ConvertCurrencyResponse;
+import org.vl4ds4m.banking.converter.api.http.model.Currency;
+import org.vl4ds4m.banking.converter.api.http.model.InvalidQueryResponse;
 import org.vl4ds4m.banking.converter.service.ConverterService;
 import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
 

@@ -1,9 +1,9 @@
-package org.vl4ds4m.banking.accounts.http.api;
+package org.vl4ds4m.banking.accounts.api.http;
 
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.vl4ds4m.banking.accounts.http.api.model.InvalidQueryResponse;
+import org.vl4ds4m.banking.accounts.api.http.model.InvalidQueryResponse;
 import org.vl4ds4m.banking.common.handler.AbstractControllerExceptionHandler;
 
 @RestControllerAdvice

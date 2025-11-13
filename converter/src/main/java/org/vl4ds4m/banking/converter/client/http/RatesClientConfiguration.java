@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.converter.http.client;
+package org.vl4ds4m.banking.converter.client.http;
 
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.web.client.RestTemplate;
 import org.vl4ds4m.banking.common.auth.Auth;
-import org.vl4ds4m.banking.rates.http.client.RatesApi;
-import org.vl4ds4m.banking.rates.http.client.invoker.ApiClient;
+import org.vl4ds4m.banking.rates.client.http.RatesApi;
+import org.vl4ds4m.banking.rates.client.http.invoker.ApiClient;
 
 @Configuration
 public class RatesClientConfiguration {

@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.vl4ds4m.banking.accounts.client.ConverterClient;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
-import org.vl4ds4m.banking.converter.http.client.ConvertApi;
-import org.vl4ds4m.banking.converter.http.client.invoker.ApiClient;
+import org.vl4ds4m.banking.converter.client.http.ConvertApi;
+import org.vl4ds4m.banking.converter.client.http.invoker.ApiClient;
 
 @Slf4j
 public class ConverterHttpClient implements ConverterClient {
@@ -29,7 +29,7 @@ public class ConverterHttpClient implements ConverterClient {
         return Money.of(converted);
     }
 
-    private static org.vl4ds4m.banking.converter.http.client.model.Currency toApiCurrency(Currency currency) {
-        return org.vl4ds4m.banking.converter.http.client.model.Currency.fromValue(currency.name());
+    private static org.vl4ds4m.banking.converter.client.http.model.Currency toApiCurrency(Currency currency) {
+        return org.vl4ds4m.banking.converter.client.http.model.Currency.fromValue(currency.name());
     }
 }

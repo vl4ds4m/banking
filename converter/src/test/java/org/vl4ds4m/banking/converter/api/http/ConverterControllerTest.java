@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.converter.http.api;
+package org.vl4ds4m.banking.converter.api.http;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,8 +12,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.vl4ds4m.banking.common.entity.Money;
-import org.vl4ds4m.banking.converter.http.api.converter.CurrencyConverter;
-import org.vl4ds4m.banking.converter.http.api.model.Currency;
+import org.vl4ds4m.banking.converter.api.SecurityConfiguration;
+import org.vl4ds4m.banking.converter.api.http.converter.CurrencyConverter;
+import org.vl4ds4m.banking.converter.api.http.model.Currency;
 import org.vl4ds4m.banking.converter.service.ConverterService;
 
 import java.math.BigDecimal;

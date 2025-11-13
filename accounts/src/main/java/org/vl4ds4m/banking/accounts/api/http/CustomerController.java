@@ -1,15 +1,15 @@
-package org.vl4ds4m.banking.accounts.http.api;
+package org.vl4ds4m.banking.accounts.api.http;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.vl4ds4m.banking.accounts.api.http.converter.CurrencyConverter;
+import org.vl4ds4m.banking.accounts.api.http.model.BalanceResponse;
+import org.vl4ds4m.banking.accounts.api.http.model.CreateCustomerRequest;
+import org.vl4ds4m.banking.accounts.api.http.model.Currency;
 import org.vl4ds4m.banking.accounts.entity.Customer;
-import org.vl4ds4m.banking.accounts.http.api.converter.CurrencyConverter;
-import org.vl4ds4m.banking.accounts.http.api.model.BalanceResponse;
-import org.vl4ds4m.banking.accounts.http.api.model.CreateCustomerRequest;
-import org.vl4ds4m.banking.accounts.http.api.model.Currency;
 import org.vl4ds4m.banking.accounts.service.CustomerService;
 
 @RestController

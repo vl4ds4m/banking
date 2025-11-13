@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.converter.http.client.retry;
+package org.vl4ds4m.banking.converter.client.http.retry;
 
 import jakarta.validation.constraints.Min;
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.converter.http.api;
+package org.vl4ds4m.banking.converter.api;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

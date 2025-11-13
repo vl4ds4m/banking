@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.converter.http.client;
+package org.vl4ds4m.banking.converter.client.http;
 
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
@@ -8,8 +8,8 @@ import org.springframework.retry.RetryCallback;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.web.client.RestClientException;
 import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
-import org.vl4ds4m.banking.rates.http.client.RatesApi;
-import org.vl4ds4m.banking.rates.http.client.model.RatesResponse;
+import org.vl4ds4m.banking.rates.client.http.RatesApi;
+import org.vl4ds4m.banking.rates.client.http.model.RatesResponse;
 
 @Slf4j
 @RequiredArgsConstructor
