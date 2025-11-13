@@ -1,0 +1,7 @@
+client:
+  rates:
+    host: test-rates
+    port: 4321
+
+services:
+  timeout: 4

@@ -32,7 +32,7 @@ spring:
       properties:
         "[spring.json.trusted.packages]": "edu.vl4ds4m.banking.admin.dto"
 
-service:
+client:
   converter:
     grpc: true
     host: ${CONVERTER_HOST}
@@ -63,7 +63,7 @@ idempotency:
 grpc:
   client:
     converter:
-      address: ${service.converter.host}:${service.converter.port}
+      address: ${client.converter.host}:${client.converter.port}
       enable-keep-alive: true
       keep-alive-without-calls: true
       negotiation-type: PLAINTEXT

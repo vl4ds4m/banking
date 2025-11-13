@@ -4,7 +4,7 @@ public interface ServiceProperties {
 
     String host();
 
-    int port();
+    Integer port();
 
     default String httpUrl() {
         return "http://" + host() + ":" + port();

@@ -7,15 +7,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestTemplate;
 import org.vl4ds4m.banking.common.auth.Auth;
-import org.vl4ds4m.banking.common.properties.RatesProperties;
+import org.vl4ds4m.banking.common.properties.RatesClientProperties;
 import org.vl4ds4m.banking.rates.client.http.invoker.ApiClient;
 
 @Configuration
-@EnableConfigurationProperties(RatesProperties.class)
+@EnableConfigurationProperties(RatesClientProperties.class)
 @RequiredArgsConstructor
 public class RatesClientConfig {
 
-    private final RatesProperties ratesProps;
+    private final RatesClientProperties ratesProps;
 
     @Bean
     @Profile("!" + Auth.PROFILE)

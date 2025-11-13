@@ -1,6 +1,6 @@
 spring.application.name: converter
 
-service:
+client:
   rates:
     host: ${RATES_HOST}
     port: ${RATES_PORT}

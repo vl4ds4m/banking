@@ -3,22 +3,25 @@ package org.vl4ds4m.banking.common.properties;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.validation.annotation.Validated;
 
-@ConfigurationProperties("service.converter")
-@Validated
-public record ConverterProperties(
+import static org.vl4ds4m.banking.common.properties.RatesClientProperties.PREFIX;
 
-    @DefaultValue("true")
-    boolean grpc,
+@ConfigurationProperties(PREFIX)
+@Validated
+public record RatesClientProperties(
 
     @NotBlank
     String host,
 
+    @NotNull
     @Min(0)
     @Max(65535)
-    int port
+    Integer port
 
-) implements ServiceProperties {}
+) implements ServiceProperties {
+
+    public static final String PREFIX = "client.rates";
+}
