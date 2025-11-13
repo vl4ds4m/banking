@@ -1,12 +1,13 @@
 package org.vl4ds4m.banking.converter.service;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
+import org.vl4ds4m.banking.converter.client.RatesClient;
 import org.vl4ds4m.banking.converter.entity.CurrencyRates;
 import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
 
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.when;
 class ConverterServiceTest {
 
     @DisplayName("Конвертация денег")
-    @ParameterizedTest
+    @ParameterizedTest(name = "{0} {2} -> {1} {3}")
     @MethodSource("provideConverterArguments")
     void testConversion(
         Currency source,
@@ -31,7 +32,7 @@ class ConverterServiceTest {
         BigDecimal result
     ) {
         // Arrange
-        var service = new ConverterService(mockRatesService());
+        var service = new ConverterService(mockRatesClient());
 
         // Act
         var actual = service.convert(source, target, Money.of(amount));
@@ -40,15 +41,15 @@ class ConverterServiceTest {
         assertEquals(Money.of(result), actual);
     }
 
-    @DisplayName("Ошибка конвертации, когда информация о валюте отсутствует")
-    @Test
-    void testConversionInaccessibleCurrencyFailed() {
+    @DisplayName("Ошибка конвертации, когда информация о валюте отсутствует или курс = 0")
+    @ParameterizedTest(name = "{0}")
+    @EnumSource(value = Currency.class, names = {"CNY", "GBP"})
+    void testConversionInaccessibleCurrencyFailed(Currency inaccessible) {
         // Arrange
-        var inaccessible = Currency.CNY;
         var usd = Currency.USD;
         var money = Money.of(BigDecimal.ONE);
 
-        var service = new ConverterService(mockRatesService());
+        var service = new ConverterService(mockRatesClient());
 
         // Act & Assert
         assertThrows(RatesServiceException.class,
@@ -67,15 +68,16 @@ class ConverterServiceTest {
         );
     }
 
-    private static RatesService mockRatesService() {
+    private static RatesClient mockRatesClient() {
         var rates = new HashMap<Currency, Money>();
         rates.put(Currency.RUB, Money.of(new BigDecimal("1")));
         rates.put(Currency.USD, Money.of(new BigDecimal("35.47")));
         rates.put(Currency.EUR, Money.of(new BigDecimal("50.2")));
+        rates.put(Currency.GBP, Money.empty());
 
         var currencyRates = new CurrencyRates(Currency.RUB, rates);
 
-        var service = mock(RatesService.class);
+        var service = mock(RatesClient.class);
         when(service.getRates()).thenReturn(currencyRates);
 
         return service;

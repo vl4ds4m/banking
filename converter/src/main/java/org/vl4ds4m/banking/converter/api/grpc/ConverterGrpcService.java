@@ -2,7 +2,6 @@ package org.vl4ds4m.banking.converter.api.grpc;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
-import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -28,7 +27,8 @@ public class ConverterGrpcService extends ConverterGrpc.ConverterImplBase {
 
     private final ConverterService service;
 
-    @Observed
+    // TODO
+    // @Observed
     @Override
     public void convert(
         ConvertRequest request,

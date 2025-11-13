@@ -1,5 +1,9 @@
 spring.application.name: converter
 
+service:
+  rates:
+    host: ${RATES_HOST}
+    port: ${RATES_PORT}
+
 services:
   timeout: 5
-  currency-rates-host: ${RATES_URL:http://rates:8080}

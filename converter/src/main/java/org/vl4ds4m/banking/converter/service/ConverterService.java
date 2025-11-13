@@ -1,11 +1,11 @@
 package org.vl4ds4m.banking.converter.service;
 
-import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
+import org.vl4ds4m.banking.converter.client.RatesClient;
 import org.vl4ds4m.banking.converter.entity.CurrencyRates;
 import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
 
@@ -14,40 +14,46 @@ import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
 @RequiredArgsConstructor
 public class ConverterService {
 
-    private final RatesService ratesService;
+    private final RatesClient ratesClient;
 
-    @Observed
+    // TODO
+    // @Observed
     public Money convert(Currency source, Currency target, Money money) {
+        if (money.isEmpty()) {
+            log.warn("Money is zero, conversion is redundant");
+            return money;
+        }
+
         if (target.equals(source)) {
             log.warn("Source currency equals target currency, conversion is redundant");
             return money;
         }
 
-        var currencyRates = ratesService.getRates();
+        var currencyRates = ratesClient.getRates();
         var base = currencyRates.base();
-        Money converted;
+        final Money converted;
 
         if (base.equals(source)) {
-            var rate = requireRate(currencyRates, target);
+            var rate = getRate(currencyRates, target);
             converted = money.divide(rate);
         } else if (base.equals(target)) {
-            var rate = requireRate(currencyRates, source);
+            var rate = getRate(currencyRates, source);
             converted = money.multiply(rate);
         } else {
-            var rate = requireRate(currencyRates, source);
-            converted = money.multiply(rate);
-            rate = requireRate(currencyRates, target);
-            converted = converted.divide(rate);
+            var rate = getRate(currencyRates, source);
+            var transitive = money.multiply(rate);
+            rate = getRate(currencyRates, target);
+            converted = transitive.divide(rate);
         }
 
         log.debug("Convert {} {} to {} {}", money, source, converted, target);
         return converted;
     }
 
-    private static Money requireRate(CurrencyRates rates, Currency currency) {
-        var money = rates.rates().get(currency);
+    private static Money getRate(CurrencyRates currencyRates, Currency currency) {
+        var money = currencyRates.rates().get(currency);
         if (money == null || money.isEmpty()) {
-            String message = String.format("%s rate is null or empty", currency);
+            var message = String.format("%s rate is absent or zero", currency);
             throw new RatesServiceException(message);
         }
         return money;

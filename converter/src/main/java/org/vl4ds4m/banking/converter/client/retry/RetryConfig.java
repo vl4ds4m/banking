@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.converter.client.http.retry;
+package org.vl4ds4m.banking.converter.client.retry;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

@@ -14,16 +14,16 @@ import org.vl4ds4m.banking.converter.grpc.ConverterGrpc;
 @Configuration
 @EnableConfigurationProperties(ConverterProperties.class)
 @RequiredArgsConstructor
-public class ConverterConfig {
+public class ConverterClientConfig {
 
-    private final ConverterProperties properties;
+    private final ConverterProperties converterProps;
 
     @Bean
     public ConverterClient converterClient(
             ConverterGrpc.ConverterBlockingStub converterGrpcStub,
             RestTemplate restTemplate
     ) {
-        return properties.grpc()
+        return converterProps.grpc()
                 ? createGrpcClient(converterGrpcStub)
                 : createHttpClient(restTemplate);
     }
@@ -34,7 +34,7 @@ public class ConverterConfig {
 
     private ConverterHttpClient createHttpClient(RestTemplate restTemplate) {
         var client = new ApiClient(restTemplate);
-        client.setBasePath("http://" + properties.address());
+        client.setBasePath(converterProps.httpUrl());
         return new ConverterHttpClient(client);
     }
 }

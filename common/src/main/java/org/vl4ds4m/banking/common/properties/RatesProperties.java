@@ -4,21 +4,17 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.validation.annotation.Validated;
 
-@ConfigurationProperties("service.converter")
+@ConfigurationProperties("service.rates")
 @Validated
-public record ConverterProperties(
+public record RatesProperties(
 
-    @DefaultValue("true")
-    boolean grpc,
+        @NotBlank
+        String host,
 
-    @NotBlank
-    String host,
-
-    @Min(0)
-    @Max(65535)
-    int port
+        @Min(0)
+        @Max(65535)
+        int port
 
 ) implements ServiceProperties {}
