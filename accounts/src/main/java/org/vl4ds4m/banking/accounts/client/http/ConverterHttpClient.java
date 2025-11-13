@@ -17,12 +17,12 @@ public class ConverterHttpClient implements ConverterClient {
     }
 
     @Override
-    public Money convertCurrency(Currency from, Currency to, Money money) {
-        var apiFrom = toApiCurrency(from);
-        var apiTo = toApiCurrency(to);
+    public Money convertCurrency(Currency source, Currency target, Money money) {
+        var apiFrom = toApiCurrency(source);
+        var apiTo = toApiCurrency(target);
         var amount = money.amount();
 
-        log.info("Request currency conversion: {}, {} -> {}", amount, from, to);
+        log.info("Request currency conversion: {}, {} -> {}", amount, source, target);
         var response = api.convertCurrency(apiFrom, apiTo, amount);
 
         var converted = response.getConvertedAmount();

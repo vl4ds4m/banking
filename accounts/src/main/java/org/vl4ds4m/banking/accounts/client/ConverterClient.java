@@ -5,5 +5,5 @@ import org.vl4ds4m.banking.common.entity.Money;
 
 public interface ConverterClient {
 
-    Money convertCurrency(Currency from, Currency to, Money money);
+    Money convertCurrency(Currency source, Currency target, Money money);
 }

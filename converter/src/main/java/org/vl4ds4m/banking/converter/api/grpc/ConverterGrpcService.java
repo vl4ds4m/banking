@@ -5,9 +5,7 @@ import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.common.exception.ServiceException;
-import org.vl4ds4m.banking.common.grpc.Currency;
 import org.vl4ds4m.banking.common.util.To;
 import org.vl4ds4m.banking.converter.api.ConverterExceptionHandler;
 import org.vl4ds4m.banking.converter.grpc.ConvertRequest;
@@ -30,32 +28,33 @@ public class ConverterGrpcService extends ConverterGrpc.ConverterImplBase {
     // TODO
     // @Observed
     @Override
-    public void convert(
-        ConvertRequest request,
-        StreamObserver<ConvertResponse> observer
-    ) {
-        log.info("Accept a request to convert currency");
-        Money converted;
+    public void convert(ConvertRequest request, StreamObserver<ConvertResponse> observer) {
+        log.info("Accept request to convert currency:\n{}", request);
+
+        ConvertResponse response;
         try {
-            var amount = BigDecimal.valueOf(request.getAmount());
-            converted = service.convert(
-                toEntity(request.getFrom()),
-                toEntity(request.getTo()),
-                To.moneyOrReject(amount, "Amount"));
+            response = process(request);
         } catch (RuntimeException e) {
             Status status = handleException(e);
             observer.onError(status.asRuntimeException());
             return;
         }
-        ConvertResponse response = ConvertResponse.newBuilder()
-            .setAmount(converted.amount().doubleValue())
-            .build();
+
         observer.onNext(response);
         observer.onCompleted();
     }
 
-    private static org.vl4ds4m.banking.common.entity.Currency toEntity(Currency currency) {
-        return org.vl4ds4m.banking.common.entity.Currency.valueOf(currency.name());
+    private ConvertResponse process(ConvertRequest request) {
+        var amount = BigDecimal.valueOf(request.getAmount());
+
+        var converted = service.convert(
+                To.currency(request.getFrom()),
+                To.currency(request.getTo()),
+                To.moneyOrReject(amount, "Amount"));
+
+        return ConvertResponse.newBuilder()
+                .setAmount(converted.amount().doubleValue())
+                .build();
     }
 
     private Status handleException(RuntimeException exception) {
