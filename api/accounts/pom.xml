@@ -5,16 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.vl4ds4m.banking</groupId>
-        <artifactId>banking-project</artifactId>
+        <artifactId>banking-api</artifactId>
         <version>1.0</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>accounts-api</artifactId>
 
     <properties>
-        <openapi.inputSpec>${project.basedir}/../openapi/accounts.yaml</openapi.inputSpec>
-        <openapi.appPackage>${project.groupId}.accounts.http</openapi.appPackage>
+        <openapi.inputSpec>${project.parent.basedir}/openapi/accounts.yaml</openapi.inputSpec>
+        <openapi.apiPackage>${project.groupId}.accounts.api.http</openapi.apiPackage>
     </properties>
 
     <dependencies>
@@ -63,8 +62,8 @@
                         <configuration>
                             <inputSpec>${openapi.inputSpec}</inputSpec>
                             <generatorName>spring</generatorName>
-                            <apiPackage>${openapi.appPackage}.api</apiPackage>
-                            <modelPackage>${openapi.appPackage}.api.model</modelPackage>
+                            <apiPackage>${openapi.apiPackage}</apiPackage>
+                            <modelPackage>${openapi.apiPackage}.model</modelPackage>
                             <configOptions>
                                 <interfaceOnly>true</interfaceOnly>
                                 <useOptional>true</useOptional>

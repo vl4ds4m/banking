@@ -16,10 +16,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>api/common</module>
-        <module>api/accounts</module>
-        <module>api/converter</module>
-        <module>api/rates</module>
+        <module>api</module>
         <module>common</module>
         <module>accounts</module>
         <module>converter</module>
@@ -27,7 +24,6 @@
 
     <properties>
         <java.version>21</java.version>
-        <grpc.version>1.76.0</grpc.version>
         <grpc-spring-boot-starter.version>3.0.0.RELEASE</grpc-spring-boot-starter.version>
     </properties>
 
@@ -59,18 +55,6 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- OpenAPI -->
-            <dependency>
-                <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-annotations</artifactId>
-                <version>2.2.20</version>
-            </dependency>
-            <dependency>
-                <groupId>org.openapitools</groupId>
-                <artifactId>jackson-databind-nullable</artifactId>
-                <version>0.2.7</version>
-            </dependency>
-
             <dependency>
                 <groupId>org.keycloak</groupId>
                 <artifactId>keycloak-core</artifactId>
@@ -82,13 +66,6 @@
                 <version>4.4.0</version>
             </dependency>
 
-            <dependency>
-                <groupId>io.grpc</groupId>
-                <artifactId>grpc-bom</artifactId>
-                <version>${grpc.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <dependency>
                 <groupId>net.devh</groupId>
                 <artifactId>grpc-server-spring-boot-starter</artifactId>
@@ -104,41 +81,6 @@
 
     <build>
         <finalName>${project.artifactId}</finalName>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.xolstice.maven.plugins</groupId>
-                    <artifactId>protobuf-maven-plugin</artifactId>
-                    <version>0.6.1</version>
-                    <configuration>
-                        <protocArtifact>com.google.protobuf:protoc:3.25.8:exe:${os.detected.classifier}</protocArtifact>
-                        <pluginId>grpc-java</pluginId>
-                        <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>compile</goal>
-                                <goal>compile-custom</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.openapitools</groupId>
-                    <artifactId>openapi-generator-maven-plugin</artifactId>
-                    <version>7.16.0</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <extensions>
-            <!-- gRPC -->
-            <extension>
-                <groupId>kr.motd.maven</groupId>
-                <artifactId>os-maven-plugin</artifactId>
-                <version>1.7.1</version>
-            </extension>
-        </extensions>
     </build>
 
 </project>

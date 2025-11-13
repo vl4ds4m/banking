@@ -5,16 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.vl4ds4m.banking</groupId>
-        <artifactId>banking-project</artifactId>
+        <artifactId>banking-api</artifactId>
         <version>1.0</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>rates-api</artifactId>
 
     <properties>
-        <openapi.inputSpec>${project.basedir}/../openapi/rates.yaml</openapi.inputSpec>
-        <openapi.appPackage>${project.groupId}.rates.http</openapi.appPackage>
+        <openapi.inputSpec>${project.parent.basedir}/openapi/rates.yaml</openapi.inputSpec>
+        <openapi.clientPackage>${project.groupId}.rates.client.http</openapi.clientPackage>
     </properties>
 
     <dependencies>
@@ -59,9 +58,9 @@
                             <inputSpec>${openapi.inputSpec}</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
-                            <apiPackage>${openapi.appPackage}.client</apiPackage>
-                            <modelPackage>${openapi.appPackage}.client.model</modelPackage>
-                            <invokerPackage>${openapi.appPackage}.client.invoker</invokerPackage>
+                            <apiPackage>${openapi.clientPackage}</apiPackage>
+                            <modelPackage>${openapi.clientPackage}.model</modelPackage>
+                            <invokerPackage>${openapi.clientPackage}.invoker</invokerPackage>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <configOptions>
