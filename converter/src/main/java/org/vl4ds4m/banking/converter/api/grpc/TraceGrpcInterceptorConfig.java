@@ -6,11 +6,12 @@ import io.micrometer.observation.ObservationRegistry;
 import net.devh.boot.grpc.common.util.InterceptorOrder;
 import net.devh.boot.grpc.server.interceptor.GrpcGlobalServerInterceptor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
-@Configuration
+// TODO
+// @Configuration
 public class TraceGrpcInterceptorConfig {
+
     @Bean
     @GrpcGlobalServerInterceptor
     @Order(InterceptorOrder.ORDER_GLOBAL_EXCEPTION_HANDLING)
