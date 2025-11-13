@@ -7,6 +7,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
+import org.vl4ds4m.banking.common.exception.ServiceException;
 import org.vl4ds4m.banking.converter.client.RatesClient;
 import org.vl4ds4m.banking.converter.entity.CurrencyRates;
 import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
@@ -52,9 +53,9 @@ class ConverterServiceTest {
         var service = new ConverterService(mockRatesClient());
 
         // Act & Assert
-        assertThrows(RatesServiceException.class,
+        assertThrows(ServiceException.class,
             () -> service.convert(inaccessible, usd, money));
-        assertThrows(RatesServiceException.class,
+        assertThrows(ServiceException.class,
             () -> service.convert(usd, inaccessible, money));
     }
 

@@ -7,7 +7,7 @@ import org.vl4ds4m.banking.accounts.entity.Account;
 import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
-import org.vl4ds4m.banking.common.exception.ServiceException;
+import org.vl4ds4m.banking.common.exception.InvalidQueryException;
 
 import java.math.BigDecimal;
 
@@ -105,7 +105,7 @@ class TransferServiceTest {
         var service = new TransferService(mockAccountDao(), mockConverterService());
 
         // Act & Assert
-        var e = assertThrows(ServiceException.class,
+        var e = assertThrows(InvalidQueryException.class,
                 () -> service.transferMoney(
                         DEFAULT_SENDER.number(),
                         DEFAULT_RECEIVER.number(),

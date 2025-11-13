@@ -13,7 +13,7 @@ import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
 import org.vl4ds4m.banking.accounts.util.TestEntity;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
-import org.vl4ds4m.banking.common.exception.ServiceException;
+import org.vl4ds4m.banking.common.exception.InvalidQueryException;
 
 import java.math.BigDecimal;
 import java.util.Set;
@@ -169,7 +169,7 @@ class AccountServiceTest {
         var money = Money.of(BigDecimal.TWO).add(DEFAULT_ACCOUNT.money());
 
         // Act & Assert
-        assertThrows(ServiceException.class, () -> service.withdrawMoneyToAccount(number, money));
+        assertThrows(InvalidQueryException.class, () -> service.withdrawMoneyToAccount(number, money));
     }
 
     private static Stream<Money> provideMoneyForAccountOperations() {

@@ -13,7 +13,7 @@ import org.vl4ds4m.banking.accounts.service.expection.DuplicateEntityException;
 import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
-import org.vl4ds4m.banking.common.exception.ServiceException;
+import org.vl4ds4m.banking.common.exception.InvalidQueryException;
 import org.vl4ds4m.banking.common.util.To;
 
 @Service
@@ -104,7 +104,7 @@ public class AccountService {
         }
 
         if (account.money().compareTo(subtrahend) < 0) {
-            throw new ServiceException("Account money is less than subtrahend");
+            throw new InvalidQueryException("Account money is less than subtrahend");
         }
 
         var money = account.money().subtract(subtrahend);

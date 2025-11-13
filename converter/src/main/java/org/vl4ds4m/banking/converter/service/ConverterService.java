@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
+import org.vl4ds4m.banking.common.exception.ServiceException;
 import org.vl4ds4m.banking.converter.client.RatesClient;
 import org.vl4ds4m.banking.converter.entity.CurrencyRates;
-import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
 
 @Service
 @Slf4j
@@ -54,7 +54,7 @@ public class ConverterService {
         var money = currencyRates.rates().get(currency);
         if (money == null || money.isEmpty()) {
             var message = String.format("%s rate is absent or zero", currency);
-            throw new RatesServiceException(message);
+            throw new ServiceException("rates", new Exception(message));
         }
         return money;
     }

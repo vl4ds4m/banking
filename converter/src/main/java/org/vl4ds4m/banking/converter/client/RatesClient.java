@@ -1,11 +1,14 @@
 package org.vl4ds4m.banking.converter.client;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.client.RestClientException;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
+import org.vl4ds4m.banking.common.exception.ServiceException;
 import org.vl4ds4m.banking.converter.entity.CurrencyRates;
 import org.vl4ds4m.banking.rates.client.http.RatesApi;
 import org.vl4ds4m.banking.rates.client.http.invoker.ApiClient;
+import org.vl4ds4m.banking.rates.client.http.model.RatesResponse;
 
 import java.util.stream.Collectors;
 
@@ -20,7 +23,13 @@ public class RatesClient {
 
     public CurrencyRates getRates() {
         log.info("Request currency rates");
-        var response = api.getRates();
+
+        RatesResponse response;
+        try {
+            response = api.getRates();
+        } catch (RestClientException e) {
+            throw new ServiceException("rates", e.getMostSpecificCause());
+        }
 
         var base = Currency.valueOf(response.getBase().getValue());
         var rates = response.getRates()

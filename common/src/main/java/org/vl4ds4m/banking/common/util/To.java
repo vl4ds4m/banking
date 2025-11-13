@@ -3,7 +3,7 @@ package org.vl4ds4m.banking.common.util;
 import org.springframework.validation.Errors;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
-import org.vl4ds4m.banking.common.exception.ServiceException;
+import org.vl4ds4m.banking.common.exception.InvalidQueryException;
 
 import java.math.BigDecimal;
 
@@ -19,7 +19,7 @@ public class To {
         return ErrorsToString.string(errors);
     }
 
-    public static Money moneyOrReject(BigDecimal amount, String varName) throws ServiceException {
+    public static Money moneyOrReject(BigDecimal amount, String varName) throws InvalidQueryException {
         return MoneyConverter.convertOrReject(amount, varName);
     }
 

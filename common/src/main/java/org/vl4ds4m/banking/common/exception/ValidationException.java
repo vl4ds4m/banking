@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.springframework.validation.Errors;
 import org.vl4ds4m.banking.common.util.To;
 
-public class ValidationException extends ServiceException {
+public class ValidationException extends InvalidQueryException {
 
     @Getter
     private final Errors errors;

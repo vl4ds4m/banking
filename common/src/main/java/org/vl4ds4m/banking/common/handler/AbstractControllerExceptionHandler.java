@@ -7,10 +7,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.vl4ds4m.banking.common.exception.InvalidQueryException;
 import org.vl4ds4m.banking.common.exception.ServiceException;
 import org.vl4ds4m.banking.common.util.To;
 
 public abstract class AbstractControllerExceptionHandler {
+
+    protected final ExceptionLogger exceptionLogger = new ExceptionLogger(this::log);
 
     protected abstract Logger log();
 
@@ -19,25 +22,33 @@ public abstract class AbstractControllerExceptionHandler {
     @ExceptionHandler({
             MethodArgumentTypeMismatchException.class,
             HttpMessageNotReadableException.class,
-            MethodArgumentNotValidException.class,
-            ServiceException.class})
+            InvalidQueryException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Object handleInvalidQuery(Exception e) {
-        String message;
-        if (e instanceof MethodArgumentNotValidException target) {
-            message = To.string(target.getBindingResult());
-        } else {
-            message = e.getMessage();
-        }
+        exceptionLogger.logInvalidQuery(e);
+        return buildResponse(e.getMessage());
+    }
 
-        log().info("""
-                Invalid query handled:
-                    exception = {},
-                    response message = {}""",
-                e.getClass().getName(),
-                message);
-
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Object handleInvalidQuery(MethodArgumentNotValidException e) {
+        var message = To.string(e.getBindingResult());
+        exceptionLogger.logInvalidQuery(e, message);
         return buildResponse(message);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public Object handleServiceError(ServiceException e) {
+        exceptionLogger.logServiceError(e);
+        return buildResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Object handleCriticalError(Throwable e) {
+        exceptionLogger.logCriticalError(e);
+        return buildResponse(e.getMessage());
     }
 
     // TODO

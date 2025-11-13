@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.converter.api;
+package org.vl4ds4m.banking.converter.api.http;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

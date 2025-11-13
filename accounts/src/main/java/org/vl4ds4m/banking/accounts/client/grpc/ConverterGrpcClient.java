@@ -1,12 +1,15 @@
 package org.vl4ds4m.banking.accounts.client.grpc;
 
+import io.grpc.StatusRuntimeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.vl4ds4m.banking.accounts.client.ConverterClient;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
+import org.vl4ds4m.banking.common.exception.ServiceException;
 import org.vl4ds4m.banking.common.util.To;
 import org.vl4ds4m.banking.converter.grpc.ConvertRequest;
+import org.vl4ds4m.banking.converter.grpc.ConvertResponse;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpc;
 
 import java.math.BigDecimal;
@@ -26,7 +29,13 @@ public class ConverterGrpcClient implements ConverterClient {
                 .build();
 
         log.info("Request currency conversion: {}, {} -> {}", money.amount(), source, target);
-        var response = grpcStub.convert(request);
+
+        ConvertResponse response;
+        try {
+            response = grpcStub.convert(request);
+        } catch (StatusRuntimeException e) {
+            throw new ServiceException("converter", e);
+        }
 
         var convertedAmount = BigDecimal.valueOf(response.getAmount());
         return Money.of(convertedAmount);

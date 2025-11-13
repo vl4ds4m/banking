@@ -10,7 +10,7 @@ import org.vl4ds4m.banking.accounts.entity.Account;
 import org.vl4ds4m.banking.accounts.entity.TransferResult;
 import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
 import org.vl4ds4m.banking.common.entity.Money;
-import org.vl4ds4m.banking.common.exception.ServiceException;
+import org.vl4ds4m.banking.common.exception.InvalidQueryException;
 import org.vl4ds4m.banking.common.util.To;
 
 @Service
@@ -43,7 +43,7 @@ public class TransferService {
         }
 
         if (sender.money().compareTo(money) < 0) {
-            throw new ServiceException("Sender " + To.string(Account.class, senderNumber) +
+            throw new InvalidQueryException("Sender " + To.string(Account.class, senderNumber) +
                     " doesn't have enough money for transfer operation");
         }
 

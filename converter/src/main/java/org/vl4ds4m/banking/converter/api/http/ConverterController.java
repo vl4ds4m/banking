@@ -3,19 +3,13 @@ package org.vl4ds4m.banking.converter.api.http;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.vl4ds4m.banking.common.util.To;
-import org.vl4ds4m.banking.converter.api.ConverterExceptionHandler;
 import org.vl4ds4m.banking.converter.api.http.converter.CurrencyConverter;
 import org.vl4ds4m.banking.converter.api.http.model.ConvertCurrencyResponse;
 import org.vl4ds4m.banking.converter.api.http.model.Currency;
-import org.vl4ds4m.banking.converter.api.http.model.InvalidQueryResponse;
 import org.vl4ds4m.banking.converter.service.ConverterService;
-import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
 
 import java.math.BigDecimal;
 
@@ -23,8 +17,6 @@ import java.math.BigDecimal;
 @Slf4j
 @RequiredArgsConstructor
 public class ConverterController implements ConvertApi {
-
-    private static final ConverterExceptionHandler handler = new ConverterExceptionHandler(log);
 
     private final ConverterService service;
 
@@ -45,12 +37,5 @@ public class ConverterController implements ConvertApi {
 
         var response = new ConvertCurrencyResponse(converted.amount());
         return ResponseEntity.ok(response);
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
-    public InvalidQueryResponse warnRatesServiceError(RatesServiceException e) {
-        var reason = handler.warnRatesServiceError(e);
-        return new InvalidQueryResponse(reason);
     }
 }
