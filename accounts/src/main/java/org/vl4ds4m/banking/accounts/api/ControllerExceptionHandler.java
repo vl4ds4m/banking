@@ -3,7 +3,7 @@ package org.vl4ds4m.banking.accounts.api;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.vl4ds4m.banking.accounts.api.http.model.InvalidQueryResponse;
+import org.vl4ds4m.banking.accounts.api.http.model.ErrorMessageResponse;
 import org.vl4ds4m.banking.common.handler.AbstractControllerExceptionHandler;
 
 @RestControllerAdvice
@@ -16,7 +16,7 @@ public class ControllerExceptionHandler extends AbstractControllerExceptionHandl
     }
 
     @Override
-    protected InvalidQueryResponse buildResponse(String message) {
-        return new InvalidQueryResponse(message);
+    protected ErrorMessageResponse buildResponse(String message) {
+        return new ErrorMessageResponse(message);
     }
 }

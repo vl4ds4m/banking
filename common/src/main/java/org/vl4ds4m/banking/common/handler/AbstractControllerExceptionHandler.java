@@ -43,32 +43,4 @@ public abstract class AbstractControllerExceptionHandler {
         exceptionLogger.logServiceError(e);
         return buildResponse(e.getMessage());
     }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Object handleCriticalError(Throwable e) {
-        exceptionLogger.logCriticalError(e);
-        return buildResponse(e.getMessage());
-    }
-
-    // TODO
-    // @ExceptionHandler({StatusException.class, StatusRuntimeException.class})
-    // @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
-    // public void handleGrpcException(Exception e) {
-    //     String message = String.format(
-    //         "Grpc exception was thrown, code: %s, description: %s",
-    //         Status.fromThrowable(e).getCode(),
-    //         Status.fromThrowable(e).getDescription());
-    //     handleUnavailableConverterException(message);
-    // }
-    //
-    // @ExceptionHandler
-    // @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
-    // public void handleUnavailableConverterException(CallNotPermittedException e) {
-    //     handleUnavailableConverterException(e.getMessage());
-    // }
-    //
-    // private void handleUnavailableConverterException(String message) {
-    //     log.warn("Converter is unavailable: {}", message);
-    // }
 }

@@ -18,12 +18,12 @@ components:
       type: number
       example: 1234.56
   responses:
-    InvalidQuery:
+    ErrorMessage:
       description: Invalid query with cause message.
       content:
         application/json:
           schema:
-            title: InvalidQueryResponse
+            title: ErrorMessageResponse
             type: object
             properties:
               message:

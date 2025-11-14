@@ -10,8 +10,8 @@ components:
     CurrencyAmount:
       $ref: './common.yaml#/components/schemas/CurrencyAmount'
   responses:
-    InvalidQuery:
-      $ref: './common.yaml#/components/responses/InvalidQuery'
+    ErrorMessage:
+      $ref: './common.yaml#/components/responses/ErrorMessage'
 paths:
   /convert:
     get:
@@ -53,4 +53,4 @@ paths:
                 required:
                   - convertedAmount
         '400':
-          $ref: '#/components/responses/InvalidQuery'
+          $ref: '#/components/responses/ErrorMessage'

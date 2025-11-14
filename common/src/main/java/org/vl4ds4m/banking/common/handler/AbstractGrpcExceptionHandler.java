@@ -28,12 +28,4 @@ public abstract class AbstractGrpcExceptionHandler {
                 .withDescription(e.getMessage())
                 .asRuntimeException();
     }
-
-    @GrpcExceptionHandler
-    public StatusRuntimeException handleCriticalError(Throwable e) {
-        exceptionLogger.logCriticalError(e);
-        return Status.INTERNAL
-                .withDescription(e.toString())
-                .asRuntimeException();
-    }
 }

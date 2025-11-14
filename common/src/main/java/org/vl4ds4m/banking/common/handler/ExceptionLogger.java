@@ -38,13 +38,4 @@ public class ExceptionLogger {
                 cause.getClass().getName(),
                 cause.getMessage());
     }
-
-    public void logCriticalError(Throwable cause) {
-        log.get().error("""
-                Critical error:
-                    error = {},
-                    message = {}""",
-                cause.getClass().getName(),
-                cause.getMessage());
-    }
 }
