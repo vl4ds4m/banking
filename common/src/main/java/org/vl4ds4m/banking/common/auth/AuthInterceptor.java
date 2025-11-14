@@ -1,24 +1,19 @@
 package org.vl4ds4m.banking.common.auth;
 
-import org.springframework.context.annotation.Profile;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-@Component
-@Profile(Auth.PROFILE)
+@RequiredArgsConstructor
 public class AuthInterceptor implements ClientHttpRequestInterceptor {
-    private final KeycloakAuthClient keycloakAuthClient;
 
-    public AuthInterceptor(KeycloakAuthClient keycloakAuthClient) {
-        this.keycloakAuthClient = keycloakAuthClient;
-    }
+    private final KeycloakAuthClient keycloakAuthClient;
 
     @Override
     public ClientHttpResponse intercept(

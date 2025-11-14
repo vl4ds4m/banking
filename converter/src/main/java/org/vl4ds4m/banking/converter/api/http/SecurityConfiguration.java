@@ -15,9 +15,10 @@ import org.vl4ds4m.banking.common.auth.Auth;
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfiguration {
+
     @Bean
     @Profile("!" + Auth.PROFILE)
-    public SecurityFilterChain freeSecurityfilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain freeSecurityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authz -> authz
                 .anyRequest().permitAll());
@@ -25,8 +26,8 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @Profile(Auth.PROFILE)
-    public SecurityFilterChain authSecurityfilterChain(HttpSecurity http) throws Exception {
+    @Auth
+    public SecurityFilterChain authSecurityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authz -> authz
                 .anyRequest().authenticated())
@@ -37,7 +38,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @Profile(Auth.PROFILE)
+    @Auth
     public Converter<Jwt, AbstractAuthenticationToken> jwtAuthenticationConverter() {
         return new JwtAuthenticationConverter();
     }

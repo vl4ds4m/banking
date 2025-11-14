@@ -1,23 +1,18 @@
 package org.vl4ds4m.banking.common.auth;
 
 import org.keycloak.representations.AccessTokenResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.vl4ds4m.banking.common.exception.ServiceException;
 
-@Component
-@Profile(Auth.PROFILE)
-@EnableConfigurationProperties(KeycloakProperties.class)
+import java.util.Objects;
+
 public class KeycloakAuthClient {
-    private static final Logger logger = LoggerFactory.getLogger(KeycloakAuthClient.class);
 
     private final RestTemplate restTemplate;
 
@@ -50,8 +45,6 @@ public class KeycloakAuthClient {
     }
 
     private String postForToken() {
-        logger.debug("Send a request to get {} access token", clientId);
-
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.add("client_id", clientId);
         requestBody.add("client_secret", clientSecret);
@@ -60,12 +53,16 @@ public class KeycloakAuthClient {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        var response = restTemplate.postForObject(
-            tokenUrl,
-            new HttpEntity<>(requestBody, headers),
-            AccessTokenResponse.class
-        );
-
-        return response.getToken();
+        try {
+            var response = restTemplate.postForObject(
+                    tokenUrl,
+                    new HttpEntity<>(requestBody, headers),
+                    AccessTokenResponse.class
+            );
+            Objects.requireNonNull(response, "AccessTokenResponse is null");
+            return response.getToken();
+        } catch (RestClientException | NullPointerException e) {
+            throw new ServiceException("keycloak", e);
+        }
     }
 }
