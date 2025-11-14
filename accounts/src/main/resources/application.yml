@@ -39,8 +39,6 @@ client:
     port: ${CONVERTER_PORT}
 
 services:
-  timeout: 5
-
   kafka:
     topic.update-config: ${KAFKA_TOPIC_UPD_CFG}
 

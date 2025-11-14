@@ -1,9 +1,11 @@
-spring.application.name: converter
+spring:
+  application.name: converter
+
+  http.client:
+    connect-timeout: 3s
+    read-timeout: 2s
 
 client:
   rates:
     host: ${RATES_HOST}
     port: ${RATES_PORT}
-
-services:
-  timeout: 5
