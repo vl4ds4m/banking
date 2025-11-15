@@ -1,6 +1,5 @@
 package org.vl4ds4m.banking.accounts.client.http;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.RestClientException;
 import org.vl4ds4m.banking.accounts.client.ConverterClient;
 import org.vl4ds4m.banking.common.entity.Currency;
@@ -10,7 +9,6 @@ import org.vl4ds4m.banking.converter.client.http.ConvertApi;
 import org.vl4ds4m.banking.converter.client.http.invoker.ApiClient;
 import org.vl4ds4m.banking.converter.client.http.model.ConvertCurrencyResponse;
 
-@Slf4j
 public class ConverterHttpClient implements ConverterClient {
 
     private final ConvertApi api;
@@ -24,8 +22,6 @@ public class ConverterHttpClient implements ConverterClient {
         var apiFrom = toApiCurrency(source);
         var apiTo = toApiCurrency(target);
         var amount = money.amount();
-
-        log.info("Request currency conversion: {}, {} -> {}", amount, source, target);
 
         ConvertCurrencyResponse response;
         try {

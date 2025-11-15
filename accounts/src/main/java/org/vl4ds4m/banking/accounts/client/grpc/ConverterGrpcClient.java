@@ -2,7 +2,6 @@ package org.vl4ds4m.banking.accounts.client.grpc;
 
 import io.grpc.StatusRuntimeException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.vl4ds4m.banking.accounts.client.ConverterClient;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
@@ -15,7 +14,6 @@ import org.vl4ds4m.banking.converter.grpc.ConverterGrpc;
 import java.math.BigDecimal;
 
 @RequiredArgsConstructor
-@Slf4j
 public class ConverterGrpcClient implements ConverterClient {
 
     private final ConverterGrpc.ConverterBlockingStub grpcStub;
@@ -27,8 +25,6 @@ public class ConverterGrpcClient implements ConverterClient {
                 .setTo(To.currency(target))
                 .setAmount(money.amount().doubleValue())
                 .build();
-
-        log.info("Request currency conversion: {}, {} -> {}", money.amount(), source, target);
 
         ConvertResponse response;
         try {

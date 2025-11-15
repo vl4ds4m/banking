@@ -1,6 +1,5 @@
 package org.vl4ds4m.banking.converter.client;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.RestClientException;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
@@ -12,7 +11,6 @@ import org.vl4ds4m.banking.rates.client.http.model.RatesResponse;
 
 import java.util.stream.Collectors;
 
-@Slf4j
 public class RatesClient {
 
     private final RatesApi api;
@@ -22,8 +20,6 @@ public class RatesClient {
     }
 
     public CurrencyRates getRates() {
-        log.info("Request currency rates");
-
         RatesResponse response;
         try {
             response = api.getRates();

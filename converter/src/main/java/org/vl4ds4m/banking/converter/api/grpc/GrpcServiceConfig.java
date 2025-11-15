@@ -5,17 +5,15 @@ import io.micrometer.core.instrument.binder.grpc.ObservationGrpcServerIntercepto
 import io.micrometer.observation.ObservationRegistry;
 import net.devh.boot.grpc.common.util.InterceptorOrder;
 import net.devh.boot.grpc.server.interceptor.GrpcGlobalServerInterceptor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 
 // TODO
 // @Configuration
-public class TraceGrpcInterceptorConfig {
+public class GrpcServiceConfig {
 
-    @Bean
     @GrpcGlobalServerInterceptor
     @Order(InterceptorOrder.ORDER_GLOBAL_EXCEPTION_HANDLING)
-    public ServerInterceptor serverInterceptor(ObservationRegistry observationRegistry) {
+    public ServerInterceptor observationGrpcInterceptor(ObservationRegistry observationRegistry) {
         return new ObservationGrpcServerInterceptor(observationRegistry);
     }
 }

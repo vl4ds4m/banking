@@ -2,7 +2,6 @@ package org.vl4ds4m.banking.converter.api.grpc;
 
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.vl4ds4m.banking.common.util.To;
 import org.vl4ds4m.banking.converter.grpc.ConvertRequest;
@@ -13,7 +12,6 @@ import org.vl4ds4m.banking.converter.service.ConverterService;
 import java.math.BigDecimal;
 
 @GrpcService
-@Slf4j
 @RequiredArgsConstructor
 public class ConverterGrpcService extends ConverterGrpc.ConverterImplBase {
 
@@ -23,8 +21,6 @@ public class ConverterGrpcService extends ConverterGrpc.ConverterImplBase {
     // @Observed
     @Override
     public void convert(ConvertRequest request, StreamObserver<ConvertResponse> observer) {
-        log.info("Accept request to convert currency:\n{}", request);
-
         var amount = BigDecimal.valueOf(request.getAmount());
         var converted = service.convert(
                 To.currency(request.getFrom()),
