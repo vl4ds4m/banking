@@ -6,11 +6,11 @@ class HttpCurrencyConverter {
 
     private HttpCurrencyConverter() {}
 
-    static org.vl4ds4m.banking.common.api.http.model.Currency convert(Currency currency) {
-        return org.vl4ds4m.banking.common.api.http.model.Currency.fromValue(currency.name());
+    static org.vl4ds4m.banking.common.openapi.model.Currency convert(Currency currency) {
+        return org.vl4ds4m.banking.common.openapi.model.Currency.fromValue(currency.name());
     }
 
-    static Currency convert(org.vl4ds4m.banking.common.api.http.model.Currency currency) {
+    static Currency convert(org.vl4ds4m.banking.common.openapi.model.Currency currency) {
         return Currency.valueOf(currency.getValue());
     }
 }

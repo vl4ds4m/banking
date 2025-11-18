@@ -13,8 +13,8 @@
 
     <properties>
         <openapi.inputSpec>${project.parent.basedir}/openapi/accounts.yaml</openapi.inputSpec>
-        <openapi.apiPackage>${project.groupId}.accounts.api.http</openapi.apiPackage>
-        <openapi.clientPackage>${project.groupId}.accounts.client.http</openapi.clientPackage>
+        <openapi.serverPackage>${project.groupId}.accounts.openapi.server</openapi.serverPackage>
+        <openapi.clientPackage>${project.groupId}.accounts.openapi.client</openapi.clientPackage>
     </properties>
 
     <dependencies>
@@ -65,20 +65,22 @@
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>generate-api</id>
+                        <id>server</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
                             <inputSpec>${openapi.inputSpec}</inputSpec>
                             <generatorName>spring</generatorName>
-                            <apiPackage>${openapi.apiPackage}</apiPackage>
-                            <modelPackage>${openapi.apiPackage}.model</modelPackage>
+                            <invokerPackage>${openapi.serverPackage}.invoke</invokerPackage>
+                            <apiPackage>${openapi.serverPackage}.api</apiPackage>
+                            <modelPackage>${openapi.serverPackage}.model</modelPackage>
                             <importMappings>
-                                <importMapping>Currency=org.vl4ds4m.banking.common.api.http.model.Currency</importMapping>
-                                <importMapping>ErrorMessageResponse=org.vl4ds4m.banking.common.api.http.model.ErrorMessageResponse</importMapping>
+                                <importMapping>Currency=org.vl4ds4m.banking.common.openapi.model.Currency</importMapping>
+                                <importMapping>ErrorMessageResponse=org.vl4ds4m.banking.common.openapi.model.ErrorMessageResponse</importMapping>
                             </importMappings>
                             <configOptions>
+                                <configPackage>${openapi.serverPackage}.config</configPackage>
                                 <interfaceOnly>true</interfaceOnly>
                                 <useOptional>true</useOptional>
                                 <useSpringBoot3>true</useSpringBoot3>
@@ -86,7 +88,7 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>generate-client</id>
+                        <id>client</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
@@ -94,14 +96,14 @@
                             <inputSpec>${openapi.inputSpec}</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
-                            <apiPackage>${openapi.clientPackage}</apiPackage>
+                            <invokerPackage>${openapi.clientPackage}.invoke</invokerPackage>
+                            <apiPackage>${openapi.clientPackage}.api</apiPackage>
                             <modelPackage>${openapi.clientPackage}.model</modelPackage>
-                            <invokerPackage>${openapi.clientPackage}.invoker</invokerPackage>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <importMappings>
-                                <importMapping>Currency=org.vl4ds4m.banking.common.api.http.model.Currency</importMapping>
-                                <importMapping>ErrorMessageResponse=org.vl4ds4m.banking.common.api.http.model.ErrorMessageResponse</importMapping>
+                                <importMapping>Currency=org.vl4ds4m.banking.common.openapi.model.Currency</importMapping>
+                                <importMapping>ErrorMessageResponse=org.vl4ds4m.banking.common.openapi.model.ErrorMessageResponse</importMapping>
                             </importMappings>
                             <configOptions>
                                 <useJakartaEe>true</useJakartaEe>

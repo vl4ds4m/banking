@@ -3,9 +3,9 @@ package org.vl4ds4m.banking.accounts.api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import org.vl4ds4m.banking.accounts.api.http.TransferApi;
-import org.vl4ds4m.banking.accounts.api.http.model.TransferRequest;
-import org.vl4ds4m.banking.accounts.api.http.model.TransferResponse;
+import org.vl4ds4m.banking.accounts.openapi.server.api.TransferApi;
+import org.vl4ds4m.banking.accounts.openapi.server.model.TransferRequest;
+import org.vl4ds4m.banking.accounts.openapi.server.model.TransferResponse;
 import org.vl4ds4m.banking.accounts.service.TransferService;
 import org.vl4ds4m.banking.common.util.To;
 

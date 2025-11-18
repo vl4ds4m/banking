@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import org.vl4ds4m.banking.common.properties.RatesClientProperties;
-import org.vl4ds4m.banking.rates.client.http.invoker.ApiClient;
+import org.vl4ds4m.banking.rates.openapi.client.invoke.ApiClient;
 
 @Configuration
 @EnableConfigurationProperties(RatesClientProperties.class)

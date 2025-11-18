@@ -58,14 +58,14 @@
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>generate-models</id>
+                        <id>models</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
                             <inputSpec>${project.parent.basedir}/openapi/common.yaml</inputSpec>
                             <generatorName>spring</generatorName>
-                            <modelPackage>${project.groupId}.common.api.http.model</modelPackage>
+                            <modelPackage>${project.groupId}.common.openapi.model</modelPackage>
                             <generateApis>false</generateApis>
                             <generateSupportingFiles>false</generateSupportingFiles>
                             <generateApiTests>false</generateApiTests>

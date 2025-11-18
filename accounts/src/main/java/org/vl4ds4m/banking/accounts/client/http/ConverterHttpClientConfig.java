@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import org.vl4ds4m.banking.accounts.client.ConverterClient;
 import org.vl4ds4m.banking.common.properties.ConverterClientProperties;
-import org.vl4ds4m.banking.converter.client.http.invoker.ApiClient;
+import org.vl4ds4m.banking.converter.openapi.client.invoke.ApiClient;
 
 @Configuration
 @ConditionalOnProperty(

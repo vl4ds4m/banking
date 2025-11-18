@@ -6,9 +6,9 @@ import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.common.exception.ServiceException;
 import org.vl4ds4m.banking.common.util.To;
-import org.vl4ds4m.banking.converter.client.http.ConvertApi;
-import org.vl4ds4m.banking.converter.client.http.invoker.ApiClient;
-import org.vl4ds4m.banking.converter.client.http.model.ConvertCurrencyResponse;
+import org.vl4ds4m.banking.converter.openapi.client.api.ConvertApi;
+import org.vl4ds4m.banking.converter.openapi.client.invoke.ApiClient;
+import org.vl4ds4m.banking.converter.openapi.client.model.ConvertCurrencyResponse;
 
 public class ConverterHttpClient implements ConverterClient {
 

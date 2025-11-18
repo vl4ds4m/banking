@@ -3,9 +3,10 @@ package org.vl4ds4m.banking.converter.api.http;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import org.vl4ds4m.banking.common.api.http.model.Currency;
+import org.vl4ds4m.banking.common.openapi.model.Currency;
 import org.vl4ds4m.banking.common.util.To;
-import org.vl4ds4m.banking.converter.api.http.model.ConvertCurrencyResponse;
+import org.vl4ds4m.banking.converter.openapi.server.api.ConvertApi;
+import org.vl4ds4m.banking.converter.openapi.server.model.ConvertCurrencyResponse;
 import org.vl4ds4m.banking.converter.service.ConverterService;
 
 import java.math.BigDecimal;

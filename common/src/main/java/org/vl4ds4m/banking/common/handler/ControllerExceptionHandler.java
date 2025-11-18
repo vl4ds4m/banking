@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.vl4ds4m.banking.common.api.http.model.ErrorMessageResponse;
 import org.vl4ds4m.banking.common.exception.InvalidQueryException;
 import org.vl4ds4m.banking.common.exception.ServiceException;
+import org.vl4ds4m.banking.common.openapi.model.ErrorMessageResponse;
 import org.vl4ds4m.banking.common.util.To;
 
 @RestControllerAdvice

@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.vl4ds4m.banking.common.api.http.model.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
+import org.vl4ds4m.banking.common.openapi.model.Currency;
 import org.vl4ds4m.banking.common.util.To;
 import org.vl4ds4m.banking.converter.service.ConverterService;
 
