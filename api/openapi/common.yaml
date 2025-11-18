@@ -3,6 +3,7 @@ info:
   title: Banking - Common
   description: This is a OpenAPI 3.0 specification that describes common banking system components.
   version: 1.0.0
+paths: {}
 components:
   schemas:
     Currency:

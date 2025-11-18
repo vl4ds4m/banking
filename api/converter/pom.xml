@@ -87,6 +87,10 @@
                             <generatorName>spring</generatorName>
                             <apiPackage>${openapi.apiPackage}</apiPackage>
                             <modelPackage>${openapi.apiPackage}.model</modelPackage>
+                            <importMappings>
+                                <importMapping>Currency=org.vl4ds4m.banking.common.api.http.model.Currency</importMapping>
+                                <importMapping>ErrorMessageResponse=org.vl4ds4m.banking.common.api.http.model.ErrorMessageResponse</importMapping>
+                            </importMappings>
                             <configOptions>
                                 <interfaceOnly>true</interfaceOnly>
                                 <useOptional>true</useOptional>
@@ -108,6 +112,10 @@
                             <invokerPackage>${openapi.clientPackage}.invoker</invokerPackage>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
+                            <importMappings>
+                                <importMapping>Currency=org.vl4ds4m.banking.common.api.http.model.Currency</importMapping>
+                                <importMapping>ErrorMessageResponse=org.vl4ds4m.banking.common.api.http.model.ErrorMessageResponse</importMapping>
+                            </importMappings>
                             <configOptions>
                                 <useJakartaEe>true</useJakartaEe>
                             </configOptions>

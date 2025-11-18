@@ -18,6 +18,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.vl4ds4m.banking</groupId>
+            <artifactId>common-api</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
         </dependency>
@@ -63,6 +68,10 @@
                             <invokerPackage>${openapi.clientPackage}.invoker</invokerPackage>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
+                            <importMappings>
+                                <importMapping>Currency=org.vl4ds4m.banking.common.api.http.model.Currency</importMapping>
+                                <importMapping>ErrorMessageResponse=org.vl4ds4m.banking.common.api.http.model.ErrorMessageResponse</importMapping>
+                            </importMappings>
                             <configOptions>
                                 <useJakartaEe>true</useJakartaEe>
                             </configOptions>

@@ -2,16 +2,17 @@ package org.vl4ds4m.banking.common.handler;
 
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
+import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.server.advice.GrpcAdvice;
 import net.devh.boot.grpc.server.advice.GrpcExceptionHandler;
-import org.slf4j.Logger;
 import org.vl4ds4m.banking.common.exception.InvalidQueryException;
 import org.vl4ds4m.banking.common.exception.ServiceException;
 
-public abstract class AbstractGrpcExceptionHandler {
+@GrpcAdvice
+@Slf4j
+public class GrpcServiceExceptionHandler {
 
-    protected final ExceptionLogger exceptionLogger = new ExceptionLogger(this::log);
-
-    protected abstract Logger log();
+    private final ExceptionLogger exceptionLogger = new ExceptionLogger(log);
 
     @GrpcExceptionHandler
     public StatusRuntimeException handleInvalidQuery(InvalidQueryException e) {

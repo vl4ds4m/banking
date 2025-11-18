@@ -4,6 +4,7 @@ import org.springframework.web.client.RestClientException;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.common.exception.ServiceException;
+import org.vl4ds4m.banking.common.util.To;
 import org.vl4ds4m.banking.converter.entity.CurrencyRates;
 import org.vl4ds4m.banking.rates.client.http.RatesApi;
 import org.vl4ds4m.banking.rates.client.http.invoker.ApiClient;
@@ -27,7 +28,7 @@ public class RatesClient {
             throw new ServiceException("rates", e.getMostSpecificCause());
         }
 
-        var base = Currency.valueOf(response.getBase().getValue());
+        var base = To.currency(response.getBase());
         var rates = response.getRates()
                 .entrySet()
                 .stream()

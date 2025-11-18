@@ -3,13 +3,13 @@ package org.vl4ds4m.banking.accounts.api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import org.vl4ds4m.banking.accounts.api.converter.CurrencyConverter;
 import org.vl4ds4m.banking.accounts.api.http.CustomersApi;
 import org.vl4ds4m.banking.accounts.api.http.model.BalanceResponse;
 import org.vl4ds4m.banking.accounts.api.http.model.CreateCustomerRequest;
-import org.vl4ds4m.banking.accounts.api.http.model.Currency;
 import org.vl4ds4m.banking.accounts.entity.Customer;
 import org.vl4ds4m.banking.accounts.service.CustomerService;
+import org.vl4ds4m.banking.common.api.http.model.Currency;
+import org.vl4ds4m.banking.common.util.To;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,7 +33,7 @@ public class CustomerController implements CustomersApi {
     public ResponseEntity<BalanceResponse> getCustomerBalance(String customerName, Currency currency) {
         var money = customerService.getCustomerBalance(
                 customerName,
-                CurrencyConverter.toEntity(currency));
+                To.currency(currency));
 
         var response = new BalanceResponse(currency, money.amount());
         return ResponseEntity.ok(response);

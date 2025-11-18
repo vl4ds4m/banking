@@ -4,19 +4,17 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.vl4ds4m.banking.common.exception.ServiceException;
 
-import java.util.function.Supplier;
-
 @RequiredArgsConstructor
 public class ExceptionLogger {
 
-    private final Supplier<Logger> log;
+    private final Logger log;
 
     public void logInvalidQuery(Exception exception) {
         logInvalidQuery(exception, exception.getMessage());
     }
 
     public void logInvalidQuery(Exception exception, String message) {
-        log.get().info("""
+        log.info("""
                 Invalid query handled:
                     exception = {},
                     response message = {}""",
@@ -29,7 +27,7 @@ public class ExceptionLogger {
     }
 
     public void logServiceError(String service, Throwable cause) {
-        log.get().warn("""
+        log.warn("""
                 Service error handled:
                     service = {}
                     cause = {}

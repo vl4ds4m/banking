@@ -23,11 +23,19 @@ public class To {
         return MoneyConverter.convertOrReject(amount, varName);
     }
 
-    public static org.vl4ds4m.banking.common.grpc.Currency currency(Currency currency) {
+    public static org.vl4ds4m.banking.common.grpc.Currency grpcCurrency(Currency currency) {
         return GrpcCurrencyConverter.convert(currency);
     }
 
     public static Currency currency(org.vl4ds4m.banking.common.grpc.Currency currency) {
         return GrpcCurrencyConverter.convert(currency);
+    }
+
+    public static org.vl4ds4m.banking.common.api.http.model.Currency currency(Currency currency) {
+        return HttpCurrencyConverter.convert(currency);
+    }
+
+    public static Currency currency(org.vl4ds4m.banking.common.api.http.model.Currency currency) {
+        return HttpCurrencyConverter.convert(currency);
     }
 }

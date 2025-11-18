@@ -3,7 +3,6 @@ package org.vl4ds4m.banking.accounts.api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import org.vl4ds4m.banking.accounts.api.converter.CurrencyConverter;
 import org.vl4ds4m.banking.accounts.api.http.AccountsApi;
 import org.vl4ds4m.banking.accounts.api.http.model.*;
 import org.vl4ds4m.banking.accounts.service.AccountService;
@@ -19,7 +18,7 @@ public class AccountController implements AccountsApi {
     public ResponseEntity<CreateAccountResponse> createAccount(CreateAccountRequest createAccountRequest) {
         long accountNumber = accountService.createAccount(
                 createAccountRequest.getCustomerName(),
-                CurrencyConverter.toEntity(createAccountRequest.getCurrency()));
+                To.currency(createAccountRequest.getCurrency()));
 
         var response = new CreateAccountResponse(accountNumber);
         return ResponseEntity.ok(response);
@@ -30,7 +29,7 @@ public class AccountController implements AccountsApi {
         var account = accountService.getAccount(accountNumber);
 
         var response = new BalanceResponse(
-                CurrencyConverter.toApi(account.currency()),
+                To.currency(account.currency()),
                 account.money().amount());
         return ResponseEntity.ok(response);
     }
@@ -47,7 +46,7 @@ public class AccountController implements AccountsApi {
                         "Augend"));
 
         var response = new AccountOperationResponse(
-                CurrencyConverter.toApi(account.currency()),
+                To.currency(account.currency()),
                 account.money().amount());
         return ResponseEntity.ok(response);
     }
@@ -64,7 +63,7 @@ public class AccountController implements AccountsApi {
                         "Subtrahend"));
 
         var response = new AccountOperationResponse(
-                CurrencyConverter.toApi(account.currency()),
+                To.currency(account.currency()),
                 account.money().amount());
         return ResponseEntity.ok(response);
     }

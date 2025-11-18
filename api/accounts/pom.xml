@@ -14,9 +14,15 @@
     <properties>
         <openapi.inputSpec>${project.parent.basedir}/openapi/accounts.yaml</openapi.inputSpec>
         <openapi.apiPackage>${project.groupId}.accounts.api.http</openapi.apiPackage>
+        <openapi.clientPackage>${project.groupId}.accounts.client.http</openapi.clientPackage>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.vl4ds4m.banking</groupId>
+            <artifactId>common-api</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
@@ -24,6 +30,10 @@
         <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
         <dependency>
             <groupId>jakarta.annotation</groupId>
@@ -64,10 +74,37 @@
                             <generatorName>spring</generatorName>
                             <apiPackage>${openapi.apiPackage}</apiPackage>
                             <modelPackage>${openapi.apiPackage}.model</modelPackage>
+                            <importMappings>
+                                <importMapping>Currency=org.vl4ds4m.banking.common.api.http.model.Currency</importMapping>
+                                <importMapping>ErrorMessageResponse=org.vl4ds4m.banking.common.api.http.model.ErrorMessageResponse</importMapping>
+                            </importMappings>
                             <configOptions>
                                 <interfaceOnly>true</interfaceOnly>
                                 <useOptional>true</useOptional>
                                 <useSpringBoot3>true</useSpringBoot3>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${openapi.inputSpec}</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <apiPackage>${openapi.clientPackage}</apiPackage>
+                            <modelPackage>${openapi.clientPackage}.model</modelPackage>
+                            <invokerPackage>${openapi.clientPackage}.invoker</invokerPackage>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <importMappings>
+                                <importMapping>Currency=org.vl4ds4m.banking.common.api.http.model.Currency</importMapping>
+                                <importMapping>ErrorMessageResponse=org.vl4ds4m.banking.common.api.http.model.ErrorMessageResponse</importMapping>
+                            </importMappings>
+                            <configOptions>
+                                <useJakartaEe>true</useJakartaEe>
                             </configOptions>
                         </configuration>
                     </execution>

@@ -5,6 +5,7 @@ import org.vl4ds4m.banking.accounts.client.ConverterClient;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.common.exception.ServiceException;
+import org.vl4ds4m.banking.common.util.To;
 import org.vl4ds4m.banking.converter.client.http.ConvertApi;
 import org.vl4ds4m.banking.converter.client.http.invoker.ApiClient;
 import org.vl4ds4m.banking.converter.client.http.model.ConvertCurrencyResponse;
@@ -19,8 +20,8 @@ public class ConverterHttpClient implements ConverterClient {
 
     @Override
     public Money convertCurrency(Currency source, Currency target, Money money) {
-        var apiFrom = toApiCurrency(source);
-        var apiTo = toApiCurrency(target);
+        var apiFrom = To.currency(source);
+        var apiTo = To.currency(target);
         var amount = money.amount();
 
         ConvertCurrencyResponse response;
@@ -32,9 +33,5 @@ public class ConverterHttpClient implements ConverterClient {
 
         var converted = response.getConvertedAmount();
         return Money.of(converted);
-    }
-
-    private static org.vl4ds4m.banking.converter.client.http.model.Currency toApiCurrency(Currency currency) {
-        return org.vl4ds4m.banking.converter.client.http.model.Currency.fromValue(currency.name());
     }
 }

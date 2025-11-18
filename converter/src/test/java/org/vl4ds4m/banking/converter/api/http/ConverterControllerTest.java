@@ -11,9 +11,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.vl4ds4m.banking.common.api.http.model.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
-import org.vl4ds4m.banking.converter.api.http.converter.CurrencyConverter;
-import org.vl4ds4m.banking.converter.api.http.model.Currency;
+import org.vl4ds4m.banking.common.util.To;
 import org.vl4ds4m.banking.converter.service.ConverterService;
 
 import java.math.BigDecimal;
@@ -48,8 +48,8 @@ class ConverterControllerTest {
         var src = source.getValue();
         var tgt = target.getValue();
         when(converterService.convert(
-            CurrencyConverter.toEntity(source),
-            CurrencyConverter.toEntity(target),
+            To.currency(source),
+            To.currency(target),
             Money.of(amount))
         ).thenReturn(Money.of(expected));
 

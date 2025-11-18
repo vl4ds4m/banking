@@ -1,37 +1,37 @@
 package org.vl4ds4m.banking.common.handler;
 
-import org.slf4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.vl4ds4m.banking.common.api.http.model.ErrorMessageResponse;
 import org.vl4ds4m.banking.common.exception.InvalidQueryException;
 import org.vl4ds4m.banking.common.exception.ServiceException;
 import org.vl4ds4m.banking.common.util.To;
 
-public abstract class AbstractControllerExceptionHandler {
+@RestControllerAdvice
+@Slf4j
+public class ControllerExceptionHandler {
 
-    protected final ExceptionLogger exceptionLogger = new ExceptionLogger(this::log);
-
-    protected abstract Logger log();
-
-    protected abstract Object buildResponse(String message);
+    private final ExceptionLogger exceptionLogger = new ExceptionLogger(log);
 
     @ExceptionHandler({
             MethodArgumentTypeMismatchException.class,
             HttpMessageNotReadableException.class,
             InvalidQueryException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Object handleInvalidQuery(Exception e) {
+    public ErrorMessageResponse handleInvalidQuery(Exception e) {
         exceptionLogger.logInvalidQuery(e);
         return buildResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Object handleInvalidQuery(MethodArgumentNotValidException e) {
+    public ErrorMessageResponse handleInvalidQuery(MethodArgumentNotValidException e) {
         var message = To.string(e.getBindingResult());
         exceptionLogger.logInvalidQuery(e, message);
         return buildResponse(message);
@@ -39,8 +39,12 @@ public abstract class AbstractControllerExceptionHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
-    public Object handleServiceError(ServiceException e) {
+    public ErrorMessageResponse handleServiceError(ServiceException e) {
         exceptionLogger.logServiceError(e);
         return buildResponse(e.getMessage());
+    }
+
+    private static ErrorMessageResponse buildResponse(String message) {
+        return new ErrorMessageResponse(message);
     }
 }

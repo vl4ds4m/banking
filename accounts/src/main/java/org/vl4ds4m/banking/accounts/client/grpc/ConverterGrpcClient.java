@@ -21,8 +21,8 @@ public class ConverterGrpcClient implements ConverterClient {
     @Override
     public Money convertCurrency(Currency source, Currency target, Money money) {
         var request = ConvertRequest.newBuilder()
-                .setFrom(To.currency(source))
-                .setTo(To.currency(target))
+                .setFrom(To.grpcCurrency(source))
+                .setTo(To.grpcCurrency(target))
                 .setAmount(money.amount().doubleValue())
                 .build();
 
