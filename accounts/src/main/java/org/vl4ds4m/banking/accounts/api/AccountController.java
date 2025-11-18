@@ -29,7 +29,7 @@ public class AccountController implements AccountsApi {
         var account = accountService.getAccount(accountNumber);
 
         var response = new BalanceResponse(
-                To.currency(account.currency()),
+                To.restCurrency(account.currency()),
                 account.money().amount());
         return ResponseEntity.ok(response);
     }
@@ -46,7 +46,7 @@ public class AccountController implements AccountsApi {
                         "Augend"));
 
         var response = new AccountOperationResponse(
-                To.currency(account.currency()),
+                To.restCurrency(account.currency()),
                 account.money().amount());
         return ResponseEntity.ok(response);
     }
@@ -63,7 +63,7 @@ public class AccountController implements AccountsApi {
                         "Subtrahend"));
 
         var response = new AccountOperationResponse(
-                To.currency(account.currency()),
+                To.restCurrency(account.currency()),
                 account.money().amount());
         return ResponseEntity.ok(response);
     }

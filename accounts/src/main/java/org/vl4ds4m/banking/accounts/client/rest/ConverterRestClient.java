@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.accounts.client.http;
+package org.vl4ds4m.banking.accounts.client.rest;
 
 import org.springframework.web.client.RestClientException;
 import org.vl4ds4m.banking.accounts.client.ConverterClient;
@@ -10,18 +10,18 @@ import org.vl4ds4m.banking.converter.openapi.client.api.ConvertApi;
 import org.vl4ds4m.banking.converter.openapi.client.invoke.ApiClient;
 import org.vl4ds4m.banking.converter.openapi.client.model.ConvertCurrencyResponse;
 
-public class ConverterHttpClient implements ConverterClient {
+public class ConverterRestClient implements ConverterClient {
 
     private final ConvertApi api;
 
-    public ConverterHttpClient(ApiClient client) {
+    public ConverterRestClient(ApiClient client) {
         this.api = new ConvertApi(client);
     }
 
     @Override
     public Money convertCurrency(Currency source, Currency target, Money money) {
-        var apiFrom = To.currency(source);
-        var apiTo = To.currency(target);
+        var apiFrom = To.restCurrency(source);
+        var apiTo = To.restCurrency(target);
         var amount = money.amount();
 
         ConvertCurrencyResponse response;

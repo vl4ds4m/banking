@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.converter.api.http;
+package org.vl4ds4m.banking.converter.api.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

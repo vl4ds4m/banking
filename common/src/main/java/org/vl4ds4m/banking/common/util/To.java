@@ -31,11 +31,11 @@ public class To {
         return GrpcCurrencyConverter.convert(currency);
     }
 
-    public static org.vl4ds4m.banking.common.openapi.model.Currency currency(Currency currency) {
-        return HttpCurrencyConverter.convert(currency);
+    public static org.vl4ds4m.banking.common.openapi.model.Currency restCurrency(Currency currency) {
+        return RestCurrencyConverter.convert(currency);
     }
 
     public static Currency currency(org.vl4ds4m.banking.common.openapi.model.Currency currency) {
-        return HttpCurrencyConverter.convert(currency);
+        return RestCurrencyConverter.convert(currency);
     }
 }

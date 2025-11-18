@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.accounts.client.http;
+package org.vl4ds4m.banking.accounts.client.rest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import org.vl4ds4m.banking.converter.openapi.client.invoke.ApiClient;
 @EnableConfigurationProperties(ConverterClientProperties.class)
 @Slf4j
 @RequiredArgsConstructor
-public class ConverterHttpClientConfig {
+public class ConverterRestClientConfig {
 
     private final ConverterClientProperties converterProps;
 
@@ -27,6 +27,6 @@ public class ConverterHttpClientConfig {
         log.info("Create HTTP converter client");
         var client = new ApiClient(restTemplate);
         client.setBasePath(converterProps.httpUrl());
-        return new ConverterHttpClient(client);
+        return new ConverterRestClient(client);
     }
 }

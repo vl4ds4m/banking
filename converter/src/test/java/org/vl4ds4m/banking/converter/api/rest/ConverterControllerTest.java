@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.converter.api.http;
+package org.vl4ds4m.banking.converter.api.rest;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
