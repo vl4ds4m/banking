@@ -10,7 +10,6 @@ import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.common.exception.ServiceException;
 import org.vl4ds4m.banking.converter.client.RatesClient;
 import org.vl4ds4m.banking.converter.entity.CurrencyRates;
-import org.vl4ds4m.banking.converter.service.exception.RatesServiceException;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
