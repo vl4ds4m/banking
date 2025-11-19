@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" type="text/css" media="all" href="../static/css/common.css" th:href="@{/css/common.css}" />
+  <link rel="stylesheet" type="text/css" media="all" href="../static/css/customer-info.css" th:href="@{/css/customer-info.css}" />
+  <title>Banking CMS - Пополнение</title>
+</head>
+<body>
+<div th:replace="~{fragments :: head-frag}"></div>
+<div class="body">
+  <div th:replace="~{fragments :: menu-frag}"></div>
+  <div class="content" th:object="${accountInfo}">
+    <a href="" th:href="@{/customers/{login}/info(login=*{customerLogin})}">Вернуться к данным клиента</a>
+    <div class="content-block">
+      <h2>Текущий баланс</h2>
+      <p th:text="|*{amount} *{currency}|">123.45 RUB</p>
+    </div>
+    <form class="content-block" action="" method="post"
+          th:action="@{/accounts/{number}/top-up(number=${accountNumber})}">
+      <h2>Пополнение счета</h2>
+      <div th:replace="~{fragments :: problem-frag}"></div>
+      <div>
+        <label for="input-amount">Сумма пополнения</label>
+        <input id="input-amount" name="augend" type="number" required step="0.01" min="0.01" max="9888777666.55" />
+      </div>
+      <p><button>Добавить</button></p>
+    </form>
+  </div>
+</div>
+</body>
+</html>

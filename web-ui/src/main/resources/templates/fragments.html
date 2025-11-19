@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Banking CMS</title>
+</head>
+<body>
+<div class="head" th:fragment="head-frag">
+  <h1>Управление счетами</h1>
+  <h2>Администратор</h2>
+</div>
+<div class="body">
+  <div class="menu no-link-style" th:fragment="menu-frag">
+    <a href="" th:href="@{/customers}"><h2>Клиенты</h2></a>
+    <a href="" th:href="@{/transfer}"><h2>Перевод</h2></a>
+  </div>
+  <div class="content">
+    <p class="problem"
+       th:fragment="problem-frag"
+       th:unless="${#strings.isEmpty(problem)}"
+       th:text="${problem}">
+      Here may appear error message
+    </p>
+    <p class="success"
+       th:fragment="success-frag (msg)"
+       th:if="${#bools.isTrue(success)}"
+       th:text="${msg}">
+      Here may appear success message
+    </p>
+  </div>
+</div>
+</body>
+</html>

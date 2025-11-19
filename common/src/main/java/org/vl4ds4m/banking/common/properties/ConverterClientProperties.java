@@ -26,7 +26,7 @@ public record ConverterClientProperties(
 
 ) implements ServiceProperties {
 
-    public static final String PREFIX = "client.converter";
+    static final String PREFIX = "client.converter";
 
     public static final String GRPC_PROP = PREFIX + ".grpc";
 }

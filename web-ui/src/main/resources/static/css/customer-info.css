@@ -1,0 +1,11 @@
+.personal-data span {
+  font-family: sans-serif;
+}
+
+.amount > * {
+  display: inline
+}
+
+.amount > p {
+  margin-right: 2em;
+}

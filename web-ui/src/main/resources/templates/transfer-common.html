@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" type="text/css" media="all" href="../static/css/common.css" th:href="@{/css/common.css}">
+  <title>Banking CMS - Перевод</title>
+</head>
+<body>
+<div th:replace="~{fragments :: head-frag}"></div>
+<div class="body">
+  <div th:replace="~{fragments :: menu-frag}"></div>
+  <div class="content">
+    <form class="content-block" action="" method="post" th:action="@{/transfer}">
+      <h2>Перевод денег</h2>
+      <div th:replace="~{fragments :: problem-frag}">Место для вывода ошибок</div>
+      <div th:replace="~{fragments :: success-frag ('Перевод успешно выполнен')}">
+        Место для вывода сообщения об успехе
+      </div>
+      <p><b>Отправитель</b></p>
+      <label for="input-sender-login">Логин:</label>
+      <input id="input-sender-login" name="senderLogin" required th:value="${senderLogin}">
+      <label for="input-sender-currency">Валюта счета:</label>
+      <select id="input-sender-currency" name="senderCurrency">
+        <option value="RUB" th:each="currency : ${currencies}"
+                th:value="${currency}"
+                th:text="${currency}"
+                th:selected="${currency == senderCurrency}">RUB</option>
+      </select>
+      <p><b>Получатель</b></p>
+      <label for="input-receiver-login">Логин:</label>
+      <input id="input-receiver-login" name="receiverLogin" required th:value="${receiverLogin}">
+      <label for="input-receiver-currency">Валюта счета:</label>
+      <select id="input-receiver-currency" name="receiverCurrency">
+        <option value="RUB" th:each="currency : ${currencies}"
+                th:value="${currency}"
+                th:text="${currency}"
+                th:selected="${currency == receiverCurrency}">RUB</option>
+      </select>
+      <p></p>
+      <label for="input-amount">Сумма для перевода:</label>
+      <input id="input-amount" name="amount" required
+             type="number" step="0.01" min="0.01"
+             th:value="${amount}"/>
+      <p><button>Перевести</button></p>
+    </form>
+  </div>
+</div>
+</body>
+</html>

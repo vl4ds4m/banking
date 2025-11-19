@@ -1,0 +1,7 @@
+spring:
+  application.name: web-ui
+  mvc.problemdetails.enabled: true
+
+client.accounts:
+  host: ${ACCOUNTS_HOST}
+  port: ${ACCOUNTS_PORT}

@@ -1,0 +1,16 @@
+.head {
+  justify-content: center;
+}
+
+.content {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#btn-reg {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}

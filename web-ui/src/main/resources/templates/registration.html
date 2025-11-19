@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" type="text/css" media="all" href="../static/css/common.css" th:href="@{/css/common.css}" />
+  <link rel="stylesheet" type="text/css" media="all" href="../static/css/registration.css" th:href="@{/css/registration.css}" />
+  <title>Регистрация</title>
+</head>
+<body>
+<div class="head">
+  <h1>Вход в Banking System</h1>
+</div>
+<div class="body">
+  <div class="content">
+    <h2>Регистрация</h2>
+    <div th:replace="~{fragments :: problem-frag}"></div>
+    <form class="list" action="" method="post" th:action="@{/customers/new}" th:object="${customer}">
+      <div>
+        <label for="input-login">Логин:</label>
+        <input id="input-login" type="text" required name="login" th:field="*{nickname}" />
+      </div>
+      <div>
+        <label for="input-forename">Имя:</label>
+        <input id="input-forename" type="text" required th:field="*{forename}" />
+      </div>
+      <div>
+        <label for="input-surname">Фамилия:</label>
+        <input id="input-surname" type="text" required th:field="*{surname}" />
+      </div>
+      <div>
+        <label for="input-birthdate">День рождения:</label>
+        <input id="input-birthdate" type="date" required name="birthdate" th:value="*{birthdate}" />
+      </div>
+      <button id="btn-reg">Зарегистрироваться</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>
