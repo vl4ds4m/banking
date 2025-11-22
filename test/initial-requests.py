@@ -10,15 +10,15 @@ def request(method, path, body):
     print(data if data else "ok")
 
 # Create customer: ivanovp
-payload = "{\n  \"customerName\": \"ivanovp\",\n  \"firstName\": \"Пётр\",\n  \"lastName\": \"Иванов\",\n  \"birthDate\": \"1985-10-06\"\n}"
+payload = "{\n  \"nickname\": \"ivanovp\",\n  \"forename\": \"Пётр\",\n  \"surname\": \"Иванов\",\n  \"birthdate\": \"1985-10-06\"\n}"
 request("POST", "/customers", payload)
 
 # Create customer: jsmithy
-payload = "{\n  \"customerName\": \"jsmithy\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Smith\",\n  \"birthDate\": \"1969-03-26\"\n}"
+payload = "{\n  \"nickname\": \"jsmithy\",\n  \"forename\": \"John\",\n  \"surname\": \"Smith\",\n  \"birthdate\": \"1969-03-26\"\n}"
 request("POST", "/customers", payload)
 
 # Create customer: tt_goat
-payload = "{\n  \"customerName\": \"tt_goat\",\n  \"firstName\": \"Ma\",\n  \"lastName\": \"Long\",\n  \"birthDate\": \"1988-10-20\"\n}"
+payload = "{\n  \"nickname\": \"tt_goat\",\n  \"forename\": \"Ma\",\n  \"surname\": \"Long\",\n  \"birthdate\": \"1988-10-20\"\n}"
 request("POST", "/customers", payload)
 
 # Create account: 1000000001

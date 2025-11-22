@@ -5,28 +5,62 @@ info:
   version: 1.0.0
 components:
   schemas:
-    CustomerName:
+    CustomerNickname:
       type: string
       example: ipet123
+    CustomerForename:
+      type: string
+      example: Ivan
+    CustomerSurname:
+      type: string
+      example: Petrov
+    Customer:
+      type: object
+      properties:
+        nickname:
+          $ref: '#/components/schemas/CustomerNickname'
+        forename:
+          $ref: '#/components/schemas/CustomerForename'
+        surname:
+          $ref: '#/components/schemas/CustomerSurname'
+        birthdate:
+          type: string
+          format: date
+          example: 1984-04-17
+      required:
+        - nickname
+        - forename
+        - surname
+        - birthdate
     Currency:
       $ref: './common.yaml#/components/schemas/Currency'
     CurrencyAmount:
       $ref: './common.yaml#/components/schemas/CurrencyAmount'
-    BalanceResponse:
+    AccountNumber:
+      type: integer
+      format: int64
+      example: 438832491231
+    Account:
       type: object
       properties:
+        number:
+          $ref: '#/components/schemas/AccountNumber'
         currency:
           $ref: '#/components/schemas/Currency'
         amount:
           $ref: '#/components/schemas/CurrencyAmount'
       required:
+        - number
         - currency
         - amount
-    AccountNumber:
-      type: integer
-      format: int64
-      example: 438832491231
   parameters:
+    CustomerNickname:
+      name: nickname
+      description: Customer nickname.
+      required: true
+      in: path
+      schema:
+        $ref: '#/components/schemas/CustomerNickname'
     AccountNumber:
       name: accountNumber
       description: An account number.
@@ -54,7 +88,38 @@ components:
               - totalAmount
 paths:
   /customers:
+    get:
+      tags:
+        - customers
+      operationId: getCustomers
+      summary: Get all customers.
+      description: Get information about all customers.
+      responses:
+        '200':
+          description: List of customers.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  title: CustomerNames
+                  type: object
+                  properties:
+                    nickname:
+                      $ref: '#/components/schemas/CustomerNickname'
+                    forename:
+                      $ref: '#/components/schemas/CustomerForename'
+                    surname:
+                      $ref: '#/components/schemas/CustomerSurname'
+                  required:
+                    - nickname
+                    - forename
+                    - surname
+        '400':
+          $ref: '#/components/responses/ErrorMessage'
     post:
+      tags:
+        - customers
       operationId: createCustomer
       summary: Create customer.
       description: Create a new customer.
@@ -63,43 +128,50 @@ paths:
         content:
           application/json:
             schema:
-              title: CreateCustomerRequest
-              type: object
-              properties:
-                customerName:
-                  $ref: '#/components/schemas/CustomerName'
-                firstName:
-                  type: string
-                  example: Ivan
-                lastName:
-                  type: string
-                  example: Petrov
-                birthDate:
-                  type: string
-                  format: date
-                  example: 1984-04-17
-              required:
-                - customerName
-                - firstName
-                - lastName
-                - birthDate
+              $ref: '#/components/schemas/Customer'
       responses:
         '200':
           description: Customer created.
         '400':
           $ref: '#/components/responses/ErrorMessage'
-  /customers/{customerName}/balance:
+  /customers/{nickname}/info:
     get:
+      tags:
+        - customers
+      operationId: getCustomerInfo
+      summary: Get customer information.
+      description: Get information about customer - personal data and accounts.
+      parameters:
+        - $ref: '#/components/parameters/CustomerNickname'
+      responses:
+        '200':
+          description: Customer information.
+          content:
+            application/json:
+              schema:
+                title: CustomerInfo
+                type: object
+                properties:
+                  customer:
+                    $ref: '#/components/schemas/Customer'
+                  accounts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Account'
+                required:
+                  - customer
+                  - accounts
+        '400':
+          $ref: '#/components/responses/ErrorMessage'
+  /customers/{nickname}/balance:
+    get:
+      tags:
+        - customers
       operationId: getCustomerBalance
       summary: Get customer balance.
       description: Get the customer balance over all accounts in the specified currency.
       parameters:
-        - name: customerName
-          description: Customer nickname.
-          required: true
-          in: path
-          schema:
-            $ref: '#/components/schemas/CustomerName'
+        - $ref: '#/components/parameters/CustomerNickname'
         - name: currency
           description: Currency code for the balance representation.
           required: true
@@ -112,11 +184,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BalanceResponse'
+                title: BalanceResponse
+                type: object
+                properties:
+                  currency:
+                    $ref: '#/components/schemas/Currency'
+                  amount:
+                    $ref: '#/components/schemas/CurrencyAmount'
+                required:
+                  - currency
+                  - amount
         '400':
           $ref: '#/components/responses/ErrorMessage'
   /accounts:
     post:
+      tags:
+        - accounts
       operationId: createAccount
       summary: Create account.
       description: Create a new customer account.
@@ -129,7 +212,7 @@ paths:
               type: object
               properties:
                 customerName:
-                  $ref: '#/components/schemas/CustomerName'
+                  $ref: '#/components/schemas/CustomerNickname'
                 currency:
                   $ref: '#/components/schemas/Currency'
               required:
@@ -150,24 +233,77 @@ paths:
                   - number
         '400':
           $ref: '#/components/responses/ErrorMessage'
+    get:
+      tags:
+        - accounts
+      operationId: getAccountByCustomer
+      summary: Get account by customer data.
+      description: Get account by customer login and currency.
+      parameters:
+        - name: login
+          description: Customer login.
+          required: true
+          in: query
+          schema:
+            $ref: '#/components/schemas/CustomerNickname'
+        - name: currency
+          description: Account currency.
+          required: true
+          in: query
+          schema:
+            $ref: '#/components/schemas/Currency'
+      responses:
+        '200':
+          description: Account number and amount of money.
+          content:
+            application/json:
+              schema:
+                title: AccountResponse
+                type: object
+                properties:
+                  number:
+                    $ref: '#/components/schemas/AccountNumber'
+                  amount:
+                    $ref: '#/components/schemas/CurrencyAmount'
+                required:
+                  - number
+                  - amount
+        '400':
+          $ref: '#/components/responses/ErrorMessage'
   /accounts/{accountNumber}:
     get:
-      operationId: getAccountBalance
-      summary: Get account balance.
-      description: Get amount of money in the account.
+      tags:
+        - accounts
+      operationId: getAccountInfo
+      summary: Get account information.
+      description: Get information about the account - customer login, currency, amount.
       parameters:
         - $ref: '#/components/parameters/AccountNumber'
       responses:
         '200':
-          description: Amount of money in the account.
+          description: Information about the account.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BalanceResponse'
+                title: AccountInfo
+                type: object
+                properties:
+                  customerLogin:
+                    $ref: '#/components/schemas/CustomerNickname'
+                  currency:
+                    $ref: '#/components/schemas/Currency'
+                  amount:
+                    $ref: '#/components/schemas/CurrencyAmount'
+                required:
+                  - customerLogin
+                  - currency
+                  - amount
         '400':
           $ref: '#/components/responses/ErrorMessage'
   /accounts/{accountNumber}/top-up:
     put:
+      tags:
+        - accounts
       operationId: topUpAccount
       summary: Top up account.
       description: Top up the account by the passed amount.
@@ -192,6 +328,8 @@ paths:
           $ref: '#/components/responses/ErrorMessage'
   /accounts/{accountNumber}/withdraw:
     put:
+      tags:
+        - accounts
       operationId: withdrawAccount
       summary: Withdraw account.
       description: Withdraw money from the account.
@@ -216,6 +354,8 @@ paths:
           $ref: '#/components/responses/ErrorMessage'
   /transfer:
     put:
+      tags:
+        - transfer
       operationId: transfer
       summary: Transfer money.
       description: Transfer money from the account to the another account.

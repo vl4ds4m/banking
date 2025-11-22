@@ -3,6 +3,7 @@ package org.vl4ds4m.banking.accounts.dao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.vl4ds4m.banking.accounts.entity.Account;
+import org.vl4ds4m.banking.accounts.entity.Customer;
 import org.vl4ds4m.banking.accounts.repository.AccountRepository;
 import org.vl4ds4m.banking.accounts.repository.CustomerRepository;
 import org.vl4ds4m.banking.accounts.repository.entity.AccountRe;
@@ -27,6 +28,15 @@ public class AccountDao {
                 re.getNumber(),
                 re.getCurrency(),
                 Money.of(re.getAmount()));
+    }
+
+    public Customer getOwner(long accountNumber) {
+        var re = getReByNumber(accountNumber).getCustomer();
+        return new Customer(
+                re.getNickname(),
+                re.getForename(),
+                re.getSurname(),
+                re.getBirthdate());
     }
 
     public long create(String customerName, Currency currency, Money money) {

@@ -10,12 +10,24 @@ import org.vl4ds4m.banking.common.entity.Money;
 
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Repository
 @RequiredArgsConstructor
 public class CustomerDao {
 
     private final CustomerRepository repository;
+
+    public Set<Customer> getAll() {
+        var customers = repository.findAll();
+        return StreamSupport.stream(customers.spliterator(), false)
+                .map(c -> new Customer(
+                        c.getNickname(),
+                        c.getForename(),
+                        c.getSurname(),
+                        c.getBirthdate()))
+                .collect(Collectors.toUnmodifiableSet());
+    }
 
     public boolean existsByNickname(String nickname) {
         return repository.existsByNickname(nickname);

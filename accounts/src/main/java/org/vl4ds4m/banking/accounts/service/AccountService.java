@@ -32,12 +32,23 @@ public class AccountService {
         return accountDao.getByNumber(accountNumber);
     }
 
+    public Account getAccount(String customerLogin, Currency currency) {
+        checkCustomerExists(customerLogin);
+        return customerDao.getAccounts(customerLogin).stream()
+                .filter(a -> a.currency().equals(currency))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException(Account.class, customerLogin, currency));
+    }
+
+    public String getAccountOwnerLogin(long accountNumber) {
+        checkAccountExists(accountNumber);
+        return accountDao.getOwner(accountNumber).nickname();
+    }
+
     // TODO
     // @Observed
     public long createAccount(String customerNickname, Currency currency) {
-        if (!customerDao.existsByNickname(customerNickname)) {
-            throw new EntityNotFoundException(Customer.class, customerNickname);
-        }
+        checkCustomerExists(customerNickname);
 
         boolean exists = customerDao.getAccounts(customerNickname).stream()
                 .map(Account::currency)
@@ -121,6 +132,12 @@ public class AccountService {
     private void checkAccountExists(long accountNumber) {
         if (!accountDao.existsByNumber(accountNumber)) {
             throw new EntityNotFoundException(Account.class, accountNumber);
+        }
+    }
+
+    private void checkCustomerExists(String login) {
+        if (!customerDao.existsByNickname(login)) {
+            throw new EntityNotFoundException(Customer.class, login);
         }
     }
 

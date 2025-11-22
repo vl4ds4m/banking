@@ -51,6 +51,21 @@ class CustomerServiceTest {
         assertTrue(e.getMessage().contains(customerNickname));
     }
 
+    @DisplayName("Получение всех клиентов")
+    @Test
+    void testGetAllCustomers() {
+        // Arrange
+        var customerDao = mockCustomerDao();
+        when(customerDao.getAll()).thenReturn(Set.of(DEFAULT_CUSTOMER));
+        var service = new CustomerService(customerDao, mock(), mock());
+
+        // Act
+        var customers = service.getCustomers();
+
+        // Assert
+        assertEquals(Set.of(DEFAULT_CUSTOMER), customers);
+    }
+
     @DisplayName("Создание клиента")
     @Test
     void testCreateCustomer() {
@@ -109,6 +124,25 @@ class CustomerServiceTest {
         // Act & Assert
         var e = assertThrows(DuplicateEntityException.class, () -> service.createCustomer(customer));
         assertTrue(e.getMessage().contains(DEFAULT_CUSTOMER.nickname()));
+    }
+
+    @DisplayName("Получение счетов клиента")
+    @Test
+    void testGetCustomerAccounts() {
+        // Arrange
+        var customerDao = mockCustomerDao();
+        var accounts = Set.of(
+                new Account(94L, Currency.RUB, Money.of(new BigDecimal("19.05"))),
+                new Account(346L, Currency.EUR, Money.of(new BigDecimal("6.72"))));
+        when(customerDao.getAccounts(DEFAULT_CUSTOMER.nickname())).thenReturn(accounts);
+
+        var service = new CustomerService(customerDao, mock(), mock());
+
+        // Act
+        var actual = service.getCustomerAccounts(DEFAULT_CUSTOMER.nickname());
+
+        // Assert
+        assertEquals(accounts, actual);
     }
 
     @DisplayName("Получение баланса по всем счетам клиента")

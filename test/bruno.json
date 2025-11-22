@@ -6,12 +6,13 @@
       "type": "http",
       "name": "Accounts balance",
       "filename": "Accounts balance.bru",
-      "seq": 6,
+      "seq": 7,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
       },
       "tags": [],
+      "examples": [],
       "request": {
         "url": "http://localhost:8081/accounts/1000000001",
         "method": "GET",
@@ -37,12 +38,13 @@
       "type": "http",
       "name": "Accounts create",
       "filename": "Accounts create.bru",
-      "seq": 7,
+      "seq": 6,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
       },
       "tags": [],
+      "examples": [],
       "request": {
         "url": "http://localhost:8081/accounts0",
         "method": "POST",
@@ -75,8 +77,9 @@
         "timeout": 0
       },
       "tags": [],
+      "examples": [],
       "request": {
-        "url": "http://localhost:8081/accounts/1000000008/top-up0",
+        "url": "http://localhost:8082/accounts/1000000008/top-up",
         "method": "PUT",
         "headers": [],
         "params": [],
@@ -99,14 +102,83 @@
     },
     {
       "type": "http",
-      "name": "Convert currency",
-      "filename": "Convert currency.bru",
-      "seq": 2,
+      "name": "Accounts withdraw",
+      "filename": "Accounts withdraw.bru",
+      "seq": 9,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
       },
       "tags": [],
+      "examples": [],
+      "request": {
+        "url": "http://localhost:8081/accounts/1000000008/withdraw0",
+        "method": "PUT",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"subtrahend\": 64.51\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "grpc",
+      "name": "Convert currency GRPC",
+      "filename": "Convert currency GRPC.bru",
+      "seq": 12,
+      "settings": {},
+      "tags": [],
+      "examples": [],
+      "request": {
+        "url": "localhost:9092",
+        "method": "/banking.converter.Converter/Convert",
+        "headers": [],
+        "body": {
+          "mode": "grpc",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": [],
+          "grpc": [
+            {
+              "name": "message 1",
+              "content": "{\n  \"from\": 2,\n  \"to\": 3,\n  \"amount\": 45.83\n}"
+            }
+          ]
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "methodType": "unary",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Convert currency",
+      "filename": "Convert currency.bru",
+      "seq": 11,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "examples": [],
       "request": {
         "url": "http://localhost:8082/convert?from=EUR&to=RUB&amount=197.45",
         "method": "GET",
@@ -154,12 +226,13 @@
       "type": "http",
       "name": "Customers balance",
       "filename": "Customers balance.bru",
-      "seq": 4,
+      "seq": 5,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
       },
       "tags": [],
+      "examples": [],
       "request": {
         "url": "http://localhost:8081/customers/ivanovp/balance?currency=RUB",
         "method": "GET",
@@ -192,12 +265,13 @@
       "type": "http",
       "name": "Customers create",
       "filename": "Customers create.bru",
-      "seq": 5,
+      "seq": 2,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
       },
       "tags": [],
+      "examples": [],
       "request": {
         "url": "http://localhost:8081/customers0",
         "method": "POST",
@@ -205,7 +279,7 @@
         "params": [],
         "body": {
           "mode": "json",
-          "json": "{\n  \"customerName\": \"foo_bar\",\n  \"firstName\": \"Foo\",\n  \"lastName\": \"Bar\",\n  \"birthDate\": \"2001-02-03\"\n}",
+          "json": "{\n  \"nickname\": \"foo_bar\",\n  \"forename\": \"Foo\",\n  \"surname\": \"Bar\",\n  \"birthdate\": \"2001-02-03\"\n}",
           "formUrlEncoded": [],
           "multipartForm": [],
           "file": []
@@ -224,12 +298,61 @@
       "type": "http",
       "name": "Keycloak get token",
       "filename": "Keycloak get token.bru",
-      "seq": 3,
+      "seq": 12,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
       },
       "tags": [],
+      "examples": [],
+      "request": {
+        "url": "http://localhost:8084/realms/banking/protocol/openid-connect/token",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "formUrlEncoded",
+          "formUrlEncoded": [
+            {
+              "name": "client_id",
+              "value": "banking_service",
+              "enabled": true
+            },
+            {
+              "name": "client_secret",
+              "value": "zaHH0GJMccZtdY64fa0gPe3nlEflD9vs",
+              "enabled": true
+            },
+            {
+              "name": "grant_type",
+              "value": "client_credentials",
+              "enabled": true
+            }
+          ],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Keycloak validate token",
+      "filename": "Keycloak validate token.bru",
+      "seq": 14,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "examples": [],
       "request": {
         "url": "http://localhost:8084/realms/banking/protocol/openid-connect/token",
         "method": "POST",
@@ -271,12 +394,13 @@
       "type": "http",
       "name": "Rates actuator",
       "filename": "Rates actuator.bru",
-      "seq": 11,
+      "seq": 15,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
       },
       "tags": [],
+      "examples": [],
       "request": {
         "url": "http://localhost:8083/actuator",
         "method": "GET",
@@ -284,38 +408,6 @@
         "params": [],
         "body": {
           "mode": "none",
-          "formUrlEncoded": [],
-          "multipartForm": [],
-          "file": []
-        },
-        "script": {},
-        "vars": {},
-        "assertions": [],
-        "tests": "",
-        "docs": "",
-        "auth": {
-          "mode": "inherit"
-        }
-      }
-    },
-    {
-      "type": "http",
-      "name": "Accounts withdraw",
-      "filename": "Accounts withdraw.bru",
-      "seq": 9,
-      "settings": {
-        "encodeUrl": true,
-        "timeout": 0
-      },
-      "tags": [],
-      "request": {
-        "url": "http://localhost:8081/accounts/1000000008/withdraw0",
-        "method": "PUT",
-        "headers": [],
-        "params": [],
-        "body": {
-          "mode": "json",
-          "json": "{\n  \"subtrahend\": 64.51\n}",
           "formUrlEncoded": [],
           "multipartForm": [],
           "file": []
@@ -340,6 +432,7 @@
         "timeout": 0
       },
       "tags": [],
+      "examples": [],
       "request": {
         "url": "http://localhost:8081/transfer0",
         "method": "PUT",
@@ -348,6 +441,70 @@
         "body": {
           "mode": "json",
           "json": "{\n  \"senderAccountNumber\": 1000000001,\n  \"receiverAccountNumber\": 1000000002,\n  \"senderCurrencyAmount\": 2.31\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Customers info",
+      "filename": "Customers info.bru",
+      "seq": 3,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "examples": [],
+      "request": {
+        "url": "http://localhost:8081/customers/ivanovp/info",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Customers list",
+      "filename": "Customers list.bru",
+      "seq": 3,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "examples": [],
+      "request": {
+        "url": "http://localhost:8081/customers",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
           "formUrlEncoded": [],
           "multipartForm": [],
           "file": []
@@ -372,8 +529,8 @@
       "node_modules",
       ".git"
     ],
-    "size": 0.003204345703125,
-    "filesCount": 9,
+    "size": 0.0043792724609375,
+    "filesCount": 13,
     "presets": {
       "requestType": "http",
       "requestUrl": ""

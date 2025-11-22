@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.vl4ds4m.banking.accounts.dao.CustomerDao;
+import org.vl4ds4m.banking.accounts.entity.Account;
 import org.vl4ds4m.banking.accounts.entity.Customer;
 import org.vl4ds4m.banking.accounts.service.expection.DuplicateEntityException;
 import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
@@ -12,6 +13,8 @@ import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.common.exception.ValidationException;
 import org.vl4ds4m.banking.common.util.To;
+
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -29,6 +32,10 @@ public class CustomerService {
         return customerDao.getByNickname(nickname);
     }
 
+    public Set<Customer> getCustomers() {
+        return customerDao.getAll();
+    }
+
     // TODO
     // @Observed
     public void createCustomer(Customer newCustomer) {
@@ -44,6 +51,11 @@ public class CustomerService {
 
         customerDao.create(newCustomer);
         log.info("{} created", To.string(Customer.class, nickname));
+    }
+
+    public Set<Account> getCustomerAccounts(String nickname) {
+        checkCustomerExists(nickname);
+        return customerDao.getAccounts(nickname);
     }
 
     // TODO

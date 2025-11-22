@@ -53,6 +53,37 @@ class AccountServiceTest {
         assertTrue(e.getMessage().contains("" + accountNumber));
     }
 
+    @DisplayName("Получение счёта по логину клиента и валюте")
+    @Test
+    void testGetAccountByCustomerLoginAndCurrency() {
+        // Arrange
+        var service = new AccountService(mockAccountDao(), mockCustomerDao());
+
+        // Act
+        var account = service.getAccount(DEFAULT_CUSTOMER.nickname(), DEFAULT_ACCOUNT.currency());
+
+        // Assert
+        assertEquals(DEFAULT_ACCOUNT, account);
+    }
+
+    @DisplayName("Ошибка при получении счёта по логину клиента и валюте")
+    @Test
+    void testGetAccountByInvalidCustomerLoginOrCurrencyFailed() {
+        // Arrange
+        var service = new AccountService(mockAccountDao(), mockCustomerDao());
+        var absentLogin = "qwerty_456";
+        var absentCurrency = Currency.CNY;
+
+        // Act & Assert
+        var e = assertThrows(EntityNotFoundException.class,
+                () -> service.getAccount(absentLogin, DEFAULT_ACCOUNT.currency()));
+        assertTrue(e.getMessage().contains(absentLogin));
+
+        e = assertThrows(EntityNotFoundException.class,
+                () -> service.getAccount(DEFAULT_CUSTOMER.nickname(), absentCurrency));
+        assertTrue(e.getMessage().contains("" + absentCurrency));
+    }
+
     @DisplayName("Создание счёта")
     @Test
     void testCreateAccount() {
@@ -192,6 +223,7 @@ class AccountServiceTest {
         when(dao.existsByNickname(anyString())).thenReturn(false);
         when(dao.existsByNickname(DEFAULT_CUSTOMER.nickname())).thenReturn(true);
         when(dao.getByNickname(DEFAULT_CUSTOMER.nickname())).thenReturn(DEFAULT_CUSTOMER);
+        when(dao.getAccounts(DEFAULT_CUSTOMER.nickname())).thenReturn(Set.of(DEFAULT_ACCOUNT));
         return dao;
     }
 }
