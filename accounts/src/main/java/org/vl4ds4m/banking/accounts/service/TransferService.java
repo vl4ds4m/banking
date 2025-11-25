@@ -79,9 +79,6 @@ public class TransferService {
         //     receiver.getNumber(),
         //     convertedAmount,
         //     receiver.getAmount());
-        //
-        // simpMessagingService.sendMessage(sender);
-        // simpMessagingService.sendMessage(receiver);
 
         return new TransferResult(totalSenderMoney, totalReceiverMoney);
     }

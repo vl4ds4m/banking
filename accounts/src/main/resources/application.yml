@@ -42,10 +42,6 @@ services:
   kafka:
     topic.update-config: ${KAFKA_TOPIC_UPD_CFG}
 
-messaging:
-  endpoint: /ws
-  destination-prefix: /topic
-
 notification:
   host: ${NOTIFICATION_SERVICE_URL}
   url: ${notification.host}/notification

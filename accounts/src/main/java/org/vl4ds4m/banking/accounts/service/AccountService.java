@@ -61,9 +61,6 @@ public class AccountService {
         long number = accountDao.create(customerNickname, currency, Money.empty());
         log.info("{} created", To.string(Account.class, number));
 
-        // TODO
-        // simpMessagingService.sendMessage(savedAccount);
-
         return number;
     }
 
@@ -94,8 +91,6 @@ public class AccountService {
         //     account.getNumber(),
         //     amount,
         //     account.getAmount());
-        //
-        // simpMessagingService.sendMessage(account);
         //
         // Transaction transaction = transactionService.persist(
         //     new Transaction(account, amount));
