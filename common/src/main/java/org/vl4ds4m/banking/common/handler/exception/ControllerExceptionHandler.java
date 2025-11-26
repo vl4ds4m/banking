@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.common.handler;
+package org.vl4ds4m.banking.common.handler.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

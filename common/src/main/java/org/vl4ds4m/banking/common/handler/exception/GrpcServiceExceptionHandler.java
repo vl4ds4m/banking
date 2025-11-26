@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.common.handler;
+package org.vl4ds4m.banking.common.handler.exception;
 
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
