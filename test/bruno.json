@@ -71,7 +71,7 @@
       "type": "http",
       "name": "Accounts top up",
       "filename": "Accounts top up.bru",
-      "seq": 8,
+      "seq": 9,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
@@ -104,7 +104,7 @@
       "type": "http",
       "name": "Accounts withdraw",
       "filename": "Accounts withdraw.bru",
-      "seq": 9,
+      "seq": 10,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
@@ -172,7 +172,7 @@
       "type": "http",
       "name": "Convert currency",
       "filename": "Convert currency.bru",
-      "seq": 11,
+      "seq": 12,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
@@ -296,9 +296,73 @@
     },
     {
       "type": "http",
+      "name": "Customers info",
+      "filename": "Customers info.bru",
+      "seq": 3,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "examples": [],
+      "request": {
+        "url": "http://localhost:8081/customers/ivanovp/info",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Customers list",
+      "filename": "Customers list.bru",
+      "seq": 4,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "examples": [],
+      "request": {
+        "url": "http://localhost:8081/customers",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
       "name": "Keycloak get token",
       "filename": "Keycloak get token.bru",
-      "seq": 12,
+      "seq": 14,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
@@ -346,7 +410,7 @@
       "type": "http",
       "name": "Keycloak validate token",
       "filename": "Keycloak validate token.bru",
-      "seq": 14,
+      "seq": 15,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
@@ -394,7 +458,7 @@
       "type": "http",
       "name": "Rates actuator",
       "filename": "Rates actuator.bru",
-      "seq": 15,
+      "seq": 16,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
@@ -426,7 +490,7 @@
       "type": "http",
       "name": "Transfer",
       "filename": "Transfer.bru",
-      "seq": 10,
+      "seq": 11,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
@@ -457,9 +521,9 @@
     },
     {
       "type": "http",
-      "name": "Customers info",
-      "filename": "Customers info.bru",
-      "seq": 3,
+      "name": "Accounts get by customer",
+      "filename": "Accounts get by customer.bru",
+      "seq": 8,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
@@ -467,42 +531,23 @@
       "tags": [],
       "examples": [],
       "request": {
-        "url": "http://localhost:8081/customers/ivanovp/info",
+        "url": "http://localhost:8081/accounts?login=ivanovp&currency=RUB",
         "method": "GET",
         "headers": [],
-        "params": [],
-        "body": {
-          "mode": "none",
-          "formUrlEncoded": [],
-          "multipartForm": [],
-          "file": []
-        },
-        "script": {},
-        "vars": {},
-        "assertions": [],
-        "tests": "",
-        "docs": "",
-        "auth": {
-          "mode": "inherit"
-        }
-      }
-    },
-    {
-      "type": "http",
-      "name": "Customers list",
-      "filename": "Customers list.bru",
-      "seq": 3,
-      "settings": {
-        "encodeUrl": true,
-        "timeout": 0
-      },
-      "tags": [],
-      "examples": [],
-      "request": {
-        "url": "http://localhost:8081/customers",
-        "method": "GET",
-        "headers": [],
-        "params": [],
+        "params": [
+          {
+            "name": "login",
+            "value": "ivanovp",
+            "type": "query",
+            "enabled": true
+          },
+          {
+            "name": "currency",
+            "value": "RUB",
+            "type": "query",
+            "enabled": true
+          }
+        ],
         "body": {
           "mode": "none",
           "formUrlEncoded": [],
@@ -529,8 +574,8 @@
       "node_modules",
       ".git"
     ],
-    "size": 0.0043792724609375,
-    "filesCount": 13,
+    "size": 0.004723548889160156,
+    "filesCount": 15,
     "presets": {
       "requestType": "http",
       "requestUrl": ""

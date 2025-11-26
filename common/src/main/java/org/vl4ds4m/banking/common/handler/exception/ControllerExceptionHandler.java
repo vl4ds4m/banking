@@ -1,5 +1,6 @@
 package org.vl4ds4m.banking.common.handler.exception;
 
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -41,6 +42,13 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     public ErrorMessageResponse handleServiceError(ServiceException e) {
         exceptionLogger.logServiceError(e);
+        return buildResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public ErrorMessageResponse handleServiceErrorByCircuitBreaker(CallNotPermittedException e) {
+        exceptionLogger.logServiceError(e.getCausingCircuitBreakerName(), e);
         return buildResponse(e.getMessage());
     }
 

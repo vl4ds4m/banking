@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
-import org.vl4ds4m.banking.accounts.client.ConverterClient;
+import org.vl4ds4m.banking.accounts.client.ConverterClientImpl;
 import org.vl4ds4m.banking.common.properties.ConverterClientProperties;
 import org.vl4ds4m.banking.converter.openapi.client.invoke.ApiClient;
 
@@ -23,7 +23,7 @@ public class ConverterRestClientConfig {
     private final ConverterClientProperties converterProps;
 
     @Bean
-    public ConverterClient converterHttpClient(RestTemplate restTemplate) {
+    public ConverterClientImpl converterHttpClient(RestTemplate restTemplate) {
         log.info("Create HTTP converter client");
         var client = new ApiClient(restTemplate);
         client.setBasePath(converterProps.httpUrl());

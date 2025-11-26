@@ -1,7 +1,7 @@
 package org.vl4ds4m.banking.accounts.client.rest;
 
 import org.springframework.web.client.RestClientException;
-import org.vl4ds4m.banking.accounts.client.ConverterClient;
+import org.vl4ds4m.banking.accounts.client.ConverterClientImpl;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.common.exception.ServiceException;
@@ -10,7 +10,7 @@ import org.vl4ds4m.banking.converter.openapi.client.api.ConvertApi;
 import org.vl4ds4m.banking.converter.openapi.client.invoke.ApiClient;
 import org.vl4ds4m.banking.converter.openapi.client.model.ConvertCurrencyResponse;
 
-public class ConverterRestClient implements ConverterClient {
+public class ConverterRestClient implements ConverterClientImpl {
 
     private final ConvertApi api;
 

@@ -6,7 +6,7 @@ import net.devh.boot.grpc.client.inject.GrpcClientBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.vl4ds4m.banking.accounts.client.ConverterClient;
+import org.vl4ds4m.banking.accounts.client.ConverterClientImpl;
 import org.vl4ds4m.banking.common.properties.ConverterClientProperties;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpc;
 
@@ -22,7 +22,7 @@ import org.vl4ds4m.banking.converter.grpc.ConverterGrpc;
 public class ConverterGrpcClientConfig {
 
     @Bean
-    public ConverterClient converterGrpcClient(ConverterGrpc.ConverterBlockingStub converterGrpcStub) {
+    public ConverterClientImpl converterGrpcClient(ConverterGrpc.ConverterBlockingStub converterGrpcStub) {
         log.info("Create GRPC converter client");
         return new ConverterGrpcClient(converterGrpcStub);
     }
