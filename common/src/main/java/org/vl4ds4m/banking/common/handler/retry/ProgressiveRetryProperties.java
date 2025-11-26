@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.converter.client.retry;
+package org.vl4ds4m.banking.common.handler.retry;
 
 import jakarta.validation.constraints.Min;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -10,8 +10,9 @@ import java.time.Duration;
 @ConfigurationProperties("retry.progressive")
 @Validated
 public record ProgressiveRetryProperties(
+
     @Min(1)
-    @DefaultValue("4")
+    @DefaultValue("3")
     byte attempts,
 
     @DefaultValue("50ms")
