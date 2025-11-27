@@ -1,6 +1,8 @@
 package org.vl4ds4m.banking.common.handler.exception;
 
+import com.giffing.bucket4j.spring.boot.starter.context.RateLimitException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -34,6 +36,17 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorMessageResponse handleInvalidQuery(MethodArgumentNotValidException e) {
         var message = To.string(e.getBindingResult());
+        exceptionLogger.logInvalidQuery(e, message);
+        return buildResponse(message);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public ErrorMessageResponse handleRateLimitExcessOnGetCustomerBalance(
+            RateLimitException e,
+            HttpServletRequest request
+    ) {
+        var message = "Too many request of %s.".formatted(request.getRequestURI());
         exceptionLogger.logInvalidQuery(e, message);
         return buildResponse(message);
     }

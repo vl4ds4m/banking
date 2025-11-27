@@ -60,11 +60,6 @@ public class CustomerService {
 
     // TODO
     // @Observed
-    // @RateLimiting(
-    //     name = "customer-balance",
-    //     cacheKey = "#id",
-    //     ratePerMethod = true,
-    //     fallbackMethodName = "exceedRateOnBalance")
     public Money getCustomerBalance(String customerName, Currency currency) {
         checkCustomerExists(customerName);
 
@@ -81,15 +76,4 @@ public class CustomerService {
             throw new EntityNotFoundException(Customer.class, nickname);
         }
     }
-
-    // TODO
-    // public CustomerBalanceResponse exceedRateOnBalance(int id, org.vl4ds4m.banking.accounts.api.model.Currency currency) {
-    //     throw new RateLimitException() {
-    //         @Override
-    //         public String getMessage() {
-    //             return String.format(
-    //                     "Too many requests of Customer[id=%d] balance", id);
-    //         }
-    //     };
-    // }
 }

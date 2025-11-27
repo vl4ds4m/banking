@@ -1,5 +1,6 @@
 package org.vl4ds4m.banking.accounts.api;
 
+import com.giffing.bucket4j.spring.boot.starter.context.RateLimiting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -61,6 +62,10 @@ public class CustomerController implements CustomersApi {
         return ResponseEntity.ok(response);
     }
 
+    @RateLimiting(
+        name = "customer-balance",
+        cacheKey = "#customerName",
+        ratePerMethod = true)
     @Override
     public ResponseEntity<BalanceResponse> getCustomerBalance(String customerName, Currency currency) {
         var money = customerService.getCustomerBalance(
@@ -69,11 +74,4 @@ public class CustomerController implements CustomersApi {
         var response = new BalanceResponse(currency, money.amount());
         return ResponseEntity.ok(response);
     }
-
-    // TODO
-    // @ExceptionHandler
-    // @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
-    // public void handleRateLimitException(RateLimitException e) {
-    //     logger.debug("Handle RateLimitException: {}", e.getMessage());
-    // }
 }

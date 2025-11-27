@@ -15,13 +15,13 @@ spring:
     jcache:
       provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
     cache-names:
-      - buckets
+      - bucket4j-rate-limit
     caffeine:
       spec: maximumSize=1000000,expireAfterAccess=3600s
 
   data.redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
 
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
@@ -37,6 +37,18 @@ client:
     grpc: true
     host: ${CONVERTER_HOST}
     port: ${CONVERTER_PORT}
+
+bucket4j:
+  enabled: true
+  methods:
+    - name: customer-balance
+      cache-name: bucket4j-rate-limit
+      rate-limit:
+        bandwidths:
+          - capacity: 5
+            time: 60
+            unit: seconds
+            refill-speed: greedy
 
 services:
   kafka:
@@ -61,15 +73,3 @@ grpc:
       enable-keep-alive: true
       keep-alive-without-calls: true
       negotiation-type: PLAINTEXT
-
-bucket4j:
-  enabled: true
-  methods:
-    - name: customer-balance
-      cache-name: buckets
-      rate-limit:
-        bandwidths:
-          - capacity: 5
-            time: 60
-            unit: seconds
-            refill-speed: greedy
