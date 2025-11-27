@@ -54,12 +54,6 @@ services:
   kafka:
     topic.update-config: ${KAFKA_TOPIC_UPD_CFG}
 
-notification:
-  host: ${NOTIFICATION_SERVICE_URL}
-  url: ${notification.host}/notification
-  count: 100
-  delay: 5s
-
 idempotency:
   ttl: 30s
   paths:

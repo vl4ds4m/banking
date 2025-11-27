@@ -68,17 +68,6 @@ public class TransferService {
         //     new Transaction(sender, negatedAmount));
         // transactionService.persist(
         //     new Transaction(receiver, convertedAmount));
-        //
-        // notificationService.save(
-        //     sender.getCustomer().getId(),
-        //     sender.getNumber(),
-        //     negatedAmount,
-        //     sender.getAmount());
-        // notificationService.save(
-        //     receiver.getCustomer().getId(),
-        //     receiver.getNumber(),
-        //     convertedAmount,
-        //     receiver.getAmount());
 
         return new TransferResult(totalSenderMoney, totalReceiverMoney);
     }

@@ -9,7 +9,6 @@ import org.vl4ds4m.banking.common.Common;
 @SpringBootApplication(scanBasePackageClasses = {Main.class, Common.class})
 @EnableCaching
 @EnableAspectJAutoProxy
-// TODO @EnableScheduling
 public class Main {
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);

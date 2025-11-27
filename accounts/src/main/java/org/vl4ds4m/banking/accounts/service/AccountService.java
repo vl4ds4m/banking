@@ -86,12 +86,6 @@ public class AccountService {
                 account.currency());
 
         // TODO
-        // notificationService.save(
-        //     account.getCustomer().getId(),
-        //     account.getNumber(),
-        //     amount,
-        //     account.getAmount());
-        //
         // Transaction transaction = transactionService.persist(
         //     new Transaction(account, amount));
 
