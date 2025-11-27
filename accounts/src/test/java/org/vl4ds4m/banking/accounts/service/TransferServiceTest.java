@@ -3,6 +3,7 @@ package org.vl4ds4m.banking.accounts.service;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.vl4ds4m.banking.accounts.dao.AccountDao;
+import org.vl4ds4m.banking.accounts.dao.TransactionDao;
 import org.vl4ds4m.banking.accounts.entity.Account;
 import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
 import org.vl4ds4m.banking.common.entity.Currency;
@@ -35,12 +36,13 @@ class TransferServiceTest {
         var convertedMoney = Money.of(new BigDecimal("15.84"));
 
         var accountDao = mockAccountDao();
+        var transactionDao = mock(TransactionDao.class);
 
         var converterService = mockConverterService();
         when(converterService.convert(DEFAULT_SENDER.currency(), DEFAULT_RECEIVER.currency(), money))
                 .thenReturn(convertedMoney);
 
-        var service = new TransferService(accountDao, converterService);
+        var service = new TransferService(accountDao, transactionDao, converterService);
 
         // Act
         var result = service.transferMoney(DEFAULT_SENDER.number(), DEFAULT_RECEIVER.number(), money);
@@ -52,6 +54,9 @@ class TransferServiceTest {
         verify(accountDao).updateMoney(DEFAULT_SENDER.number(), senderMoney);
         verify(accountDao).updateMoney(DEFAULT_RECEIVER.number(), receiverMoney);
 
+        verify(transactionDao).create(DEFAULT_SENDER.number(), money, true);
+        verify(transactionDao).create(DEFAULT_RECEIVER.number(), convertedMoney, false);
+
         assertEquals(senderMoney, result.totalSenderMoney());
         assertEquals(receiverMoney, result.totalReceiverMoney());
     }
@@ -62,13 +67,15 @@ class TransferServiceTest {
         // Arrange
         var money = Money.empty();
         var accountDao = mockAccountDao();
-        var service = new TransferService(accountDao, mockConverterService());
+        var transactionDao = mock(TransactionDao.class);
+        var service = new TransferService(accountDao, transactionDao, mockConverterService());
 
         // Act
         var result = service.transferMoney(DEFAULT_SENDER.number(), DEFAULT_RECEIVER.number(), money);
 
         // Assert
         verify(accountDao, never()).updateMoney(anyLong(), any());
+        verify(transactionDao, never()).create(anyLong(), any(), anyBoolean());
 
         assertEquals(DEFAULT_SENDER.money(), result.totalSenderMoney());
         assertEquals(DEFAULT_RECEIVER.money(), result.totalReceiverMoney());
@@ -78,7 +85,7 @@ class TransferServiceTest {
     @Test
     void testTransferMoneyFromAbsentAccountFailed() {
         // Arrange
-        var service = new TransferService(mockAccountDao(), mockConverterService());
+        var service = createTransferService();
 
         // Act & Assert
         var e = assertThrows(EntityNotFoundException.class,
@@ -90,7 +97,7 @@ class TransferServiceTest {
     @Test
     void testTransferMoneyToAbsentAccountFailed() {
         // Arrange
-        var service = new TransferService(mockAccountDao(), mockConverterService());
+        var service = createTransferService();
 
         // Act & Assert
         var e = assertThrows(EntityNotFoundException.class,
@@ -102,7 +109,7 @@ class TransferServiceTest {
     @Test
     void testTransferMoneyOnShortageFailed() {
         // Arrange
-        var service = new TransferService(mockAccountDao(), mockConverterService());
+        var service = createTransferService();
 
         // Act & Assert
         var e = assertThrows(InvalidQueryException.class,
@@ -128,5 +135,9 @@ class TransferServiceTest {
 
     private static ConverterService mockConverterService() {
         return mock(ConverterService.class);
+    }
+
+    private static TransferService createTransferService() {
+        return new TransferService(mockAccountDao(), mock(), mockConverterService());
     }
 }

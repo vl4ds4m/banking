@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.vl4ds4m.banking.accounts.dao.AccountDao;
 import org.vl4ds4m.banking.accounts.dao.CustomerDao;
+import org.vl4ds4m.banking.accounts.dao.TransactionDao;
 import org.vl4ds4m.banking.accounts.entity.Account;
 import org.vl4ds4m.banking.accounts.entity.Customer;
 import org.vl4ds4m.banking.accounts.service.expection.DuplicateEntityException;
@@ -24,6 +25,8 @@ public class AccountService {
     private final AccountDao accountDao;
 
     private final CustomerDao customerDao;
+
+    private final TransactionDao transactionDao;
 
     // TODO
     // @Observed
@@ -85,9 +88,7 @@ public class AccountService {
                 augend,
                 account.currency());
 
-        // TODO
-        // Transaction transaction = transactionService.persist(
-        //     new Transaction(account, amount));
+        transactionDao.create(accountNumber, augend, false);
 
         return new Account(accountNumber, account.currency(), money);
     }
@@ -115,6 +116,8 @@ public class AccountService {
                 subtrahend,
                 account.currency());
 
+        transactionDao.create(accountNumber, subtrahend, true);
+
         return new Account(accountNumber, account.currency(), money);
     }
 
@@ -129,16 +132,4 @@ public class AccountService {
             throw new EntityNotFoundException(Customer.class, login);
         }
     }
-
-    // TODO
-    // @Observed
-    // public List<TransactionResponse> getTransactions(int number) {
-    //     org.vl4ds4m.banking.accounts.account.Account account = accountRepository.findById(number)
-    //             .orElseThrow(() -> new InvalidAccountNumberException(number));
-    //
-    //     logger.debug("Return Account[number={}] transactions", number);
-    //     return account.getTransactions().stream()
-    //             .map(t -> new TransactionResponse(t.getId(), t.getAmount()))
-    //             .toList();
-    // }
 }

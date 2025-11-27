@@ -9,3 +9,5 @@ client:
   rates:
     host: ${RATES_HOST}
     port: ${RATES_PORT}
+
+bucket4j.enabled: false

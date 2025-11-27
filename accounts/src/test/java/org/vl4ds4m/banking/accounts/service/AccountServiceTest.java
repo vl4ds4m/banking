@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.vl4ds4m.banking.accounts.dao.AccountDao;
 import org.vl4ds4m.banking.accounts.dao.CustomerDao;
+import org.vl4ds4m.banking.accounts.dao.TransactionDao;
 import org.vl4ds4m.banking.accounts.entity.Account;
 import org.vl4ds4m.banking.accounts.entity.Customer;
 import org.vl4ds4m.banking.accounts.service.expection.DuplicateEntityException;
@@ -32,7 +33,7 @@ class AccountServiceTest {
     @Test
     void testGetAccountByNumber() {
         // Arrange
-        var service = new AccountService(mockAccountDao(), mock());
+        var service = createAccountService();
 
         // Act
         var account = service.getAccount(DEFAULT_ACCOUNT.number());
@@ -46,7 +47,7 @@ class AccountServiceTest {
     void testGetAbsentAccountFailed() {
         // Arrange
         var accountNumber = 935L;
-        AccountService service = new AccountService(mockAccountDao(), mock());
+        var service = createAccountService();
 
         // Act & Assert
         var e = assertThrows(EntityNotFoundException.class, () -> service.getAccount(accountNumber));
@@ -57,7 +58,7 @@ class AccountServiceTest {
     @Test
     void testGetAccountByCustomerLoginAndCurrency() {
         // Arrange
-        var service = new AccountService(mockAccountDao(), mockCustomerDao());
+        var service = createAccountService();
 
         // Act
         var account = service.getAccount(DEFAULT_CUSTOMER.nickname(), DEFAULT_ACCOUNT.currency());
@@ -70,7 +71,7 @@ class AccountServiceTest {
     @Test
     void testGetAccountByInvalidCustomerLoginOrCurrencyFailed() {
         // Arrange
-        var service = new AccountService(mockAccountDao(), mockCustomerDao());
+        var service = createAccountService();
         var absentLogin = "qwerty_456";
         var absentCurrency = Currency.CNY;
 
@@ -91,7 +92,7 @@ class AccountServiceTest {
         var accountDao = mockAccountDao();
         when(accountDao.create(DEFAULT_CUSTOMER.nickname(), Currency.CNY, Money.empty()))
                 .thenReturn(8346L);
-        var service = new AccountService(accountDao, mockCustomerDao());
+        var service = new AccountService(accountDao, mockCustomerDao(), mock());
 
         // Act
         var accountNumber = service.createAccount(DEFAULT_CUSTOMER.nickname(), Currency.CNY);
@@ -107,7 +108,7 @@ class AccountServiceTest {
         var customerDao = mockCustomerDao();
         when(customerDao.getAccounts(DEFAULT_CUSTOMER.nickname()))
                 .thenReturn(Set.of(DEFAULT_ACCOUNT));
-        var service = new AccountService(mockAccountDao(), customerDao);
+        var service = new AccountService(mockAccountDao(), customerDao, mock());
 
         // Act & Assert
         var e = assertThrows(DuplicateEntityException.class,
@@ -121,7 +122,7 @@ class AccountServiceTest {
     void testCreateAccountForAbsentCustomerFailed() {
         // Arrange
         var customerNickname = "unknown_client";
-        var service = new AccountService(mockAccountDao(), mockCustomerDao());
+        var service = createAccountService();
 
         // Act & Assert
         var e = assertThrows(EntityNotFoundException.class,
@@ -133,7 +134,7 @@ class AccountServiceTest {
     @Test
     void testGetAccountBalance() {
         // Arrange
-        var service = new AccountService(mockAccountDao(), mock());
+        var service = createAccountService();
 
         // Act
         var response = service.getAccount(DEFAULT_ACCOUNT.number());
@@ -149,7 +150,8 @@ class AccountServiceTest {
     void testTopUpAccount(Money money) {
         // Arrange
         var accountDao = mockAccountDao();
-        var service = new AccountService(accountDao, mock());
+        var transactionDao = mock(TransactionDao.class);
+        var service = new AccountService(accountDao, mock(), transactionDao);
         var number = DEFAULT_ACCOUNT.number();
         var sum = DEFAULT_ACCOUNT.money().add(money);
 
@@ -159,8 +161,10 @@ class AccountServiceTest {
         // Assert
         if (money.isEmpty()) {
             verify(accountDao, never()).updateMoney(anyLong(), any());
+            verify(transactionDao, never()).create(anyLong(), any(), anyBoolean());
         } else {
             verify(accountDao).updateMoney(number, sum);
+            verify(transactionDao).create(number, money, false);
         }
         assertEquals(
                 new Account(number, DEFAULT_ACCOUNT.currency(), sum),
@@ -173,7 +177,8 @@ class AccountServiceTest {
     void testWithdrawMoneyToAccount(Money money) {
         // Arrange
         var accountDao = mockAccountDao();
-        var service = new AccountService(accountDao, mock());
+        var transactionDao = mock(TransactionDao.class);
+        var service = new AccountService(accountDao, mock(), transactionDao);
         var number = DEFAULT_ACCOUNT.number();
         var sub = DEFAULT_ACCOUNT.money().subtract(money);
 
@@ -183,8 +188,10 @@ class AccountServiceTest {
         // Assert
         if (money.isEmpty()) {
             verify(accountDao, never()).updateMoney(anyLong(), any());
+            verify(transactionDao, never()).create(anyLong(), any(), anyBoolean());
         } else {
             verify(accountDao).updateMoney(number, sub);
+            verify(transactionDao).create(number, money, true);
         }
         assertEquals(
                 new Account(number, DEFAULT_ACCOUNT.currency(), sub),
@@ -195,7 +202,7 @@ class AccountServiceTest {
     @Test
     void testWithdrawMoreMoneyToAccountFailed() {
         // Arrange
-        var service = new AccountService(mockAccountDao(), mock());
+        var service = createAccountService();
         var number = DEFAULT_ACCOUNT.number();
         var money = Money.of(BigDecimal.TWO).add(DEFAULT_ACCOUNT.money());
 
@@ -225,5 +232,9 @@ class AccountServiceTest {
         when(dao.getByNickname(DEFAULT_CUSTOMER.nickname())).thenReturn(DEFAULT_CUSTOMER);
         when(dao.getAccounts(DEFAULT_CUSTOMER.nickname())).thenReturn(Set.of(DEFAULT_ACCOUNT));
         return dao;
+    }
+
+    private static AccountService createAccountService() {
+        return new AccountService(mockAccountDao(), mockCustomerDao(), mock());
     }
 }
