@@ -23,7 +23,12 @@ public class ExceptionLogger {
     }
 
     public void logServiceError(ServiceException exception) {
-        logServiceError(exception.getService(), exception.getCause());
+        var cause = exception.getCause();
+        if (cause == null) {
+            logServiceError(exception.getService(), exception.getMessage());
+        } else {
+            logServiceError(exception.getService(), cause);
+        }
     }
 
     public void logServiceError(String service, Throwable cause) {
@@ -35,5 +40,14 @@ public class ExceptionLogger {
                 service,
                 cause.getClass().getName(),
                 cause.getMessage());
+    }
+
+    public void logServiceError(String service, String message) {
+        log.warn("""
+                Service error handled:
+                    service = {}
+                    message = {}""",
+                service,
+                message);
     }
 }

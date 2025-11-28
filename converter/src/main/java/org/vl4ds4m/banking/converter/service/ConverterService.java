@@ -53,8 +53,7 @@ public class ConverterService {
     private static Money getRate(CurrencyRates currencyRates, Currency currency) {
         var money = currencyRates.rates().get(currency);
         if (money == null || money.isEmpty()) {
-            var message = String.format("%s rate is absent or zero", currency);
-            throw new ServiceException("rates", new Exception(message));
+            throw new ServiceException("rates", "%s rate is absent or zero".formatted(currency));
         }
         return money;
     }

@@ -12,7 +12,12 @@ public class ServiceException extends RuntimeException {
         this.service = service;
     }
 
-    private static String buildMessage(String service, Throwable cause) {
-        return "Error in %s service: %s".formatted(service, cause);
+    public ServiceException(String service, String message) {
+        super(buildMessage(service, message));
+        this.service = service;
+    }
+
+    private static String buildMessage(String service, Object info) {
+        return "Error in %s service: %s".formatted(service, info);
     }
 }

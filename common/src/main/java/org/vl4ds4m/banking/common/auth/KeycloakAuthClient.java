@@ -10,8 +10,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.vl4ds4m.banking.common.exception.ServiceException;
 
-import java.util.Objects;
-
 public class KeycloakAuthClient {
 
     private final RestTemplate restTemplate;
@@ -53,16 +51,19 @@ public class KeycloakAuthClient {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
+        AccessTokenResponse response;
         try {
-            var response = restTemplate.postForObject(
+            response = restTemplate.postForObject(
                     tokenUrl,
                     new HttpEntity<>(requestBody, headers),
-                    AccessTokenResponse.class
-            );
-            Objects.requireNonNull(response, "AccessTokenResponse is null");
-            return response.getToken();
-        } catch (RestClientException | NullPointerException e) {
+                    AccessTokenResponse.class);
+        } catch (RestClientException e) {
             throw new ServiceException("keycloak", e);
         }
+
+        if (response == null) {
+            throw new ServiceException("keycloak", "Can't parse content to AccessTokenResponse.");
+        }
+        return response.getToken();
     }
 }
