@@ -21,12 +21,13 @@ public class CustomerService {
     public List<CustomerNames> getAllCustomers() {
         return customerApi.getCustomers()
                 .stream()
-                .sorted(Comparator.comparing(CustomerNames::getNickname))
+                .sorted(Comparator.comparing(CustomerNames::getSurname)
+                        .thenComparing(CustomerNames::getForename))
                 .toList();
     }
 
-    public CustomerInfo getCustomer(String nickname) {
-        CustomerInfo info = customerApi.getCustomerInfo(nickname);
+    public CustomerInfo getCustomer(String login) {
+        CustomerInfo info = customerApi.getCustomerInfo(login);
         List<Account> sortedAccounts = info.getAccounts()
                 .stream()
                 .sorted(Comparator.comparing(Account::getNumber))

@@ -22,28 +22,28 @@ public class CustomerDao {
         var customers = repository.findAll();
         return StreamSupport.stream(customers.spliterator(), false)
                 .map(c -> new Customer(
-                        c.getNickname(),
+                        c.getLogin(),
                         c.getForename(),
                         c.getSurname(),
                         c.getBirthdate()))
                 .collect(Collectors.toUnmodifiableSet());
     }
 
-    public boolean existsByNickname(String nickname) {
-        return repository.existsByNickname(nickname);
+    public boolean existsByLogin(String login) {
+        return repository.existsByLogin(login);
     }
 
-    public Customer getByNickname(String nickname) {
-        var re = getReByNickname(nickname);
+    public Customer getByLogin(String login) {
+        var re = getReByLogin(login);
         return new Customer(
-                re.getNickname(),
+                re.getLogin(),
                 re.getForename(),
                 re.getSurname(),
                 re.getBirthdate());
     }
 
-    public Set<Account> getAccounts(String nickname) {
-        return getReByNickname(nickname)
+    public Set<Account> getAccounts(String login) {
+        return getReByLogin(login)
                 .getAccounts().stream()
                 .map(re -> new Account(
                         re.getNumber(),
@@ -54,14 +54,14 @@ public class CustomerDao {
 
     public void create(Customer customer) {
         var re = new CustomerRe();
-        re.setNickname(customer.nickname());
+        re.setLogin(customer.login());
         re.setForename(customer.forename());
         re.setSurname(customer.surname());
         re.setBirthdate(customer.birthdate());
         repository.save(re);
     }
 
-    private CustomerRe getReByNickname(String nickname) {
-        return repository.findByNickname(nickname).orElseThrow();
+    private CustomerRe getReByLogin(String login) {
+        return repository.findByLogin(login).orElseThrow();
     }
 }

@@ -10,43 +10,43 @@ def request(method, path, body):
     print(data if data else "ok")
 
 # Create customer: ivanovp
-payload = "{\n  \"nickname\": \"ivanovp\",\n  \"forename\": \"Пётр\",\n  \"surname\": \"Иванов\",\n  \"birthdate\": \"1985-10-06\"\n}"
+payload = "{\n  \"login\": \"ivanovp\",\n  \"forename\": \"Пётр\",\n  \"surname\": \"Иванов\",\n  \"birthdate\": \"1985-10-06\"\n}"
 request("POST", "/customers", payload)
 
 # Create customer: jsmithy
-payload = "{\n  \"nickname\": \"jsmithy\",\n  \"forename\": \"John\",\n  \"surname\": \"Smith\",\n  \"birthdate\": \"1969-03-26\"\n}"
+payload = "{\n  \"login\": \"jsmithy\",\n  \"forename\": \"John\",\n  \"surname\": \"Smith\",\n  \"birthdate\": \"1969-03-26\"\n}"
 request("POST", "/customers", payload)
 
 # Create customer: tt_goat
-payload = "{\n  \"nickname\": \"tt_goat\",\n  \"forename\": \"Ma\",\n  \"surname\": \"Long\",\n  \"birthdate\": \"1988-10-20\"\n}"
+payload = "{\n  \"login\": \"tt_goat\",\n  \"forename\": \"Ma\",\n  \"surname\": \"Long\",\n  \"birthdate\": \"1988-10-20\"\n}"
 request("POST", "/customers", payload)
 
 # Create account: 1000000001
-payload = "{\n  \"customerName\": \"ivanovp\",\n  \"currency\": \"RUB\"\n}"
+payload = "{\n  \"customerLogin\": \"ivanovp\",\n  \"currency\": \"RUB\"\n}"
 request("POST", "/accounts", payload)
 
 # Create account: 1000000002
-payload = "{\n  \"customerName\": \"ivanovp\",\n  \"currency\": \"USD\"\n}"
+payload = "{\n  \"customerLogin\": \"ivanovp\",\n  \"currency\": \"USD\"\n}"
 request("POST", "/accounts", payload)
 
 # Create account: 1000000003
-payload = "{\n  \"customerName\": \"jsmithy\",\n  \"currency\": \"USD\"\n}"
+payload = "{\n  \"customerLogin\": \"jsmithy\",\n  \"currency\": \"USD\"\n}"
 request("POST", "/accounts", payload)
 
 # Create account: 1000000004
-payload = "{\n  \"customerName\": \"jsmithy\",\n  \"currency\": \"EUR\"\n}"
+payload = "{\n  \"customerLogin\": \"jsmithy\",\n  \"currency\": \"EUR\"\n}"
 request("POST", "/accounts", payload)
 
 # Create account: 1000000005
-payload = "{\n  \"customerName\": \"jsmithy\",\n  \"currency\": \"GBP\"\n}"
+payload = "{\n  \"customerLogin\": \"jsmithy\",\n  \"currency\": \"GBP\"\n}"
 request("POST", "/accounts", payload)
 
 # Create account: 1000000006
-payload = "{\n  \"customerName\": \"tt_goat\",\n  \"currency\": \"CNY\"\n}"
+payload = "{\n  \"customerLogin\": \"tt_goat\",\n  \"currency\": \"CNY\"\n}"
 request("POST", "/accounts", payload)
 
 # Create account: 1000000007
-payload = "{\n  \"customerName\": \"tt_goat\",\n  \"currency\": \"USD\"\n}"
+payload = "{\n  \"customerLogin\": \"tt_goat\",\n  \"currency\": \"USD\"\n}"
 request("POST", "/accounts", payload)
 
 # Top up account: 1000000001

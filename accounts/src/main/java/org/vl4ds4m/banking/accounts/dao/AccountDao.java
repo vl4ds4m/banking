@@ -33,19 +33,19 @@ public class AccountDao {
     public Customer getOwner(long accountNumber) {
         var re = getReByNumber(accountNumber).getCustomer();
         return new Customer(
-                re.getNickname(),
+                re.getLogin(),
                 re.getForename(),
                 re.getSurname(),
                 re.getBirthdate());
     }
 
-    public long create(String customerName, Currency currency, Money money) {
+    public long create(String customerLogin, Currency currency, Money money) {
         var accountRe = new AccountRe();
         accountRe.setNumber(0L);
         accountRe.setCurrency(currency);
         accountRe.setAmount(money.amount());
 
-        var customerRe = customerRepository.findByNickname(customerName).orElseThrow();
+        var customerRe = customerRepository.findByLogin(customerLogin).orElseThrow();
         accountRe.setCustomer(customerRe);
 
         accountRe = accountRepository.save(accountRe);

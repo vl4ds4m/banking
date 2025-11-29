@@ -15,7 +15,7 @@ import static org.vl4ds4m.banking.accounts.repository.entity.CustomerRe.TABLE_NA
 @Entity
 @Table(name = TABLE_NAME,
     uniqueConstraints = {
-        @UniqueConstraint(columnNames = NICKNAME,
+        @UniqueConstraint(columnNames = LOGIN,
             name = TABLE_NAME + "_natkey")})
 @Getter
 @Setter
@@ -31,9 +31,9 @@ public class CustomerRe {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(name = NICKNAME,
+    @Column(name = LOGIN,
             nullable = false)
-    private String nickname;
+    private String login;
 
     @Column(name = FORENAME,
             nullable = false)
@@ -54,7 +54,7 @@ public class CustomerRe {
 
         static final String ID = "id";
 
-        static final String NICKNAME = "nickname";
+        static final String LOGIN = "login";
 
         static final String FORENAME = "forename";
 

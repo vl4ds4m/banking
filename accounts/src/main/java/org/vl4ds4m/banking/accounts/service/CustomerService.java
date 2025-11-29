@@ -27,9 +27,9 @@ public class CustomerService {
 
     private final ConverterService converterService;
 
-    public Customer getCustomer(String nickname) {
-        checkCustomerExists(nickname);
-        return customerDao.getByNickname(nickname);
+    public Customer getCustomer(String login) {
+        checkCustomerExists(login);
+        return customerDao.getByLogin(login);
     }
 
     public Set<Customer> getCustomers() {
@@ -39,9 +39,9 @@ public class CustomerService {
     // TODO
     // @Observed
     public void createCustomer(Customer newCustomer) {
-        var nickname = newCustomer.nickname();
-        if (customerDao.existsByNickname(nickname)) {
-            throw new DuplicateEntityException(Customer.class, nickname);
+        var login = newCustomer.login();
+        if (customerDao.existsByLogin(login)) {
+            throw new DuplicateEntityException(Customer.class, login);
         }
 
         var errors = customerValidator.validateObject(newCustomer);
@@ -50,20 +50,20 @@ public class CustomerService {
         }
 
         customerDao.create(newCustomer);
-        log.info("{} created", To.string(Customer.class, nickname));
+        log.info("{} created", To.string(Customer.class, login));
     }
 
-    public Set<Account> getCustomerAccounts(String nickname) {
-        checkCustomerExists(nickname);
-        return customerDao.getAccounts(nickname);
+    public Set<Account> getCustomerAccounts(String login) {
+        checkCustomerExists(login);
+        return customerDao.getAccounts(login);
     }
 
     // TODO
     // @Observed
-    public Money getCustomerBalance(String customerName, Currency currency) {
-        checkCustomerExists(customerName);
+    public Money getCustomerBalance(String login, Currency currency) {
+        checkCustomerExists(login);
 
-        return customerDao.getAccounts(customerName).stream()
+        return customerDao.getAccounts(login).stream()
                 .map(a -> converterService.convert(
                         a.currency(),
                         currency,
@@ -71,9 +71,9 @@ public class CustomerService {
                 .reduce(Money.empty(), Money::add);
     }
 
-    private void checkCustomerExists(String nickname) {
-        if (!customerDao.existsByNickname(nickname)) {
-            throw new EntityNotFoundException(Customer.class, nickname);
+    private void checkCustomerExists(String login) {
+        if (!customerDao.existsByLogin(login)) {
+            throw new EntityNotFoundException(Customer.class, login);
         }
     }
 }

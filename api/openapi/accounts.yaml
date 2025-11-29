@@ -5,7 +5,7 @@ info:
   version: 1.0.0
 components:
   schemas:
-    CustomerNickname:
+    CustomerLogin:
       type: string
       example: ipet123
     CustomerForename:
@@ -17,8 +17,8 @@ components:
     Customer:
       type: object
       properties:
-        nickname:
-          $ref: '#/components/schemas/CustomerNickname'
+        login:
+          $ref: '#/components/schemas/CustomerLogin'
         forename:
           $ref: '#/components/schemas/CustomerForename'
         surname:
@@ -28,7 +28,7 @@ components:
           format: date
           example: 1984-04-17
       required:
-        - nickname
+        - login
         - forename
         - surname
         - birthdate
@@ -54,13 +54,13 @@ components:
         - currency
         - amount
   parameters:
-    CustomerNickname:
-      name: nickname
-      description: Customer nickname.
+    CustomerLogin:
+      name: login
+      description: Customer login.
       required: true
       in: path
       schema:
-        $ref: '#/components/schemas/CustomerNickname'
+        $ref: '#/components/schemas/CustomerLogin'
     AccountNumber:
       name: accountNumber
       description: An account number.
@@ -114,14 +114,14 @@ paths:
                   title: CustomerNames
                   type: object
                   properties:
-                    nickname:
-                      $ref: '#/components/schemas/CustomerNickname'
+                    login:
+                      $ref: '#/components/schemas/CustomerLogin'
                     forename:
                       $ref: '#/components/schemas/CustomerForename'
                     surname:
                       $ref: '#/components/schemas/CustomerSurname'
                   required:
-                    - nickname
+                    - login
                     - forename
                     - surname
         '400':
@@ -143,7 +143,7 @@ paths:
           description: Customer created.
         '400':
           $ref: '#/components/responses/ErrorMessage'
-  /customers/{nickname}/info:
+  /customers/{login}/info:
     get:
       tags:
         - customers
@@ -151,7 +151,7 @@ paths:
       summary: Get customer information.
       description: Get information about customer - personal data and accounts.
       parameters:
-        - $ref: '#/components/parameters/CustomerNickname'
+        - $ref: '#/components/parameters/CustomerLogin'
       responses:
         '200':
           description: Customer information.
@@ -172,7 +172,7 @@ paths:
                   - accounts
         '400':
           $ref: '#/components/responses/ErrorMessage'
-  /customers/{nickname}/balance:
+  /customers/{login}/balance:
     get:
       tags:
         - customers
@@ -180,7 +180,7 @@ paths:
       summary: Get customer balance.
       description: Get the customer balance over all accounts in the specified currency.
       parameters:
-        - $ref: '#/components/parameters/CustomerNickname'
+        - $ref: '#/components/parameters/CustomerLogin'
         - name: currency
           description: Currency code for the balance representation.
           required: true
@@ -220,12 +220,12 @@ paths:
               title: CreateAccountRequest
               type: object
               properties:
-                customerName:
-                  $ref: '#/components/schemas/CustomerNickname'
+                customerLogin:
+                  $ref: '#/components/schemas/CustomerLogin'
                 currency:
                   $ref: '#/components/schemas/Currency'
               required:
-                - customerName
+                - customerLogin
                 - currency
       responses:
         '200':
@@ -254,7 +254,7 @@ paths:
           required: true
           in: query
           schema:
-            $ref: '#/components/schemas/CustomerNickname'
+            $ref: '#/components/schemas/CustomerLogin'
         - name: currency
           description: Account currency.
           required: true
@@ -298,7 +298,7 @@ paths:
                 type: object
                 properties:
                   customerLogin:
-                    $ref: '#/components/schemas/CustomerNickname'
+                    $ref: '#/components/schemas/CustomerLogin'
                   currency:
                     $ref: '#/components/schemas/Currency'
                   amount:

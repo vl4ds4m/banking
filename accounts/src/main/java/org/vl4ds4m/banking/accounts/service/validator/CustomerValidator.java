@@ -11,22 +11,22 @@ import java.util.regex.Pattern;
 @Component
 public class CustomerValidator implements Validator {
 
-    private static final int MIN_NICKNAME_LENGTH = 3;
-    private static final int MAX_NICKNAME_LENGTH = 20;
+    private static final int MIN_LOGIN_LENGTH = 3;
+    private static final int MAX_LOGIN_LENGTH = 20;
 
-    private static final Pattern NICKNAME_PATTERN = Pattern.compile("[a-z][a-z0-9_]+[a-z0-9]");
+    private static final Pattern LOGIN_PATTERN = Pattern.compile("[a-z][a-z0-9_]+[a-z0-9]");
 
     private static final int MAX_REAL_NAME_LENGTH = 30;
 
-    public static final String NICKNAME_FIELD = "nickname";
+    public static final String LOGIN_FIELD = "login";
     public static final String FORENAME_FIELD = "forename";
     public static final String SURNAME_FIELD = "surname";
     public static final String BIRTHDATE_FIELD = "birthdate";
 
-    public static final String NICKNAME_LENGTH = "Nickname length must be between %d and %d"
-            .formatted(MIN_NICKNAME_LENGTH, MAX_NICKNAME_LENGTH);
+    public static final String LOGIN_LENGTH = "Login length must be between %d and %d"
+            .formatted(MIN_LOGIN_LENGTH, MAX_LOGIN_LENGTH);
 
-    public static final String NICKNAME_RULE = "Nickname must contains only " +
+    public static final String LOGIN_RULE = "Login must contains only " +
             "lowercase latin letters [a-z], digits and '_'. " +
             "First character must be a letter " +
             "and last character must not be '_'. " +
@@ -52,7 +52,7 @@ public class CustomerValidator implements Validator {
     public void validate(Object target, Errors errors) {
         var customer = (Customer) target;
 
-        validateNickname(customer.nickname(), errors);
+        validateLogin(customer.login(), errors);
 
         validateRealName(FORENAME_FIELD, customer.forename(), errors);
         validateRealName(SURNAME_FIELD, customer.surname(), errors);
@@ -60,13 +60,13 @@ public class CustomerValidator implements Validator {
         validateBirthdate(customer.birthdate(), errors);
     }
 
-    private void validateNickname(String value, Errors errors) {
-        if (value.length() > MAX_NICKNAME_LENGTH || value.length() < 3) {
-            rejectOnInvalidLength(errors, NICKNAME_FIELD, NICKNAME_LENGTH);
+    private void validateLogin(String value, Errors errors) {
+        if (value.length() > MAX_LOGIN_LENGTH || value.length() < 3) {
+            rejectOnInvalidLength(errors, LOGIN_FIELD, LOGIN_LENGTH);
             return;
         }
 
-        boolean match = NICKNAME_PATTERN.matcher(value).matches();
+        boolean match = LOGIN_PATTERN.matcher(value).matches();
 
         if (match) {
             for (int i = 1; i < value.length(); i++) {
@@ -78,7 +78,7 @@ public class CustomerValidator implements Validator {
         }
 
         if (!match) {
-            rejectOnInvalidContent(errors, NICKNAME_FIELD, NICKNAME_RULE);
+            rejectOnInvalidContent(errors, LOGIN_FIELD, LOGIN_RULE);
         }
     }
 

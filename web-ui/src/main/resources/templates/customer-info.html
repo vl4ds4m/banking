@@ -14,7 +14,7 @@
       <div class="content-block">
         <h2>Информация о клиенте</h2>
         <div class="personal-data">
-          <p>Логин: <span th:text="${customer.nickname}">some_user_123</span></p>
+          <p>Логин: <span th:text="${customer.login}">some_user_123</span></p>
           <p>Имя: <span th:text="${customer.forename}">Foo</span></p>
           <p>Фамилия: <span th:text="${customer.surname}">Bar</span></p>
           <p>Дата рождения: <span th:text="${{customer.birthdate}}">1979-05-18</span></p>
@@ -46,7 +46,7 @@
       <form class="content-block" action="" method="post" th:action="@{/accounts/new}">
         <h2>Новый счет</h2>
         <div th:replace="~{fragments :: problem-frag}"></div>
-        <input id="input-login" name="login" type="hidden" th:value="${customer.nickname}" />
+        <input id="input-login" name="login" type="hidden" th:value="${customer.login}" />
         <div>
           <label for="input-currency">Валюта</label>
           <select id="input-currency" name="currency">

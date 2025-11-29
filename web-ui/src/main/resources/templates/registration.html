@@ -17,7 +17,7 @@
     <form class="list" action="" method="post" th:action="@{/customers/new}" th:object="${customer}">
       <div>
         <label for="input-login">Логин:</label>
-        <input id="input-login" type="text" required name="login" th:field="*{nickname}" />
+        <input id="input-login" type="text" required th:field="*{login}" />
       </div>
       <div>
         <label for="input-forename">Имя:</label>

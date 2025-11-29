@@ -24,7 +24,7 @@ public class CustomerController implements CustomersApi {
         var response = customerService.getCustomers()
                 .stream()
                 .map(c -> new CustomerNames(
-                        c.nickname(),
+                        c.login(),
                         c.forename(),
                         c.surname()))
                 .toList();
@@ -34,7 +34,7 @@ public class CustomerController implements CustomersApi {
     @Override
     public ResponseEntity<Void> createCustomer(Customer customer) {
         var newCustomer = new org.vl4ds4m.banking.accounts.entity.Customer(
-                customer.getNickname(),
+                customer.getLogin(),
                 customer.getForename(),
                 customer.getSurname(),
                 customer.getBirthdate());
@@ -43,15 +43,15 @@ public class CustomerController implements CustomersApi {
     }
 
     @Override
-    public ResponseEntity<CustomerInfo> getCustomerInfo(String nickname) {
-        var customer = Optional.of(customerService.getCustomer(nickname))
+    public ResponseEntity<CustomerInfo> getCustomerInfo(String login) {
+        var customer = Optional.of(customerService.getCustomer(login))
                 .map(c -> new Customer(
-                        c.nickname(),
+                        c.login(),
                         c.forename(),
                         c.surname(),
                         c.birthdate()))
                 .get();
-        var accounts = customerService.getCustomerAccounts(nickname)
+        var accounts = customerService.getCustomerAccounts(login)
                 .stream()
                 .map(a -> new Account(
                         a.number(),
@@ -64,12 +64,12 @@ public class CustomerController implements CustomersApi {
 
     @RateLimiting(
         name = "customer-balance",
-        cacheKey = "#customerName",
+        cacheKey = "#customerLogin",
         ratePerMethod = true)
     @Override
-    public ResponseEntity<BalanceResponse> getCustomerBalance(String customerName, Currency currency) {
+    public ResponseEntity<BalanceResponse> getCustomerBalance(String customerLogin, Currency currency) {
         var money = customerService.getCustomerBalance(
-                customerName,
+                customerLogin,
                 To.currency(currency));
         var response = new BalanceResponse(currency, money.amount());
         return ResponseEntity.ok(response);

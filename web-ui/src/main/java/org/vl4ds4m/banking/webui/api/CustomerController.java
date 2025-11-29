@@ -27,7 +27,7 @@ public class CustomerController {
 
     @ModelAttribute
     public Customer customer(Customer customer, String login) {
-        customer.setNickname(login);
+        customer.setLogin(login);
         return customer;
     }
 
@@ -66,7 +66,7 @@ public class CustomerController {
             return "registration";
         }
 
-        redirectAttrs.addAttribute("login", customer.getNickname());
+        redirectAttrs.addAttribute("login", customer.getLogin());
         return "redirect:/customers/{login}/info";
     }
 

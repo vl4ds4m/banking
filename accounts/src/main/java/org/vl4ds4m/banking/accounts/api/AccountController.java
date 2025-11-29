@@ -21,7 +21,7 @@ public class AccountController implements AccountsApi {
     @Override
     public ResponseEntity<CreateAccountResponse> createAccount(CreateAccountRequest createAccountRequest) {
         long accountNumber = accountService.createAccount(
-                createAccountRequest.getCustomerName(),
+                createAccountRequest.getCustomerLogin(),
                 To.currency(createAccountRequest.getCurrency()));
 
         var response = new CreateAccountResponse(accountNumber);

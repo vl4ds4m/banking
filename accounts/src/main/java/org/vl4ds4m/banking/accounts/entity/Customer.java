@@ -4,11 +4,12 @@ import java.time.LocalDate;
 
 public record Customer(
 
-        String nickname,
+    String login,
 
-        String forename,
+    String forename,
 
-        String surname,
+    String surname,
 
-        LocalDate birthdate
+    LocalDate birthdate
+
 ) {}

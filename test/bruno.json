@@ -69,6 +69,51 @@
     },
     {
       "type": "http",
+      "name": "Accounts get by customer",
+      "filename": "Accounts get by customer.bru",
+      "seq": 8,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "examples": [],
+      "request": {
+        "url": "http://localhost:8081/accounts?login=ivanovp&currency=RUB",
+        "method": "GET",
+        "headers": [],
+        "params": [
+          {
+            "name": "login",
+            "value": "ivanovp",
+            "type": "query",
+            "enabled": true
+          },
+          {
+            "name": "currency",
+            "value": "RUB",
+            "type": "query",
+            "enabled": true
+          }
+        ],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
       "name": "Accounts top up",
       "filename": "Accounts top up.bru",
       "seq": 9,
@@ -79,9 +124,15 @@
       "tags": [],
       "examples": [],
       "request": {
-        "url": "http://localhost:8082/accounts/1000000008/top-up",
+        "url": "http://localhost:8081/accounts/1000000008/top-up",
         "method": "PUT",
-        "headers": [],
+        "headers": [
+          {
+            "name": "Idempotency-Key",
+            "value": "787cd067-8a8a-4ad8-81f6-125c9fcfb454",
+            "enabled": true
+          }
+        ],
         "params": [],
         "body": {
           "mode": "json",
@@ -114,7 +165,13 @@
       "request": {
         "url": "http://localhost:8081/accounts/1000000008/withdraw0",
         "method": "PUT",
-        "headers": [],
+        "headers": [
+          {
+            "name": "Idempotency-Key",
+            "value": "787cd067-8a8a-4ad8-81f6-125c9fcfb454",
+            "enabled": true
+          }
+        ],
         "params": [],
         "body": {
           "mode": "json",
@@ -279,7 +336,7 @@
         "params": [],
         "body": {
           "mode": "json",
-          "json": "{\n  \"nickname\": \"foo_bar\",\n  \"forename\": \"Foo\",\n  \"surname\": \"Bar\",\n  \"birthdate\": \"2001-02-03\"\n}",
+          "json": "{\n  \"login\": \"foo_bar\",\n  \"forename\": \"Foo\",\n  \"surname\": \"Bar\",\n  \"birthdate\": \"2001-02-03\"\n}",
           "formUrlEncoded": [],
           "multipartForm": [],
           "file": []
@@ -500,56 +557,17 @@
       "request": {
         "url": "http://localhost:8081/transfer0",
         "method": "PUT",
-        "headers": [],
+        "headers": [
+          {
+            "name": "Idempotency-Key",
+            "value": "787cd067-8a8a-4ad8-81f6-125c9fcfb454",
+            "enabled": true
+          }
+        ],
         "params": [],
         "body": {
           "mode": "json",
           "json": "{\n  \"senderAccountNumber\": 1000000001,\n  \"receiverAccountNumber\": 1000000002,\n  \"senderCurrencyAmount\": 2.31\n}",
-          "formUrlEncoded": [],
-          "multipartForm": [],
-          "file": []
-        },
-        "script": {},
-        "vars": {},
-        "assertions": [],
-        "tests": "",
-        "docs": "",
-        "auth": {
-          "mode": "inherit"
-        }
-      }
-    },
-    {
-      "type": "http",
-      "name": "Accounts get by customer",
-      "filename": "Accounts get by customer.bru",
-      "seq": 8,
-      "settings": {
-        "encodeUrl": true,
-        "timeout": 0
-      },
-      "tags": [],
-      "examples": [],
-      "request": {
-        "url": "http://localhost:8081/accounts?login=ivanovp&currency=RUB",
-        "method": "GET",
-        "headers": [],
-        "params": [
-          {
-            "name": "login",
-            "value": "ivanovp",
-            "type": "query",
-            "enabled": true
-          },
-          {
-            "name": "currency",
-            "value": "RUB",
-            "type": "query",
-            "enabled": true
-          }
-        ],
-        "body": {
-          "mode": "none",
           "formUrlEncoded": [],
           "multipartForm": [],
           "file": []
@@ -574,8 +592,8 @@
       "node_modules",
       ".git"
     ],
-    "size": 0.004723548889160156,
-    "filesCount": 15,
+    "size": 0.0051727294921875,
+    "filesCount": 16,
     "presets": {
       "requestType": "http",
       "requestUrl": ""

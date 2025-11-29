@@ -35,13 +35,13 @@ class CustomerValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
-    @DisplayName("Ошибка валидации клиента с недопустимым nickname")
-    @ParameterizedTest(name = "Nickname: {0}")
-    @MethodSource("provideInvalidNicknames")
-    void testCustomerValidationWithInvalidNicknameFailed(String nickname, String expectedMessage) {
+    @DisplayName("Ошибка валидации клиента с недопустимым логином")
+    @ParameterizedTest(name = "Логин: {0}")
+    @MethodSource("provideInvalidLogins")
+    void testCustomerValidationWithInvalidLoginFailed(String login, String expectedMessage) {
         // Arrange
         var customer = new Customer(
-                nickname,
+                login,
                 DEFAULT.forename(),
                 DEFAULT.surname(),
                 DEFAULT.birthdate());
@@ -51,7 +51,7 @@ class CustomerValidatorTest {
         var errors = validator.validateObject(customer);
 
         // Assert
-        assertSingleFieldError(errors, CustomerValidator.NICKNAME_FIELD, nickname, expectedMessage);
+        assertSingleFieldError(errors, CustomerValidator.LOGIN_FIELD, login, expectedMessage);
     }
 
     @DisplayName("Ошибка валидации клиента с недопустимым именем")
@@ -60,7 +60,7 @@ class CustomerValidatorTest {
     void testCustomerValidationWithInvalidForenameFailed(String forename, String expectedMessage) {
         // Arrange
         var customer = new Customer(
-                DEFAULT.nickname(),
+                DEFAULT.login(),
                 forename,
                 DEFAULT.surname(),
                 DEFAULT.birthdate());
@@ -79,7 +79,7 @@ class CustomerValidatorTest {
     void testCustomerValidationWithInvalidSurnameFailed(String surname, String expectedMessage) {
         // Arrange
         var customer = new Customer(
-                DEFAULT.nickname(),
+                DEFAULT.login(),
                 DEFAULT.forename(),
                 surname,
                 DEFAULT.birthdate());
@@ -98,7 +98,7 @@ class CustomerValidatorTest {
         // Arrange
         var wrongName = "name with MANY_mistakes";
         var customer = new Customer(
-                DEFAULT.nickname(),
+                DEFAULT.login(),
                 wrongName,
                 DEFAULT.surname(),
                 DEFAULT.birthdate());
@@ -141,19 +141,19 @@ class CustomerValidatorTest {
         assertSingleFieldError(errors, CustomerValidator.BIRTHDATE_FIELD, birthDate, CustomerValidator.AGE_RANGE);
     }
 
-    private static Stream<Arguments> provideInvalidNicknames() {
+    private static Stream<Arguments> provideInvalidLogins() {
         return Stream.of(
-                arguments("ab", CustomerValidator.NICKNAME_LENGTH),
-                arguments("this_nick_name_too_long", CustomerValidator.NICKNAME_LENGTH),
-                arguments("inValid_chars", CustomerValidator.NICKNAME_RULE),
-                arguments("invalid-chars", CustomerValidator.NICKNAME_RULE),
-                arguments("invalid chars ", CustomerValidator.NICKNAME_RULE),
-                arguments("1nvalid", CustomerValidator.NICKNAME_RULE),
-                arguments("_invalid", CustomerValidator.NICKNAME_RULE),
-                arguments("invalid_", CustomerValidator.NICKNAME_RULE),
-                arguments("in__valid", CustomerValidator.NICKNAME_RULE),
-                arguments("inv\uD801\uDCDFlid", CustomerValidator.NICKNAME_RULE),
-                arguments("in-valid chars", CustomerValidator.NICKNAME_RULE));
+                arguments("ab", CustomerValidator.LOGIN_LENGTH),
+                arguments("this_nick_name_too_long", CustomerValidator.LOGIN_LENGTH),
+                arguments("inValid_chars", CustomerValidator.LOGIN_RULE),
+                arguments("invalid-chars", CustomerValidator.LOGIN_RULE),
+                arguments("invalid chars ", CustomerValidator.LOGIN_RULE),
+                arguments("1nvalid", CustomerValidator.LOGIN_RULE),
+                arguments("_invalid", CustomerValidator.LOGIN_RULE),
+                arguments("invalid_", CustomerValidator.LOGIN_RULE),
+                arguments("in__valid", CustomerValidator.LOGIN_RULE),
+                arguments("inv\uD801\uDCDFlid", CustomerValidator.LOGIN_RULE),
+                arguments("in-valid chars", CustomerValidator.LOGIN_RULE));
     }
 
     private static Stream<Arguments> provideInvalidRealNames() {

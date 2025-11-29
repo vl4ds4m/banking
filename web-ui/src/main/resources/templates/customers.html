@@ -16,8 +16,8 @@
           <div th:each="customer : ${customers}">
             <a class="no-link-style"
                href="./customer-info.html"
-               th:href="@{/customers/{login}/info(login=${customer.nickname})}"
-               th:text="${customer.forename} + ' ' + ${customer.surname} + ' | ' + ${customer.nickname}">
+               th:href="@{/customers/{login}/info(login=${customer.login})}"
+               th:text="${customer.surname} + ' ' + ${customer.forename} + ' | ' + ${customer.login}">
               Клиент 1 | abc
             </a>
           </div>

@@ -26,14 +26,14 @@ class CustomerServiceTest {
 
     public static final Customer DEFAULT_CUSTOMER = TestEntity.createDefaultCustomer();
 
-    @DisplayName("Получение клиента по nickname")
+    @DisplayName("Получение клиента по логину")
     @Test
-    void testGetCustomerByNickname() {
+    void testGetCustomerByLogin() {
         // Arrange
         var service = createCustomerService();
 
         // Act
-        var customer = service.getCustomer(DEFAULT_CUSTOMER.nickname());
+        var customer = service.getCustomer(DEFAULT_CUSTOMER.login());
 
         // Arrange
         assertEquals(DEFAULT_CUSTOMER, customer);
@@ -43,12 +43,12 @@ class CustomerServiceTest {
     @Test
     void testGetAbsentCustomerFailed() {
         // Arrange
-        var customerNickname = "unregistered_client";
+        var customerLogin = "unregistered_client";
         var service = createCustomerService();
 
         // Act & Assert
-        var e = assertThrows(EntityNotFoundException.class, () -> service.getCustomer(customerNickname));
-        assertTrue(e.getMessage().contains(customerNickname));
+        var e = assertThrows(EntityNotFoundException.class, () -> service.getCustomer(customerLogin));
+        assertTrue(e.getMessage().contains(customerLogin));
     }
 
     @DisplayName("Получение всех клиентов")
@@ -110,12 +110,12 @@ class CustomerServiceTest {
         assertEquals(errors, e.getErrors());
     }
 
-    @DisplayName("Ошибка при создании клиента с уже занятым nickname")
+    @DisplayName("Ошибка при создании клиента с уже занятым логином")
     @Test
-    void testCreateCustomerWithExistedNicknameFailed() {
+    void testCreateCustomerWithExistedLoginFailed() {
         // Arrange
         var customer = new Customer(
-                DEFAULT_CUSTOMER.nickname(),
+                DEFAULT_CUSTOMER.login(),
                 "Yet",
                 "Another",
                 DEFAULT_CUSTOMER.birthdate());
@@ -123,7 +123,7 @@ class CustomerServiceTest {
 
         // Act & Assert
         var e = assertThrows(DuplicateEntityException.class, () -> service.createCustomer(customer));
-        assertTrue(e.getMessage().contains(DEFAULT_CUSTOMER.nickname()));
+        assertTrue(e.getMessage().contains(DEFAULT_CUSTOMER.login()));
     }
 
     @DisplayName("Получение счетов клиента")
@@ -134,12 +134,12 @@ class CustomerServiceTest {
         var accounts = Set.of(
                 new Account(94L, Currency.RUB, Money.of(new BigDecimal("19.05"))),
                 new Account(346L, Currency.EUR, Money.of(new BigDecimal("6.72"))));
-        when(customerDao.getAccounts(DEFAULT_CUSTOMER.nickname())).thenReturn(accounts);
+        when(customerDao.getAccounts(DEFAULT_CUSTOMER.login())).thenReturn(accounts);
 
         var service = new CustomerService(customerDao, mock(), mock());
 
         // Act
-        var actual = service.getCustomerAccounts(DEFAULT_CUSTOMER.nickname());
+        var actual = service.getCustomerAccounts(DEFAULT_CUSTOMER.login());
 
         // Assert
         assertEquals(accounts, actual);
@@ -155,7 +155,7 @@ class CustomerServiceTest {
         var accounts = Set.of(
                 new Account(101L, Currency.RUB, money1),
                 new Account(202L, Currency.EUR, money2));
-        when(customerDao.getAccounts(DEFAULT_CUSTOMER.nickname())).thenReturn(accounts);
+        when(customerDao.getAccounts(DEFAULT_CUSTOMER.login())).thenReturn(accounts);
 
         var totalCurrency = Currency.USD;
         var converterService = mock(ConverterService.class);
@@ -169,7 +169,7 @@ class CustomerServiceTest {
         var service = new CustomerService(customerDao, mock(), converterService);
 
         // Act
-        var balance = service.getCustomerBalance(DEFAULT_CUSTOMER.nickname(), totalCurrency);
+        var balance = service.getCustomerBalance(DEFAULT_CUSTOMER.login(), totalCurrency);
 
         // Assert
         assertEquals(convertedMoney1.add(convertedMoney2), balance);
@@ -181,9 +181,9 @@ class CustomerServiceTest {
 
     private static CustomerDao mockCustomerDao() {
         var dao = mock(CustomerDao.class);
-        when(dao.existsByNickname(anyString())).thenReturn(false);
-        when(dao.existsByNickname(DEFAULT_CUSTOMER.nickname())).thenReturn(true);
-        when(dao.getByNickname(DEFAULT_CUSTOMER.nickname())).thenReturn(DEFAULT_CUSTOMER);
+        when(dao.existsByLogin(anyString())).thenReturn(false);
+        when(dao.existsByLogin(DEFAULT_CUSTOMER.login())).thenReturn(true);
+        when(dao.getByLogin(DEFAULT_CUSTOMER.login())).thenReturn(DEFAULT_CUSTOMER);
         return dao;
     }
 }

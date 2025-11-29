@@ -39,7 +39,7 @@ public class AccountController {
         }
 
         CreateAccountRequest request = new CreateAccountRequest();
-        request.setCustomerName(login);
+        request.setCustomerLogin(login);
         request.setCurrency(Currency.fromValue(currency));
         accountService.createAccount(request);
 
