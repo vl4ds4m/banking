@@ -5,7 +5,6 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.vl4ds4m.banking.accounts.deprecation.admin.dto.Action;
 
 import java.math.BigDecimal;
@@ -18,7 +17,7 @@ public class AdminService {
     private static final Logger logger = LoggerFactory.getLogger(AdminService.class);
 
     private final ConfigRepository configRepository;
-    private final KafkaTemplate<String, Action> kafkaTemplate;
+    //private final KafkaTemplate<String, Action> kafkaTemplate;
     private final String updCfgTopic;
 
     private BigDecimal fee;
@@ -29,7 +28,7 @@ public class AdminService {
         @Value(PROP_TOPIC_UPD_CFG) String topic
     ) {
         this.configRepository = configRepository;
-        this.kafkaTemplate = null; // kafkaTemplate;
+        //this.kafkaTemplate =  kafkaTemplate;
         this.updCfgTopic = topic;
         loadFee();
         loadParam(ConfigParam.Key.DUMMY);
@@ -90,7 +89,7 @@ public class AdminService {
     private void sendAction(Action.Type type) {
         Action action = new Action(type);
         logger.debug("Send {} to queue", action);
-        kafkaTemplate.send(updCfgTopic, action);
+        //kafkaTemplate.send(updCfgTopic, action);
     }
 
     // @KafkaListener(id = "config_updater", topics = PROP_TOPIC_UPD_CFG)
