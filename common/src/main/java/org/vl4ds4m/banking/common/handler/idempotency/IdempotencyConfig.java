@@ -2,6 +2,7 @@ package org.vl4ds4m.banking.common.handler.idempotency;
 
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 import org.springframework.context.EnvironmentAware;
@@ -15,6 +16,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.vl4ds4m.banking.common.Common;
 
 @Configuration
+@ConditionalOnBooleanProperty(name = "enabled", prefix = IdempotencyProperties.PREFIX)
 @EnableConfigurationProperties(IdempotencyProperties.class)
 @RequiredArgsConstructor
 public class IdempotencyConfig implements EnvironmentAware {

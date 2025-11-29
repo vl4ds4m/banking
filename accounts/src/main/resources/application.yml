@@ -61,7 +61,9 @@ grpc:
       keep-alive-without-calls: true
       negotiation-type: PLAINTEXT
 
-idempotency.ttl: 30s
+idempotency:
+  enabled: true
+  ttl: 30s
 
 services:
   kafka:

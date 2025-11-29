@@ -2,7 +2,7 @@ package org.vl4ds4m.banking.accounts.client.rest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,9 +12,9 @@ import org.vl4ds4m.banking.common.properties.ConverterClientProperties;
 import org.vl4ds4m.banking.converter.openapi.client.invoke.ApiClient;
 
 @Configuration
-@ConditionalOnProperty(
+@ConditionalOnBooleanProperty(
         name = ConverterClientProperties.GRPC_PROP,
-        havingValue = "false")
+        havingValue = false)
 @EnableConfigurationProperties(ConverterClientProperties.class)
 @Slf4j
 @RequiredArgsConstructor
