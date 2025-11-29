@@ -6,11 +6,11 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.vl4ds4m.banking.common.Common;
 
-@SpringBootApplication(scanBasePackageClasses = {Main.class, Common.class})
+@SpringBootApplication(scanBasePackageClasses = {App.class, Common.class})
 @EnableCaching
 @EnableAspectJAutoProxy
-public class Main {
+public class App {
     public static void main(String[] args) {
-        SpringApplication.run(Main.class, args);
+        SpringApplication.run(App.class, args);
     }
 }

@@ -68,6 +68,15 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/AccountNumber'
+    IdempotencyKey:
+      name: Idempotency-Key
+      description: UUID of mutable operation.
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: f81d4fae-7dec-11d0-a765-00a0c91e6bf6
   responses:
     ErrorMessage:
       $ref: './common.yaml#/components/responses/ErrorMessage'
@@ -309,6 +318,7 @@ paths:
       description: Top up the account by the passed amount.
       parameters:
         - $ref: '#/components/parameters/AccountNumber'
+        - $ref: '#/components/parameters/IdempotencyKey'
       requestBody:
         required: true
         content:
@@ -335,6 +345,7 @@ paths:
       description: Withdraw money from the account.
       parameters:
         - $ref: '#/components/parameters/AccountNumber'
+        - $ref: '#/components/parameters/IdempotencyKey'
       requestBody:
         required: true
         content:
@@ -359,6 +370,8 @@ paths:
       operationId: transfer
       summary: Transfer money.
       description: Transfer money from the account to the another account.
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
       requestBody:
         required: true
         content:

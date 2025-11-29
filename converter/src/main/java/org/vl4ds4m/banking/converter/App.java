@@ -4,11 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.vl4ds4m.banking.common.Common;
 
-@SpringBootApplication(
-        scanBasePackageClasses = {Main.class, Common.class})
-public class Main {
-
+@SpringBootApplication(scanBasePackageClasses = {App.class, Common.class})
+public class App {
     public static void main(String[] args) {
-        SpringApplication.run(Main.class, args);
+        SpringApplication.run(App.class, args);
     }
 }

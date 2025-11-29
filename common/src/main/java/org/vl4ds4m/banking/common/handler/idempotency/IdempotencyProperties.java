@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.accounts.deprecation.idempotency;
+package org.vl4ds4m.banking.common.handler.idempotency;
 
 import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -6,10 +6,10 @@ import org.springframework.validation.annotation.Validated;
 
 import java.time.Duration;
 
-@ConfigurationProperties("idempotency")
+@ConfigurationProperties(IdempotencyProperties.PREFIX)
 @Validated
 public record IdempotencyProperties(
-    @NotNull String[] paths,
     @NotNull Duration ttl
 ) {
+    static final String PREFIX = "idempotency";
 }

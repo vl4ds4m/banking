@@ -6,8 +6,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.vl4ds4m.banking.accounts.openapi.server.api.AccountsApi;
 import org.vl4ds4m.banking.accounts.openapi.server.model.*;
 import org.vl4ds4m.banking.accounts.service.AccountService;
+import org.vl4ds4m.banking.common.handler.idempotency.Idempotent;
 import org.vl4ds4m.banking.common.openapi.model.Currency;
 import org.vl4ds4m.banking.common.util.To;
+
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,9 +47,11 @@ public class AccountController implements AccountsApi {
         return ResponseEntity.ok(response);
     }
 
+    @Idempotent
     @Override
     public ResponseEntity<AccountOperationResponse> topUpAccount(
             Long accountNumber,
+            UUID idempotencyKey,
             TopUpAccountRequest topUpAccountRequest
     ) {
         var account = accountService.topUpAccount(
@@ -61,9 +66,11 @@ public class AccountController implements AccountsApi {
         return ResponseEntity.ok(response);
     }
 
+    @Idempotent
     @Override
     public ResponseEntity<AccountOperationResponse> withdrawAccount(
             Long accountNumber,
+            UUID idempotencyKey,
             WithdrawAccountRequest withdrawAccountRequest
     ) {
         var account = accountService.withdrawMoneyToAccount(
@@ -77,11 +84,4 @@ public class AccountController implements AccountsApi {
                 account.money().amount());
         return ResponseEntity.ok(response);
     }
-
-    // TODO
-    // @GetMapping("/{accountNumber}/transactions")
-    // public List<TransactionResponse> getTransactions(@PathVariable int accountNumber) {
-    //     logger.debug("Accept GET {}/{}/transactions", PATH, accountNumber);
-    //     return accountService.getTransactions(accountNumber);
-    // }
 }

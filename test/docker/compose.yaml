@@ -7,10 +7,10 @@ services:
     ports:
       - 5432:5432
     env_file: ./env/postgres.env
-#  redis:
-#    image: redis:8
-#    ports:
-#      - 6379:6379
+  redis:
+    image: redis:8
+    ports:
+      - 6379:6379
 #  keycloak:
 #    image: quay.io/keycloak/keycloak:23.0.6
 #    command: ["start-dev", "--import-realm"]
@@ -44,7 +44,7 @@ services:
     depends_on:
       - converter
       - postgres
-#      - redis
+      - redis
     build:
       args:
         - JAR_FILE=./build/accounts.jar

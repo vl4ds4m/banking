@@ -33,7 +33,7 @@ public class TransferService {
         request.setReceiverAccountNumber(receiver.getNumber());
         request.setSenderCurrencyAmount(amount);
 
-        transferApi.transfer(request);
+        transferApi.transfer(UuidGenerator.random(), request);
     }
 
     public void transfer(
@@ -49,6 +49,6 @@ public class TransferService {
         request.setReceiverAccountNumber(receiver.getNumber());
         request.setSenderCurrencyAmount(amount);
 
-        transferApi.transfer(request);
+        transferApi.transfer(UuidGenerator.random(), request);
     }
 }

@@ -2,6 +2,7 @@ package org.vl4ds4m.banking.common.handler.exception;
 
 import com.giffing.bucket4j.spring.boot.starter.context.RateLimitException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.lettuce.core.RedisException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -63,6 +64,14 @@ public class ControllerExceptionHandler {
     public ErrorMessageResponse handleServiceErrorByCircuitBreaker(CallNotPermittedException e) {
         exceptionLogger.logServiceError(e.getCausingCircuitBreakerName(), e);
         return buildResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public ErrorMessageResponse handleRedisError(RedisException e) {
+        var se = new ServiceException("redis", e);
+        exceptionLogger.logServiceError(se);
+        return buildResponse(se.getMessage());
     }
 
     private static ErrorMessageResponse buildResponse(String message) {

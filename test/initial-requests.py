@@ -51,28 +51,37 @@ request("POST", "/accounts", payload)
 
 # Top up account: 1000000001
 payload = "{\n  \"augend\": 4567.89\n}"
+headers['Idempotency-Key'] = '787cd067-8a8a-4ad8-81f6-225c9fcfb454'
 request("PUT", "/accounts/1000000001/top-up", payload)
 
 # Top up account: 1000000002
 payload = "{\n  \"augend\": 150.00\n}"
+headers['Idempotency-Key'] = '787cd067-8a8a-4ad8-81f6-325c9fcfb454'
 request("PUT", "/accounts/1000000002/top-up", payload)
 
 # Top up account: 1000000003
 payload = "{\n  \"augend\": 234.56\n}"
+headers['Idempotency-Key'] = '787cd067-8a8a-4ad8-81f6-425c9fcfb454'
 request("PUT", "/accounts/1000000003/top-up", payload)
 
 # Top up account: 1000000004
 payload = "{\n  \"augend\": 136.00\n}"
+headers['Idempotency-Key'] = '787cd067-8a8a-4ad8-81f6-525c9fcfb454'
 request("PUT", "/accounts/1000000004/top-up", payload)
 
 # Top up account: 1000000005
 payload = "{\n  \"augend\": 94.00\n}"
+headers['Idempotency-Key'] = '787cd067-8a8a-4ad8-81f6-625c9fcfb454'
 request("PUT", "/accounts/1000000005/top-up", payload)
 
 # Top up account: 1000000006
 payload = "{\n  \"augend\": 789.01\n}"
+headers['Idempotency-Key'] = '787cd067-8a8a-4ad8-81f6-725c9fcfb454'
 request("PUT", "/accounts/1000000006/top-up", payload)
 
 # Top up account: 1000000007
 payload = "{\n  \"augend\": 127.00\n}"
+headers['Idempotency-Key'] = '787cd067-8a8a-4ad8-81f6-825c9fcfb454'
 request("PUT", "/accounts/1000000007/top-up", payload)
+
+del headers['Idempotency-Key']

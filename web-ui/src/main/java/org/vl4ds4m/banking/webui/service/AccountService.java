@@ -27,12 +27,12 @@ public class AccountService {
     public void topUpAccount(Long number, BigDecimal augend) {
         var request = new TopUpAccountRequest();
         request.setAugend(augend);
-        accountsApi.topUpAccount(number, request);
+        accountsApi.topUpAccount(number, UuidGenerator.random(), request);
     }
 
     public void withdrawAccount(Long number, BigDecimal subtrahend) {
         var request = new WithdrawAccountRequest();
         request.setSubtrahend(subtrahend);
-        accountsApi.withdrawAccount(number, request);
+        accountsApi.withdrawAccount(number, UuidGenerator.random(), request);
     }
 }

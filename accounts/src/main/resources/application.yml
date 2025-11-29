@@ -22,6 +22,9 @@ spring:
   data.redis:
     host: ${REDIS_HOST}
     port: ${REDIS_PORT}
+    connect-timeout: 1s
+    timeout: 1s
+    repositories.enabled: false
 
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
@@ -50,16 +53,6 @@ bucket4j:
             unit: seconds
             refill-speed: greedy
 
-services:
-  kafka:
-    topic.update-config: ${KAFKA_TOPIC_UPD_CFG}
-
-idempotency:
-  ttl: 30s
-  paths:
-    - /transfers
-    - /accounts/*
-
 grpc:
   client:
     converter:
@@ -67,3 +60,9 @@ grpc:
       enable-keep-alive: true
       keep-alive-without-calls: true
       negotiation-type: PLAINTEXT
+
+idempotency.ttl: 30s
+
+services:
+  kafka:
+    topic.update-config: ${KAFKA_TOPIC_UPD_CFG}

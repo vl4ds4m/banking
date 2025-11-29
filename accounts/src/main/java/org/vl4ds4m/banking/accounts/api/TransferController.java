@@ -7,16 +7,20 @@ import org.vl4ds4m.banking.accounts.openapi.server.api.TransferApi;
 import org.vl4ds4m.banking.accounts.openapi.server.model.TransferRequest;
 import org.vl4ds4m.banking.accounts.openapi.server.model.TransferResponse;
 import org.vl4ds4m.banking.accounts.service.TransferService;
+import org.vl4ds4m.banking.common.handler.idempotency.Idempotent;
 import org.vl4ds4m.banking.common.util.To;
 
+import java.util.UUID;
+
 @RestController
+@Idempotent
 @RequiredArgsConstructor
 public class TransferController implements TransferApi {
 
     private final TransferService service;
 
     @Override
-    public ResponseEntity<TransferResponse> transfer(TransferRequest transferRequest) {
+    public ResponseEntity<TransferResponse> transfer(UUID idempotencyKey, TransferRequest transferRequest) {
         var result = service.transferMoney(
                 transferRequest.getSenderAccountNumber(),
                 transferRequest.getReceiverAccountNumber(),
