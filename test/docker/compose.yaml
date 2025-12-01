@@ -54,6 +54,16 @@ services:
       - source: accounts-config
         target: /application.yaml
     env_file: ./env/accounts.env
+  webui:
+    build:
+      args:
+        - JAR_FILE=./build/web-ui.jar
+    ports:
+      - 8080:8080
+    configs:
+      - source: webui-config
+        target: /application.yaml
+    env_file: ./env/web-ui.env
 #  test-box:
 #    depends_on:
 #      - converter
@@ -71,3 +81,5 @@ configs:
     file: ./config/converter.yaml
   accounts-config:
     file: ./config/accounts.yaml
+  webui-config:
+    file: ./config/web-ui.yaml
