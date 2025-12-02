@@ -53,6 +53,18 @@ components:
         - number
         - currency
         - amount
+    Setting:
+      type: object
+      properties:
+        key:
+          type: string
+          example: FEE
+        value:
+          type: string
+          example: 10
+      required:
+        - key
+        - value
   parameters:
     CustomerLogin:
       name: login
@@ -406,5 +418,40 @@ paths:
                 required:
                   - totalSenderAmount
                   - totalReceiverAmount
+        '400':
+          $ref: '#/components/responses/ErrorMessage'
+  /settings:
+    get:
+      tags:
+        - settings
+      operationId: getSettings
+      summary: Get settings.
+      description: Get list of accounts service settings.
+      responses:
+        '200':
+          description: List of settings.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Setting'
+        '400':
+          $ref: '#/components/responses/ErrorMessage'
+    put:
+      tags:
+        - settings
+      operationId: updateSetting
+      summary: Update setting.
+      description: Update accounts service setting passed in request body.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Setting'
+      responses:
+        '200':
+          description: Setting updated.
         '400':
           $ref: '#/components/responses/ErrorMessage'
