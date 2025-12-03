@@ -20,4 +20,5 @@ public record ProgressiveRetryProperties(
 
     @DefaultValue("50ms")
     Duration addition
+
 ) {}

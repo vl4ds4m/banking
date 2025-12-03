@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.retry.RetryCallback;
+import org.springframework.core.retry.RetryException;
 import org.springframework.web.client.RestTemplate;
 import org.vl4ds4m.banking.common.exception.ServiceException;
 import org.vl4ds4m.banking.common.handler.retry.RetryTemplateFactory;
@@ -32,9 +32,18 @@ public class RatesClientConfig {
         return new RatesDecorator(impl) {
             @Override
             protected <T> Supplier<T> decorateGetRates(Supplier<T> fn) {
-                RetryCallback<T, ServiceException> callback = ctx -> fn.get();
-                return () -> retryTemplate.execute(callback);
+                return () -> {
+                    try {
+                        return retryTemplate.execute(fn::get);
+                    } catch (RetryException e) {
+                        if (e.getCause() instanceof ServiceException c) {
+                            throw c;
+                        }
+                        throw new RuntimeException(e);
+                    }
+                };
             }
         };
     }
+
 }

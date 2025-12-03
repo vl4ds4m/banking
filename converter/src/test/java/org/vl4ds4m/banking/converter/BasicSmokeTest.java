@@ -8,6 +8,6 @@ import org.springframework.test.annotation.DirtiesContext;
 class BasicSmokeTest {
 
     //@org.junit.jupiter.api.Test
-    void contextLoads() {
-    }
+    void contextLoads() {}
+
 }

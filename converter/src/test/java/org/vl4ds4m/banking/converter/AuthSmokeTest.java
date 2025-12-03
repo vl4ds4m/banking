@@ -11,6 +11,6 @@ import org.vl4ds4m.banking.common.auth.Auth;
 class AuthSmokeTest {
 
     //@org.junit.jupiter.api.Test
-    void contextLoads() {
-    }
+    void contextLoads() {}
+
 }

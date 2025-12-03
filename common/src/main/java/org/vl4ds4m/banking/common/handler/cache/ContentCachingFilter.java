@@ -23,7 +23,7 @@ public class ContentCachingFilter extends OncePerRequestFilter {
     ) throws IOException, ServletException {
         var requestWrapper = request instanceof ContentCachingRequestWrapper wrapper
                 ? wrapper
-                : new ContentCachingRequestWrapper(request);
+                : new ContentCachingRequestWrapper(request, 0);
         var responseWrapper = response instanceof ContentCachingResponseWrapper wrapper
                 ? wrapper
                 : new ContentCachingResponseWrapper(response);

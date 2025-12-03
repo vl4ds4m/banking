@@ -5,5 +5,3 @@ spring:
 client.accounts:
   host: ${ACCOUNTS_HOST}
   port: ${ACCOUNTS_PORT}
-
-bucket4j.enabled: false
