@@ -7,10 +7,21 @@ services:
     ports:
       - 5432:5432
     env_file: ./env/postgres.env
+  mongo:
+    image: mongo:8.0.12
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - 27017:27017
   redis:
     image: redis:8
     ports:
       - 6379:6379
+  kafka:
+    image: apache/kafka:4.1.1
+    ports:
+      - 9094:9094
+    env_file: ./env/kafka.env
 #  keycloak:
 #    image: quay.io/keycloak/keycloak:23.0.6
 #    command: ["start-dev", "--import-realm"]
@@ -45,25 +56,30 @@ services:
       - converter
       - postgres
       - redis
+      - kafka
     build:
       args:
         - JAR_FILE=./build/accounts.jar
     ports:
       - 8081:8080
-    configs:
-      - source: accounts-config
-        target: /application.yaml
     env_file: ./env/accounts.env
   webui:
     build:
       args:
         - JAR_FILE=./build/web-ui.jar
     ports:
-      - 8080:8080
-    configs:
-      - source: webui-config
-        target: /application.yaml
+      - 8085:8080
     env_file: ./env/web-ui.env
+  transactions:
+    depends_on:
+      - mongo
+      - kafka
+    build:
+      args:
+        - JAR_FILE=./build/transactions.jar
+    ports:
+      - 8086:8080
+    env_file: ./env/transactions.env
 #  test-box:
 #    depends_on:
 #      - converter
@@ -73,13 +89,10 @@ services:
 #    env_file: ./env/test-box.env
 volumes:
   postgres-data: {}
+  mongo-data: {}
 #secrets:
 #  keycloak-realm:
 #    file: ./config/realm.json
 configs:
   converter-config:
     file: ./config/converter.yaml
-  accounts-config:
-    file: ./config/accounts.yaml
-  webui-config:
-    file: ./config/web-ui.yaml

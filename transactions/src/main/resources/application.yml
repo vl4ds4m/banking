@@ -1,0 +1,16 @@
+spring:
+  application.name: transactions
+
+  mongodb:
+    host: ${DB_HOST}
+    port: ${DB_PORT}
+    database: ${DB_NAME}
+    representation.uuid: standard
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    consumer:
+      group-id: tx2mongo
+      value-deserializer: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
+      properties:
+        "[spring.json.trusted.packages]": "org.vl4ds4m.banking.common.entity.kafka"

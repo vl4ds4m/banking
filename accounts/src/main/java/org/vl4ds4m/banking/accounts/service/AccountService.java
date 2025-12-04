@@ -7,13 +7,14 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.vl4ds4m.banking.accounts.dao.AccountDao;
 import org.vl4ds4m.banking.accounts.dao.CustomerDao;
-import org.vl4ds4m.banking.accounts.dao.TransactionDao;
 import org.vl4ds4m.banking.accounts.entity.Account;
 import org.vl4ds4m.banking.accounts.entity.Customer;
 import org.vl4ds4m.banking.accounts.service.expection.DuplicateEntityException;
 import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
+import org.vl4ds4m.banking.accounts.service.transaction.TransactionService;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
+import org.vl4ds4m.banking.common.entity.Transaction;
 import org.vl4ds4m.banking.common.exception.InvalidQueryException;
 import org.vl4ds4m.banking.common.util.To;
 
@@ -26,7 +27,7 @@ public class AccountService {
 
     private final CustomerDao customerDao;
 
-    private final TransactionDao transactionDao;
+    private final TransactionService transactionService;
 
     // TODO
     // @Observed
@@ -88,7 +89,8 @@ public class AccountService {
                 augend,
                 account.currency());
 
-        transactionDao.create(accountNumber, augend, false);
+        var transaction = new Transaction(accountNumber, augend, false);
+        transactionService.sendTransactions(transaction);
 
         return new Account(accountNumber, account.currency(), money);
     }
@@ -116,7 +118,8 @@ public class AccountService {
                 subtrahend,
                 account.currency());
 
-        transactionDao.create(accountNumber, subtrahend, true);
+        var transaction = new Transaction(accountNumber, subtrahend, true);
+        transactionService.sendTransactions(transaction);
 
         return new Account(accountNumber, account.currency(), money);
     }

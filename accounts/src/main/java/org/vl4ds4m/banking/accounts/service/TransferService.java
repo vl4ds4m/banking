@@ -6,11 +6,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.vl4ds4m.banking.accounts.dao.AccountDao;
-import org.vl4ds4m.banking.accounts.dao.TransactionDao;
 import org.vl4ds4m.banking.accounts.entity.Account;
 import org.vl4ds4m.banking.accounts.entity.TransferResult;
 import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
+import org.vl4ds4m.banking.accounts.service.transaction.TransactionService;
 import org.vl4ds4m.banking.common.entity.Money;
+import org.vl4ds4m.banking.common.entity.Transaction;
 import org.vl4ds4m.banking.common.exception.InvalidQueryException;
 import org.vl4ds4m.banking.common.util.To;
 
@@ -21,9 +22,9 @@ public class TransferService {
 
     private final AccountDao accountDao;
 
-    private final TransactionDao transactionDao;
-
     private final ConverterService converterService;
+
+    private final TransactionService transactionService;
 
     // TODO
     // @Observed
@@ -65,8 +66,9 @@ public class TransferService {
                 To.string(Account.class, senderNumber),
                 To.string(Account.class, receiverNumber));
 
-        transactionDao.create(senderNumber, money, true);
-        transactionDao.create(receiverNumber, converted, false);
+        transactionService.sendTransactions(
+                new Transaction(senderNumber, money, true),
+                new Transaction(receiverNumber, converted, false));
 
         return new TransferResult(totalSenderMoney, totalReceiverMoney);
     }

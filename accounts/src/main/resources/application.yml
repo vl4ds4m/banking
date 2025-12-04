@@ -28,12 +28,7 @@ spring:
 
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
-    producer:
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-    consumer:
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        "[spring.json.trusted.packages]": "edu.vl4ds4m.banking.admin.dto"
+    producer.value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
 
 client:
   converter:
@@ -64,7 +59,3 @@ grpc:
 idempotency:
   enabled: true
   ttl: 30s
-
-services:
-  kafka:
-    topic.update-config: ${KAFKA_TOPIC_UPD_CFG}

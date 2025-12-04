@@ -6,14 +6,15 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.vl4ds4m.banking.accounts.dao.AccountDao;
 import org.vl4ds4m.banking.accounts.dao.CustomerDao;
-import org.vl4ds4m.banking.accounts.dao.TransactionDao;
 import org.vl4ds4m.banking.accounts.entity.Account;
 import org.vl4ds4m.banking.accounts.entity.Customer;
 import org.vl4ds4m.banking.accounts.service.expection.DuplicateEntityException;
 import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
+import org.vl4ds4m.banking.accounts.service.transaction.TransactionService;
 import org.vl4ds4m.banking.accounts.util.TestEntity;
 import org.vl4ds4m.banking.common.entity.Currency;
 import org.vl4ds4m.banking.common.entity.Money;
+import org.vl4ds4m.banking.common.entity.Transaction;
 import org.vl4ds4m.banking.common.exception.InvalidQueryException;
 
 import java.math.BigDecimal;
@@ -150,8 +151,8 @@ class AccountServiceTest {
     void testTopUpAccount(Money money) {
         // Arrange
         var accountDao = mockAccountDao();
-        var transactionDao = mock(TransactionDao.class);
-        var service = new AccountService(accountDao, mock(), transactionDao);
+        var transactionService = mock(TransactionService.class);
+        var service = new AccountService(accountDao, mock(), transactionService);
         var number = DEFAULT_ACCOUNT.number();
         var sum = DEFAULT_ACCOUNT.money().add(money);
 
@@ -161,10 +162,10 @@ class AccountServiceTest {
         // Assert
         if (money.isEmpty()) {
             verify(accountDao, never()).updateMoney(anyLong(), any());
-            verify(transactionDao, never()).create(anyLong(), any(), anyBoolean());
+            verify(transactionService, never()).sendTransactions(any());
         } else {
             verify(accountDao).updateMoney(number, sum);
-            verify(transactionDao).create(number, money, false);
+            verify(transactionService).sendTransactions(new Transaction(number, money, false));
         }
         assertEquals(
                 new Account(number, DEFAULT_ACCOUNT.currency(), sum),
@@ -177,8 +178,8 @@ class AccountServiceTest {
     void testWithdrawMoneyToAccount(Money money) {
         // Arrange
         var accountDao = mockAccountDao();
-        var transactionDao = mock(TransactionDao.class);
-        var service = new AccountService(accountDao, mock(), transactionDao);
+        var transactionService = mock(TransactionService.class);
+        var service = new AccountService(accountDao, mock(), transactionService);
         var number = DEFAULT_ACCOUNT.number();
         var sub = DEFAULT_ACCOUNT.money().subtract(money);
 
@@ -188,10 +189,10 @@ class AccountServiceTest {
         // Assert
         if (money.isEmpty()) {
             verify(accountDao, never()).updateMoney(anyLong(), any());
-            verify(transactionDao, never()).create(anyLong(), any(), anyBoolean());
+            verify(transactionService, never()).sendTransactions(any());
         } else {
             verify(accountDao).updateMoney(number, sub);
-            verify(transactionDao).create(number, money, true);
+            verify(transactionService).sendTransactions(new Transaction(number, money, true));
         }
         assertEquals(
                 new Account(number, DEFAULT_ACCOUNT.currency(), sub),
