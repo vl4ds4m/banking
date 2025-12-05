@@ -34,9 +34,15 @@ services:
   rates:
 #    depends_on:
 #      - keycloak
-    image: miraclewisp/hse-rates:amd64
+    build:
+      args:
+        - JAR_FILE=./build/rates.jar
     ports:
       - 8083:8080
+      - 9093:9090
+    configs:
+      - source: rates-source-config
+        target: /rates-info.yaml
     env_file: ./env/rates.env
   converter:
     depends_on:
@@ -47,6 +53,7 @@ services:
         - JAR_FILE=./build/converter.jar
     ports:
       - 8082:8080
+      - 9092:9090
     configs:
       - source: converter-config
         target: /application.yaml
@@ -96,3 +103,5 @@ volumes:
 configs:
   converter-config:
     file: ./config/converter.yaml
+  rates-source-config:
+    file: ./config/rates-src.yaml

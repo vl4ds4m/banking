@@ -19,5 +19,5 @@ message ConvertRequest {
 }
 
 message ConvertResponse {
-  double amount = 2;
+  double amount = 1;
 }

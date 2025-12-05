@@ -1,0 +1,8 @@
+spring:
+  application.name: rates
+
+  http.client:
+    connect-timeout: 3s
+    read-timeout: 2s
+
+rates.filename: "rates-info.yaml"

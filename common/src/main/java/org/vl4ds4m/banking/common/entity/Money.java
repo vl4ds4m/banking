@@ -32,6 +32,11 @@ public final class Money implements Comparable<Money> {
         return new Money(rounded);
     }
 
+    public static Money of(Object amount) {
+        var decimal = new BigDecimal("" + amount);
+        return of(decimal);
+    }
+
     public static boolean isValid(BigDecimal amount) {
         return Money.ZERO.amount().compareTo(amount) <= 0;
     }

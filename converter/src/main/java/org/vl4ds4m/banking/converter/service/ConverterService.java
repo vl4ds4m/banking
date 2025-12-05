@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.vl4ds4m.banking.common.entity.Currency;
+import org.vl4ds4m.banking.common.entity.CurrencyRates;
 import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.common.exception.ServiceException;
 import org.vl4ds4m.banking.converter.client.RatesClient;
-import org.vl4ds4m.banking.converter.entity.CurrencyRates;
 
 @Service
 @Slf4j

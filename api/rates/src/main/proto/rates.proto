@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package banking.rates;
+
+option java_multiple_files = true;
+option java_package = "org.vl4ds4m.banking.rates.grpc";
+option java_outer_classname = "RatesProto";
+
+import "common.proto";
+
+service Rates {
+  rpc GetRates (RatesRequest) returns (RatesResponse);
+}
+
+message RatesRequest {}
+
+message RatesResponse {
+  Currency base = 1;
+  repeated RatesMap rates = 2;
+}
+
+message RatesMap {
+  Currency currency = 1;
+  double rate = 2;
+}

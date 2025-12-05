@@ -20,7 +20,7 @@
   получение баланса аккаунта и счета, пополнение счетов, снятие денег, перевод средств между счетами).
 - Сервис __converter__ выполняет конвертацию валюты по запросам от _accounts_, которые осуществляются по gRPC или REST
   (зависит от настроек клиента).
-- Сервис __rates__ выдает актуальный курс валют для _converter_ по REST API.
+- Сервис __rates__ выдает актуальный курс валют для _converter_ по gRPC.
 - Сервис __keycloak__ авторизует запросы от _converter_ к _rates_.
 - Сервис __transactions__ получает сообщения об операциях со счетами от _Kafka_ и сохраняет информацию в _MongoDB_.
 - __RDBMS__ (Postgresql) хранит данные о клиентах.
@@ -42,7 +42,7 @@ cd "$BANKING_ROOT_DIR"
 mvn clean install
 
 cd "$BANKING_ROOT_DIR/test/docker"
-bash ./build.sh
+bash cp-build.sh
 docker compose up -d
 ```
 
@@ -50,7 +50,7 @@ docker compose up -d
 
 ```
 cd "$BANKING_ROOT_DIR"
-python3 ./test/initial-requests.py
+python3 test/initial-requests.py
 ```
 
 Взаимодействовать с системой можно через браузер, открыв страницу http://localhost:8085/customers.

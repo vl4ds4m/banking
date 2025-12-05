@@ -1,12 +1,12 @@
 {
-  "name": "banking",
+  "name": "Banking REST",
   "version": "1",
   "items": [
     {
       "type": "http",
-      "name": "Accounts balance",
-      "filename": "Accounts balance.bru",
-      "seq": 7,
+      "name": "Accounts - Balance",
+      "filename": "Accounts - Balance.bru",
+      "seq": 6,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
@@ -36,9 +36,9 @@
     },
     {
       "type": "http",
-      "name": "Accounts create",
-      "filename": "Accounts create.bru",
-      "seq": 6,
+      "name": "Accounts - New",
+      "filename": "Accounts - New.bru",
+      "seq": 8,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
@@ -69,9 +69,9 @@
     },
     {
       "type": "http",
-      "name": "Accounts get by customer",
-      "filename": "Accounts get by customer.bru",
-      "seq": 8,
+      "name": "Accounts - Of customer",
+      "filename": "Accounts - Of customer.bru",
+      "seq": 7,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
@@ -114,8 +114,8 @@
     },
     {
       "type": "http",
-      "name": "Accounts top up",
-      "filename": "Accounts top up.bru",
+      "name": "Accounts - Top up",
+      "filename": "Accounts - Top up.bru",
       "seq": 9,
       "settings": {
         "encodeUrl": true,
@@ -153,8 +153,8 @@
     },
     {
       "type": "http",
-      "name": "Accounts withdraw",
-      "filename": "Accounts withdraw.bru",
+      "name": "Accounts - Withdraw",
+      "filename": "Accounts - Withdraw.bru",
       "seq": 10,
       "settings": {
         "encodeUrl": true,
@@ -191,44 +191,9 @@
       }
     },
     {
-      "type": "grpc",
-      "name": "Convert currency GRPC",
-      "filename": "Convert currency GRPC.bru",
-      "seq": 12,
-      "settings": {},
-      "tags": [],
-      "examples": [],
-      "request": {
-        "url": "localhost:9092",
-        "method": "/banking.converter.Converter/Convert",
-        "headers": [],
-        "body": {
-          "mode": "grpc",
-          "formUrlEncoded": [],
-          "multipartForm": [],
-          "file": [],
-          "grpc": [
-            {
-              "name": "message 1",
-              "content": "{\n  \"from\": 2,\n  \"to\": 3,\n  \"amount\": 45.83\n}"
-            }
-          ]
-        },
-        "script": {},
-        "vars": {},
-        "assertions": [],
-        "tests": "",
-        "docs": "",
-        "methodType": "unary",
-        "auth": {
-          "mode": "inherit"
-        }
-      }
-    },
-    {
       "type": "http",
-      "name": "Convert currency",
-      "filename": "Convert currency.bru",
+      "name": "Converter",
+      "filename": "Converter.bru",
       "seq": 12,
       "settings": {
         "encodeUrl": true,
@@ -281,9 +246,9 @@
     },
     {
       "type": "http",
-      "name": "Customers balance",
-      "filename": "Customers balance.bru",
-      "seq": 5,
+      "name": "Customers - Balance",
+      "filename": "Customers - Balance.bru",
+      "seq": 4,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
@@ -320,9 +285,9 @@
     },
     {
       "type": "http",
-      "name": "Customers create",
-      "filename": "Customers create.bru",
-      "seq": 2,
+      "name": "Customers - New",
+      "filename": "Customers - New.bru",
+      "seq": 5,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
@@ -353,8 +318,8 @@
     },
     {
       "type": "http",
-      "name": "Customers info",
-      "filename": "Customers info.bru",
+      "name": "Customers - Info",
+      "filename": "Customers - Info.bru",
       "seq": 3,
       "settings": {
         "encodeUrl": true,
@@ -385,9 +350,9 @@
     },
     {
       "type": "http",
-      "name": "Customers list",
-      "filename": "Customers list.bru",
-      "seq": 4,
+      "name": "Customers - List",
+      "filename": "Customers - List.bru",
+      "seq": 2,
       "settings": {
         "encodeUrl": true,
         "timeout": 0
@@ -417,56 +382,8 @@
     },
     {
       "type": "http",
-      "name": "Keycloak get token",
-      "filename": "Keycloak get token.bru",
-      "seq": 14,
-      "settings": {
-        "encodeUrl": true,
-        "timeout": 0
-      },
-      "tags": [],
-      "examples": [],
-      "request": {
-        "url": "http://localhost:8084/realms/banking/protocol/openid-connect/token",
-        "method": "POST",
-        "headers": [],
-        "params": [],
-        "body": {
-          "mode": "formUrlEncoded",
-          "formUrlEncoded": [
-            {
-              "name": "client_id",
-              "value": "banking_service",
-              "enabled": true
-            },
-            {
-              "name": "client_secret",
-              "value": "zaHH0GJMccZtdY64fa0gPe3nlEflD9vs",
-              "enabled": true
-            },
-            {
-              "name": "grant_type",
-              "value": "client_credentials",
-              "enabled": true
-            }
-          ],
-          "multipartForm": [],
-          "file": []
-        },
-        "script": {},
-        "vars": {},
-        "assertions": [],
-        "tests": "",
-        "docs": "",
-        "auth": {
-          "mode": "inherit"
-        }
-      }
-    },
-    {
-      "type": "http",
-      "name": "Keycloak validate token",
-      "filename": "Keycloak validate token.bru",
+      "name": "Keycloak - Get token",
+      "filename": "Keycloak - Get token.bru",
       "seq": 15,
       "settings": {
         "encodeUrl": true,
@@ -513,8 +430,8 @@
     },
     {
       "type": "http",
-      "name": "Rates actuator",
-      "filename": "Rates actuator.bru",
+      "name": "Keycloak - Validate token",
+      "filename": "Keycloak - Validate token.bru",
       "seq": 16,
       "settings": {
         "encodeUrl": true,
@@ -523,10 +440,109 @@
       "tags": [],
       "examples": [],
       "request": {
-        "url": "http://localhost:8083/actuator",
+        "url": "http://localhost:8084/realms/banking/protocol/openid-connect/token",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "formUrlEncoded",
+          "formUrlEncoded": [
+            {
+              "name": "client_id",
+              "value": "banking_service",
+              "enabled": true
+            },
+            {
+              "name": "client_secret",
+              "value": "zaHH0GJMccZtdY64fa0gPe3nlEflD9vs",
+              "enabled": true
+            },
+            {
+              "name": "grant_type",
+              "value": "client_credentials",
+              "enabled": true
+            }
+          ],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Actuator",
+      "filename": "Actuator.bru",
+      "seq": 14,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "examples": [],
+      "request": {
+        "url": "http://localhost:8080/actuator",
         "method": "GET",
         "headers": [],
         "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Transactions - Reread",
+      "filename": "Transactions - Reread.bru",
+      "seq": 13,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "examples": [],
+      "request": {
+        "url": "http://localhost:8086/reread0?partition=0&offset=9&count=2",
+        "method": "POST",
+        "headers": [],
+        "params": [
+          {
+            "name": "partition",
+            "value": "0",
+            "type": "query",
+            "enabled": true
+          },
+          {
+            "name": "offset",
+            "value": "9",
+            "type": "query",
+            "enabled": true
+          },
+          {
+            "name": "count",
+            "value": "2",
+            "type": "query",
+            "enabled": true
+          }
+        ],
         "body": {
           "mode": "none",
           "formUrlEncoded": [],
@@ -581,70 +597,19 @@
           "mode": "inherit"
         }
       }
-    },
-    {
-      "type": "http",
-      "name": "Transactions reread partition",
-      "filename": "Transactions reread partition.bru",
-      "seq": 16,
-      "settings": {
-        "encodeUrl": true,
-        "timeout": 0
-      },
-      "tags": [],
-      "examples": [],
-      "request": {
-        "url": "http://localhost:8086/reread0?partition=0&offset=9&count=2",
-        "method": "POST",
-        "headers": [],
-        "params": [
-          {
-            "name": "partition",
-            "value": "0",
-            "type": "query",
-            "enabled": true
-          },
-          {
-            "name": "offset",
-            "value": "9",
-            "type": "query",
-            "enabled": true
-          },
-          {
-            "name": "count",
-            "value": "2",
-            "type": "query",
-            "enabled": true
-          }
-        ],
-        "body": {
-          "mode": "none",
-          "formUrlEncoded": [],
-          "multipartForm": [],
-          "file": []
-        },
-        "script": {},
-        "vars": {},
-        "assertions": [],
-        "tests": "",
-        "docs": "",
-        "auth": {
-          "mode": "inherit"
-        }
-      }
     }
   ],
   "environments": [],
   "brunoConfig": {
     "version": "1",
-    "name": "banking",
+    "name": "Banking REST",
     "type": "collection",
     "ignore": [
       "node_modules",
       ".git"
     ],
-    "size": 0.005169868469238281,
-    "filesCount": 16,
+    "size": 0.0031423568725585938,
+    "filesCount": 9,
     "presets": {
       "requestType": "http",
       "requestUrl": ""

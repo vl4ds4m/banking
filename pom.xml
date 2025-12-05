@@ -20,6 +20,7 @@
         <module>common</module>
         <module>accounts</module>
         <module>converter</module>
+        <module>rates</module>
         <module>web-ui</module>
         <module>transactions</module>
     </modules>

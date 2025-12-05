@@ -1,7 +1,7 @@
 package org.vl4ds4m.banking.converter.client;
 
 import lombok.RequiredArgsConstructor;
-import org.vl4ds4m.banking.converter.entity.CurrencyRates;
+import org.vl4ds4m.banking.common.entity.CurrencyRates;
 
 import java.util.function.Supplier;
 

@@ -11,6 +11,10 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
+  http.client:
+    connect-timeout: 3s
+    read-timeout: 2s
+
   cache:
     jcache:
       provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
@@ -30,11 +34,10 @@ spring:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     producer.value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
 
-client:
-  converter:
-    grpc: true
-    host: ${CONVERTER_HOST}
-    port: ${CONVERTER_PORT}
+client.converter:
+  grpc: true
+  host: ${CONVERTER_HOST}
+  port: ${CONVERTER_PORT}
 
 bucket4j:
   enabled: true
@@ -48,13 +51,11 @@ bucket4j:
             unit: seconds
             refill-speed: greedy
 
-grpc:
-  client:
-    converter:
-      address: ${client.converter.host}:${client.converter.port}
-      enable-keep-alive: true
-      keep-alive-without-calls: true
-      negotiation-type: PLAINTEXT
+grpc.client.converter:
+  address: ${client.converter.host}:${client.converter.port}
+  enable-keep-alive: true
+  keep-alive-without-calls: true
+  negotiation-type: PLAINTEXT
 
 idempotency:
   enabled: true

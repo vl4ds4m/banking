@@ -6,10 +6,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.vl4ds4m.banking.common.entity.Currency;
+import org.vl4ds4m.banking.common.entity.CurrencyRates;
 import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.common.exception.ServiceException;
 import org.vl4ds4m.banking.converter.client.RatesClient;
-import org.vl4ds4m.banking.converter.entity.CurrencyRates;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
