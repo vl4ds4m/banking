@@ -581,6 +581,57 @@
           "mode": "inherit"
         }
       }
+    },
+    {
+      "type": "http",
+      "name": "Transactions reread partition",
+      "filename": "Transactions reread partition.bru",
+      "seq": 16,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "examples": [],
+      "request": {
+        "url": "http://localhost:8086/reread0?partition=0&offset=9&count=2",
+        "method": "POST",
+        "headers": [],
+        "params": [
+          {
+            "name": "partition",
+            "value": "0",
+            "type": "query",
+            "enabled": true
+          },
+          {
+            "name": "offset",
+            "value": "9",
+            "type": "query",
+            "enabled": true
+          },
+          {
+            "name": "count",
+            "value": "2",
+            "type": "query",
+            "enabled": true
+          }
+        ],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
     }
   ],
   "environments": [],
@@ -592,7 +643,7 @@
       "node_modules",
       ".git"
     ],
-    "size": 0.0051727294921875,
+    "size": 0.005169868469238281,
     "filesCount": 16,
     "presets": {
       "requestType": "http",
