@@ -22,18 +22,18 @@ services:
     ports:
       - 9094:9094
     env_file: ./env/kafka.env
-#  keycloak:
-#    image: quay.io/keycloak/keycloak:23.0.6
-#    command: ["start-dev", "--import-realm"]
-#    ports:
-#      - 8084:8080
-#    secrets:
-#      - source: keycloak-realm
-#        target: /opt/keycloak/data/import/realm.json
-#    env_file: ./env/keycloak.env
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.5.0
+    command: ["start-dev", "--import-realm"]
+    ports:
+      - 8084:8080
+    secrets:
+      - source: keycloak-realm
+        target: /opt/keycloak/data/import/realm.json
+    env_file: ./env/keycloak.env
   rates:
-#    depends_on:
-#      - keycloak
+    depends_on:
+      - keycloak
     build:
       args:
         - JAR_FILE=./build/rates.jar
@@ -46,7 +46,7 @@ services:
     env_file: ./env/rates.env
   converter:
     depends_on:
-#      - keycloak
+      - keycloak
       - rates
     build:
       args:
@@ -97,9 +97,9 @@ services:
 volumes:
   postgres-data: {}
   mongo-data: {}
-#secrets:
-#  keycloak-realm:
-#    file: ./config/realm.json
+secrets:
+  keycloak-realm:
+    file: ./config/realm.json
 configs:
   converter-config:
     file: ./config/converter.yaml

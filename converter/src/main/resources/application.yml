@@ -5,6 +5,17 @@ spring:
     connect-timeout: 3s
     read-timeout: 2s
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt.jwk-set-uri: ${auth.server-uri}/realms/${auth.realm}/protocol/openid-connect/certs
+
+auth:
+  server-uri: ${KEYCLOAK_URI}
+  realm: ${KEYCLOAK_REALM}
+  client-id: ${KEYCLOAK_CLIENT_ID}
+  client-secret: ${KEYCLOAK_CLIENT_SECRET}
+
 client.rates:
   host: ${RATES_HOST}
   port: ${RATES_PORT}

@@ -15,6 +15,20 @@ spring:
     connect-timeout: 3s
     read-timeout: 2s
 
+  security:
+    oauth2:
+      client:
+        registration:
+          accounts-client-reg:
+            provider: keycloak
+            client-id: ${auth.client-id}
+            client-secret: ${auth.client-secret}
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: client_credentials
+        provider:
+          keycloak:
+            token-uri: ${auth.server-uri}/realms/${auth.realm}/protocol/openid-connect/token
+
   cache:
     jcache:
       provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
@@ -33,6 +47,12 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     producer.value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
+
+auth:
+  server-uri: ${KEYCLOAK_URI}
+  realm: ${KEYCLOAK_REALM}
+  client-id: ${KEYCLOAK_CLIENT_ID}
+  client-secret: ${KEYCLOAK_CLIENT_SECRET}
 
 client.converter:
   grpc: true
