@@ -1,9 +1,11 @@
 package org.vl4ds4m.banking.accounts.client.grpc;
 
+import io.grpc.ClientInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.grpc.client.ChannelBuilderOptions;
 import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.vl4ds4m.banking.accounts.App;
@@ -11,6 +13,8 @@ import org.vl4ds4m.banking.accounts.client.ConverterClientImpl;
 import org.vl4ds4m.banking.common.handler.auth.OAuth2ClientGrpcInterceptor;
 import org.vl4ds4m.banking.common.properties.ConverterClientProperties;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpc;
+
+import java.util.List;
 
 @Configuration
 @ConditionalOnBooleanProperty(
@@ -23,8 +27,11 @@ public class ConverterGrpcClientConfig {
             GrpcChannelFactory channels,
             OAuth2AuthorizedClientManager authorizedClientManager
     ) {
-        return ConverterGrpc.newBlockingStub(channels.createChannel("converter"))
-                .withInterceptors(createOAuth2Interceptor(authorizedClientManager));
+        List<ClientInterceptor> interceptors = List.of(
+                createOAuth2Interceptor(authorizedClientManager));
+        ChannelBuilderOptions options = ChannelBuilderOptions.defaults()
+                .withInterceptors(interceptors);
+        return ConverterGrpc.newBlockingStub(channels.createChannel("converter", options));
     }
 
     @Bean

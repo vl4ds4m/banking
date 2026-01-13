@@ -1,7 +1,6 @@
 package org.vl4ds4m.banking.common.handler.log;
 
 import io.grpc.ForwardingServerCall.SimpleForwardingServerCall;
-import io.grpc.ForwardingServerCallListener.SimpleForwardingServerCallListener;
 import io.grpc.Metadata;
 import io.grpc.ServerCall;
 import io.grpc.ServerCallHandler;
@@ -17,29 +16,11 @@ public class GrpcServerLogInterceptor implements ServerInterceptor {
             Metadata headers,
             ServerCallHandler<ReqT, RespT> next
     ) {
-        var descriptor = call.getMethodDescriptor();
-        var request = descriptor.getServiceName() + "/" + descriptor.getBareMethodName();
+        var request = call.getMethodDescriptor().getFullMethodName();
+        log.info("Accept GRPC request {}", request);
 
         var loggingCall = new LoggingServerCall<>(call, request);
-        return new LoggingServerCallListener<>(
-                next.startCall(loggingCall, headers),
-                request);
-    }
-
-    private static class LoggingServerCallListener<ReqT> extends SimpleForwardingServerCallListener<ReqT> {
-
-        final String request;
-
-        LoggingServerCallListener(ServerCall.Listener<ReqT> delegate, String request) {
-            super(delegate);
-            this.request = request;
-        }
-
-        @Override
-        public void onMessage(ReqT message) {
-            log.info("Accept GRPC request {}, message = [{}]", request, message);
-            super.onMessage(message);
-        }
+        return next.startCall(loggingCall, headers);
     }
 
     private static class LoggingServerCall<ReqT, RespT> extends SimpleForwardingServerCall<ReqT, RespT> {
@@ -53,8 +34,10 @@ public class GrpcServerLogInterceptor implements ServerInterceptor {
 
         @Override
         public void sendMessage(RespT message) {
-            log.info("GRPC request {} processed, message = [{}]", request, message);
+            log.info("GRPC request {} processed", request);
             super.sendMessage(message);
         }
+
     }
+
 }

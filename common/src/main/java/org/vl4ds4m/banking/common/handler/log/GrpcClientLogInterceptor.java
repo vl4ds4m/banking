@@ -14,8 +14,11 @@ public class GrpcClientLogInterceptor implements ClientInterceptor {
             CallOptions callOptions,
             Channel next
     ) {
-        var request = method.getServiceName() + "/" + method.getBareMethodName();
-        return new LoggingClientCall<>(next.newCall(method, callOptions), request);
+        var request = method.getFullMethodName();
+        log.info("Send GRPC request {}", request);
+
+        ClientCall<ReqT, RespT> loggedCall = next.newCall(method, callOptions);
+        return new LoggingClientCall<>(loggedCall, request);
     }
 
     private static class LoggingClientCall<ReqT, RespT> extends SimpleForwardingClientCall<ReqT, RespT> {
@@ -33,11 +36,6 @@ public class GrpcClientLogInterceptor implements ClientInterceptor {
             super.start(loggingListener, headers);
         }
 
-        @Override
-        public void sendMessage(ReqT message) {
-            log.info("Send GRPC request {}, message = [{}]", request, message);
-            super.sendMessage(message);
-        }
     }
 
     private static class LoggingClientCallListener<RespT> extends SimpleForwardingClientCallListener<RespT> {
@@ -51,8 +49,10 @@ public class GrpcClientLogInterceptor implements ClientInterceptor {
 
         @Override
         public void onMessage(RespT message) {
-            log.info("Receive GRPC response {}, message = [{}]", request, message);
+            log.info("Receive GRPC response {}", request);
             super.onMessage(message);
         }
+
     }
+
 }

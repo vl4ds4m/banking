@@ -31,8 +31,12 @@ public class OAuth2ClientGrpcInterceptor implements ClientInterceptor {
             CallOptions callOptions,
             Channel next
     ) {
-        ClientCall<ReqT, RespT> delegate = next.newCall(method, callOptions);
-        return new OAuth2ClientForwardingClientCall<>(delegate);
+        ClientCall<ReqT, RespT> clientCall = next.newCall(method, callOptions);
+        String token = authorize();
+        if (token == null) {
+            return clientCall;
+        }
+        return new OAuth2ClientForwardingClientCall<>(clientCall, token);
     }
 
     private @Nullable String authorize() {
@@ -61,18 +65,20 @@ public class OAuth2ClientGrpcInterceptor implements ClientInterceptor {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
-    private class OAuth2ClientForwardingClientCall<ReqT, RespT> extends SimpleForwardingClientCall<ReqT, RespT> {
+    private static class OAuth2ClientForwardingClientCall<ReqT, RespT>
+            extends SimpleForwardingClientCall<ReqT, RespT>
+    {
 
-        OAuth2ClientForwardingClientCall(ClientCall<ReqT, RespT> delegate) {
+        final String token;
+
+        OAuth2ClientForwardingClientCall(ClientCall<ReqT, RespT> delegate, String token) {
             super(delegate);
+            this.token = token;
         }
 
         @Override
         public void start(Listener<RespT> responseListener, Metadata headers) {
-            String token = authorize();
-            if (token != null) {
-                headers.put(GrpcSecurity.AUTHORIZATION_KEY, "Bearer " + token);
-            }
+            headers.put(GrpcSecurity.AUTHORIZATION_KEY, "Bearer " + token);
             super.start(responseListener, headers);
         }
 
