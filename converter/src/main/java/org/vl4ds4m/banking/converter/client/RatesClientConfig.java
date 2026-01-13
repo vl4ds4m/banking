@@ -1,12 +1,11 @@
 package org.vl4ds4m.banking.converter.client;
 
 import lombok.RequiredArgsConstructor;
-import net.devh.boot.grpc.client.inject.GrpcClient;
-import net.devh.boot.grpc.client.inject.GrpcClientBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.retry.RetryException;
 import org.springframework.core.retry.RetryTemplate;
+import org.springframework.grpc.client.GrpcChannelFactory;
 import org.vl4ds4m.banking.common.exception.ServiceException;
 import org.vl4ds4m.banking.common.handler.retry.RetryTemplateFactory;
 import org.vl4ds4m.banking.rates.grpc.RatesGrpc;
@@ -14,14 +13,15 @@ import org.vl4ds4m.banking.rates.grpc.RatesGrpc;
 import java.util.function.Supplier;
 
 @Configuration
-@GrpcClientBean(
-    clazz = RatesGrpc.RatesBlockingStub.class,
-    beanName = "ratesGrpcStub",
-    client = @GrpcClient("rates"))
 @RequiredArgsConstructor
 public class RatesClientConfig {
 
     private final RetryTemplateFactory retryTemplateFactory;
+
+    @Bean
+    public RatesGrpc.RatesBlockingStub ratesGrpcStub(GrpcChannelFactory channels) {
+        return RatesGrpc.newBlockingStub(channels.createChannel("rates"));
+    }
 
     @Bean
     public RatesClient ratesClient(RatesGrpc.RatesBlockingStub ratesGrpcStub) {

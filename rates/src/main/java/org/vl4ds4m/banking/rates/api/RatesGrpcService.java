@@ -2,7 +2,7 @@ package org.vl4ds4m.banking.rates.api;
 
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
-import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.grpc.server.service.GrpcService;
 import org.vl4ds4m.banking.common.entity.CurrencyRates;
 import org.vl4ds4m.banking.common.util.To;
 import org.vl4ds4m.banking.rates.grpc.RatesGrpc;

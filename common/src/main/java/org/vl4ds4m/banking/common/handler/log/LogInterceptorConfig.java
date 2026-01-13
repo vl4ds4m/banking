@@ -1,10 +1,10 @@
 package org.vl4ds4m.banking.common.handler.log;
 
-import net.devh.boot.grpc.client.interceptor.GrpcGlobalClientInterceptor;
-import net.devh.boot.grpc.server.interceptor.GrpcGlobalServerInterceptor;
 import org.springframework.boot.web.servlet.FilterRegistration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.grpc.client.GlobalClientInterceptor;
+import org.springframework.grpc.server.GlobalServerInterceptor;
 
 @Configuration
 public class LogInterceptorConfig {
@@ -20,12 +20,14 @@ public class LogInterceptorConfig {
         return new HttpClientLogInterceptor();
     }
 
-    @GrpcGlobalServerInterceptor
+    @Bean
+    @GlobalServerInterceptor
     public GrpcServerLogInterceptor grpcServerLog() {
         return new GrpcServerLogInterceptor();
     }
 
-    @GrpcGlobalClientInterceptor
+    @Bean
+    @GlobalClientInterceptor
     public GrpcClientLogInterceptor grpcClientLog() {
         return new GrpcClientLogInterceptor();
     }

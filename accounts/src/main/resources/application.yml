@@ -15,6 +15,13 @@ spring:
     connect-timeout: 3s
     read-timeout: 2s
 
+  grpc.client.channels:
+    converter:
+      address: ${client.converter.host}:${client.converter.port}
+      enable-keep-alive: true
+      keep-alive-without-calls: true
+      negotiation-type: PLAINTEXT
+
   security:
     oauth2:
       client:
@@ -70,12 +77,6 @@ bucket4j:
             time: 60
             unit: seconds
             refill-speed: greedy
-
-grpc.client.converter:
-  address: ${client.converter.host}:${client.converter.port}
-  enable-keep-alive: true
-  keep-alive-without-calls: true
-  negotiation-type: PLAINTEXT
 
 idempotency:
   enabled: true
