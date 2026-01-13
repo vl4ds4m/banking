@@ -54,9 +54,6 @@ services:
     ports:
       - 8082:8080
       - 9092:9090
-    configs:
-      - source: converter-config
-        target: /application.yaml
     env_file: ./env/converter.env
   accounts:
     depends_on:
@@ -101,7 +98,5 @@ secrets:
   keycloak-realm:
     file: ./config/realm.json
 configs:
-  converter-config:
-    file: ./config/converter.yaml
   rates-source-config:
     file: ./config/rates-src.yaml

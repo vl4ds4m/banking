@@ -1,9 +1,0 @@
-services:
-  keycloak:
-    url: ${KEYCLOAK_URL}
-    realm: ${KEYCLOAK_REALM}
-    client-id: ${CLIENT_ID}
-    client-secret: ${CLIENT_SECRET}
-
-spring.security.oauth2.resourceserver.jwt:
-  jwk-set-uri: ${services.keycloak.url}/realms/${services.keycloak.realm}/protocol/openid-connect/certs
