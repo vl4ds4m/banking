@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.client.OAuth2ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestTemplate;
-import org.vl4ds4m.banking.accounts.api.SecurityConfig;
+import org.vl4ds4m.banking.accounts.App;
 import org.vl4ds4m.banking.accounts.client.ConverterClientImpl;
 import org.vl4ds4m.banking.common.properties.ConverterClientProperties;
 import org.vl4ds4m.banking.converter.openapi.client.invoke.ApiClient;
@@ -48,15 +48,12 @@ public class ConverterRestClientConfig {
             OAuth2AuthorizedClientManager authorizedClientManager
     ) {
         var interceptor = new OAuth2ClientHttpRequestInterceptor(authorizedClientManager);
-
-        OAuth2ClientHttpRequestInterceptor.ClientRegistrationIdResolver clientRegIdResolver = request -> {
+        interceptor.setClientRegistrationIdResolver(request -> {
             String path = request.getURI().getPath();
             return path.equals(ConvertApi.PATH_CONVERT_CURRENCY)
-                    ? SecurityConfig.OAUTH2_CLIENT_REG
+                    ? App.OAUTH2_CLIENT_REG
                     : null;
-        };
-        interceptor.setClientRegistrationIdResolver(clientRegIdResolver);
-
+        });
         return interceptor;
     }
 

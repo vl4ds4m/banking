@@ -10,8 +10,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 public class SecurityConfig {
 
-    public static final String OAUTH2_CLIENT_REG = "accounts-client-reg";
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
