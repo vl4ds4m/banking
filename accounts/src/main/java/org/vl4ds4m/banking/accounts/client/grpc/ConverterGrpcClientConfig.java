@@ -7,7 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.grpc.client.ChannelBuilderOptions;
 import org.springframework.grpc.client.GrpcChannelFactory;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.vl4ds4m.banking.accounts.App;
 import org.vl4ds4m.banking.accounts.client.ConverterClientImpl;
 import org.vl4ds4m.banking.common.handler.auth.OAuth2ClientGrpcInterceptor;
@@ -23,27 +24,31 @@ import java.util.List;
 public class ConverterGrpcClientConfig {
 
     @Bean
+    public ConverterClientImpl converterGrpcClient(ConverterGrpc.ConverterBlockingStub converterGrpcStub) {
+        log.info("Create GRPC converter client");
+        return new ConverterGrpcClient(converterGrpcStub);
+    }
+
+    @Bean
     public ConverterGrpc.ConverterBlockingStub converterGrpcStub(
             GrpcChannelFactory channels,
-            OAuth2AuthorizedClientManager authorizedClientManager
+            OAuth2ClientGrpcInterceptor oauth2Interceptor
     ) {
-        List<ClientInterceptor> interceptors = List.of(
-                createOAuth2Interceptor(authorizedClientManager));
+        List<ClientInterceptor> interceptors = List.of(oauth2Interceptor);
         ChannelBuilderOptions options = ChannelBuilderOptions.defaults()
                 .withInterceptors(interceptors);
         return ConverterGrpc.newBlockingStub(channels.createChannel("converter", options));
     }
 
     @Bean
-    public ConverterClientImpl converterGrpcClient(ConverterGrpc.ConverterBlockingStub converterGrpcStub) {
-        log.info("Create GRPC converter client");
-        return new ConverterGrpcClient(converterGrpcStub);
-    }
-
-    private static OAuth2ClientGrpcInterceptor createOAuth2Interceptor(
-            OAuth2AuthorizedClientManager authorizedClientManager
+    public OAuth2ClientGrpcInterceptor oauth2ClientGrpcInterceptor(
+            ClientRegistrationRepository clientRegistrationRepository,
+            OAuth2AuthorizedClientService authorizedClientService
     ) {
-        return new OAuth2ClientGrpcInterceptor(authorizedClientManager, () -> App.OAUTH2_CLIENT_REG);
+        return new OAuth2ClientGrpcInterceptor(
+                clientRegistrationRepository,
+                authorizedClientService,
+                () -> App.OAUTH2_CLIENT_REG);
     }
 
 }

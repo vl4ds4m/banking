@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2AuthorizationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -69,9 +71,22 @@ public class ControllerExceptionHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     public ErrorMessageResponse handleRedisError(RedisException e) {
-        var se = new ServiceException("redis", e);
-        exceptionLogger.logServiceError(se);
-        return buildResponse(se.getMessage());
+        exceptionLogger.logServiceError("redis", e);
+        return buildResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public ErrorMessageResponse handleOAuth2Error(OAuth2AuthorizationException e) {
+        exceptionLogger.logServiceError("auth", e);
+        return buildResponse(e.getError().toString());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public ErrorMessageResponse handleOAuth2Error(OAuth2AuthenticationException e) {
+        exceptionLogger.logServiceError("auth", e);
+        return buildResponse(e.getError().toString());
     }
 
     private static ErrorMessageResponse buildResponse(String message) {

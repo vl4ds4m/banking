@@ -2,28 +2,36 @@ package org.vl4ds4m.banking.common.handler.auth;
 
 import io.grpc.*;
 import io.grpc.ForwardingClientCall.SimpleForwardingClientCall;
-import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.grpc.server.security.GrpcSecurity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.*;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 
 import java.util.function.Supplier;
 
-@RequiredArgsConstructor
 public class OAuth2ClientGrpcInterceptor implements ClientInterceptor {
 
-    private static final Authentication ANONYMOUS_AUTHENTICATION = new AnonymousAuthenticationToken("anonymous",
-            "anonymousUser", AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS"));
+    private static final Authentication ANONYMOUS_AUTHENTICATION = new AnonymousAuthenticationToken(
+            "anonymous", "anonymousUser",
+            AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS"));
 
     private final OAuth2AuthorizedClientManager authorizedClientManager;
 
     private final Supplier<@Nullable String> clientRegistrationId;
+
+    public OAuth2ClientGrpcInterceptor(
+            ClientRegistrationRepository clientRegistrationRepository,
+            OAuth2AuthorizedClientService authorizedClientService,
+            Supplier<@Nullable String> clientRegistrationId
+    ) {
+        this.authorizedClientManager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(
+                clientRegistrationRepository,
+                authorizedClientService);
+        this.clientRegistrationId = clientRegistrationId;
+    }
 
     @Override
     public <ReqT, RespT> ClientCall<ReqT, RespT> interceptCall(
@@ -45,13 +53,8 @@ public class OAuth2ClientGrpcInterceptor implements ClientInterceptor {
             return null;
         }
 
-        Authentication principal = getPrincipal();
-        if (principal == null) {
-            principal = ANONYMOUS_AUTHENTICATION;
-        }
-
         OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId(clientRegId)
-                .principal(principal)
+                .principal(ANONYMOUS_AUTHENTICATION)
                 .build();
         OAuth2AuthorizedClient client = authorizedClientManager.authorize(authorizeRequest);
 
@@ -59,10 +62,6 @@ public class OAuth2ClientGrpcInterceptor implements ClientInterceptor {
             return null;
         }
         return client.getAccessToken().getTokenValue();
-    }
-
-    private static @Nullable Authentication getPrincipal() {
-        return SecurityContextHolder.getContext().getAuthentication();
     }
 
     private static class OAuth2ClientForwardingClientCall<ReqT, RespT>

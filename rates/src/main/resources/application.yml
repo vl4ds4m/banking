@@ -5,4 +5,13 @@ spring:
     connect-timeout: 3s
     read-timeout: 2s
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt.jwk-set-uri: ${auth.server-uri}/realms/${auth.realm}/protocol/openid-connect/certs
+
+auth:
+  server-uri: ${KEYCLOAK_URI}
+  realm: ${KEYCLOAK_REALM}
+
 rates.filename: "rates-info.yaml"

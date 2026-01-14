@@ -16,6 +16,17 @@ spring:
     oauth2:
       resourceserver:
         jwt.jwk-set-uri: ${auth.server-uri}/realms/${auth.realm}/protocol/openid-connect/certs
+      client:
+        registration:
+          converter-client-reg:
+            provider: keycloak
+            client-id: ${auth.client-id}
+            client-secret: ${auth.client-secret}
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: client_credentials
+        provider:
+          keycloak:
+            token-uri: ${auth.server-uri}/realms/${auth.realm}/protocol/openid-connect/token
 
 auth:
   server-uri: ${KEYCLOAK_URI}

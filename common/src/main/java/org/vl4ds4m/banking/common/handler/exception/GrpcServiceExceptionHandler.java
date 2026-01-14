@@ -5,6 +5,8 @@ import io.grpc.StatusException;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 import org.springframework.grpc.server.exception.GrpcExceptionHandler;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2AuthorizationException;
 import org.springframework.stereotype.Component;
 import org.vl4ds4m.banking.common.exception.InvalidQueryException;
 import org.vl4ds4m.banking.common.exception.ServiceException;
@@ -24,6 +26,12 @@ public class GrpcServiceExceptionHandler implements GrpcExceptionHandler {
             case ServiceException e -> {
                 return handleServiceError(e);
             }
+            case OAuth2AuthorizationException e -> {
+                return handleOAuth2Error(e);
+            }
+            case OAuth2AuthenticationException e -> {
+                return handleOAuth2Error(e);
+            }
             default -> {
                 return null;
             }
@@ -41,6 +49,20 @@ public class GrpcServiceExceptionHandler implements GrpcExceptionHandler {
         exceptionLogger.logServiceError(e);
         return Status.UNAVAILABLE
                 .withDescription(e.getMessage())
+                .asException();
+    }
+
+    private StatusException handleOAuth2Error(OAuth2AuthorizationException e) {
+        exceptionLogger.logServiceError("auth", e);
+        return Status.UNAVAILABLE
+                .withDescription(e.getError().toString())
+                .asException();
+    }
+
+    private StatusException handleOAuth2Error(OAuth2AuthenticationException e) {
+        exceptionLogger.logServiceError("auth", e);
+        return Status.UNAVAILABLE
+                .withDescription(e.getError().toString())
                 .asException();
     }
 
