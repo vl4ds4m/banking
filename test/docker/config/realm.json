@@ -640,7 +640,8 @@
       "protocol": "openid-connect",
       "attributes": {
         "realm_client": "false",
-        "client.use.lightweight.access.token.enabled": "true"
+        "client.use.lightweight.access.token.enabled": "true",
+        "post.logout.redirect.uris": "+"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": true,
@@ -682,7 +683,8 @@
       "frontchannelLogout": false,
       "protocol": "openid-connect",
       "attributes": {
-        "realm_client": "true"
+        "realm_client": "true",
+        "post.logout.redirect.uris": "+"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": false,
@@ -724,7 +726,8 @@
       "frontchannelLogout": false,
       "protocol": "openid-connect",
       "attributes": {
-        "realm_client": "true"
+        "realm_client": "true",
+        "post.logout.redirect.uris": "+"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": false,
@@ -849,6 +852,7 @@
         "client.secret.creation.time": "1768215076",
         "backchannel.logout.session.required": "true",
         "standard.token.exchange.enabled": "false",
+        "post.logout.redirect.uris": "+",
         "oauth2.device.authorization.grant.enabled": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
         "dpop.bound.access.tokens": "false"
@@ -868,6 +872,7 @@
       "optionalClientScopes": [
         "address",
         "phone",
+        "converter-user",
         "organization",
         "offline_access",
         "microprofile-jwt"
@@ -908,6 +913,7 @@
         "client.secret.creation.time": "1768215546",
         "backchannel.logout.session.required": "true",
         "standard.token.exchange.enabled": "false",
+        "post.logout.redirect.uris": "+",
         "oauth2.device.authorization.grant.enabled": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
         "dpop.bound.access.tokens": "false"
@@ -929,11 +935,25 @@
         "phone",
         "organization",
         "offline_access",
+        "rates-user",
         "microprofile-jwt"
       ]
     }
   ],
   "clientScopes": [
+    {
+      "id": "f3044ca8-e22f-4664-ae37-dc42fb3f5b63",
+      "name": "banking-admin",
+      "description": "",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "gui.order": "",
+        "consent.screen.text": "",
+        "include.in.openid.provider.metadata": "true"
+      }
+    },
     {
       "id": "a2c1768b-923c-43e5-a5e3-60f4a13eecc7",
       "name": "role_list",
@@ -1054,15 +1074,29 @@
           "protocolMapper": "oidc-organization-membership-mapper",
           "consentRequired": false,
           "config": {
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "organization",
-            "jsonType.label": "String",
-            "multivalued": "true"
+            "jsonType.label": "String"
           }
         }
       ]
+    },
+    {
+      "id": "2b950fe9-6827-48d3-9c23-b7c5e2ba9f4d",
+      "name": "rates-user",
+      "description": "",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "gui.order": "",
+        "consent.screen.text": "",
+        "include.in.openid.provider.metadata": "true"
+      }
     },
     {
       "id": "ec27fa7a-270d-4cff-960b-59e1fc40a51d",
@@ -1336,7 +1370,8 @@
           "config": {
             "id.token.claim": "true",
             "introspection.token.claim": "true",
-            "access.token.claim": "true"
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
           }
         }
       ]
@@ -1370,8 +1405,9 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "AUTH_TIME",
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "auth_time",
             "jsonType.label": "long"
@@ -1429,8 +1465,9 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "clientHost",
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "clientHost",
             "jsonType.label": "String"
@@ -1444,8 +1481,9 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "client_id",
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "client_id",
             "jsonType.label": "String"
@@ -1459,8 +1497,9 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "clientAddress",
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "clientAddress",
             "jsonType.label": "String"
@@ -1514,6 +1553,19 @@
       ]
     },
     {
+      "id": "f50a1142-df0c-451d-86a7-85ea3d62c983",
+      "name": "converter-user",
+      "description": "",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "gui.order": "",
+        "consent.screen.text": "",
+        "include.in.openid.provider.metadata": "true"
+      }
+    },
+    {
       "id": "70810304-e373-4eda-a437-3a8c64f69db2",
       "name": "offline_access",
       "description": "OpenID Connect built-in scope: offline_access",
@@ -1558,6 +1610,7 @@
           "config": {
             "introspection.token.claim": "true",
             "multivalued": "true",
+            "userinfo.token.claim": "true",
             "user.attribute": "foo",
             "id.token.claim": "true",
             "access.token.claim": "true",
@@ -1628,7 +1681,10 @@
     "address",
     "phone",
     "microprofile-jwt",
-    "organization"
+    "organization",
+    "converter-user",
+    "rates-user",
+    "banking-admin"
   ],
   "browserSecurityHeaders": {
     "contentSecurityPolicyReportOnly": "",
@@ -1691,14 +1747,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-usermodel-attribute-mapper",
+            "oidc-address-mapper",
             "oidc-full-name-mapper",
-            "oidc-usermodel-property-mapper",
-            "saml-user-property-mapper",
-            "oidc-sha256-pairwise-sub-mapper",
-            "saml-role-list-mapper",
             "saml-user-attribute-mapper",
-            "oidc-address-mapper"
+            "oidc-usermodel-attribute-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
+            "saml-user-property-mapper",
+            "oidc-usermodel-property-mapper",
+            "saml-role-list-mapper"
           ]
         }
       },
@@ -1710,13 +1766,13 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
+            "saml-user-attribute-mapper",
+            "saml-role-list-mapper",
+            "saml-user-property-mapper",
+            "oidc-full-name-mapper",
             "oidc-sha256-pairwise-sub-mapper",
             "oidc-usermodel-attribute-mapper",
             "oidc-address-mapper",
-            "saml-user-attribute-mapper",
-            "saml-user-property-mapper",
-            "oidc-full-name-mapper",
-            "saml-role-list-mapper",
             "oidc-usermodel-property-mapper"
           ]
         }
@@ -2653,8 +2709,12 @@
     "cibaExpiresIn": "120",
     "cibaAuthRequestedUserHint": "login_hint",
     "oauth2DeviceCodeLifespan": "600",
+    "clientOfflineSessionMaxLifespan": "0",
     "oauth2DevicePollingInterval": "5",
+    "clientSessionIdleTimeout": "0",
     "parRequestUriLifespan": "60",
+    "clientSessionMaxLifespan": "0",
+    "clientOfflineSessionIdleTimeout": "0",
     "cibaInterval": "5",
     "realmReusableOtpCode": "false"
   },

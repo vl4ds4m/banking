@@ -192,6 +192,38 @@
     },
     {
       "type": "http",
+      "name": "Actuator",
+      "filename": "Actuator.bru",
+      "seq": 14,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "examples": [],
+      "request": {
+        "url": "http://localhost:8080/actuator",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
       "name": "Converter",
       "filename": "Converter.bru",
       "seq": 12,
@@ -237,10 +269,7 @@
         "tests": "",
         "docs": "",
         "auth": {
-          "mode": "bearer",
-          "bearer": {
-            "token": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJsOVJXSUI5MzNoWXhRQ1VFb0l0OXZtbWQwNXJ2akVEME9hZEJjVGRpNFFFIn0.eyJleHAiOjE3NjE0MTk1OTgsImlhdCI6MTc2MTQxOTI5OCwianRpIjoiMDNhODc2ZTEtZTEyNC00NWU5LTk3ZGQtZWNhMWI5NGZmNTcwIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDg0L3JlYWxtcy9iYW5raW5nIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImI3MmYzYWYzLWE5MjMtNGVlMy04OWJmLTFhMWRhMGYwMDk3OSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImJhbmtpbmdfc2VydmljZSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiLyoiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtYmFua2luZyIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImNsaWVudEhvc3QiOiIxNzIuMjAuMC4xIiwicHJlZmVycmVkX3VzZXJuYW1lIjoic2VydmljZS1hY2NvdW50LWJhbmtpbmdfc2VydmljZSIsImNsaWVudEFkZHJlc3MiOiIxNzIuMjAuMC4xIiwiY2xpZW50X2lkIjoiYmFua2luZ19zZXJ2aWNlIn0.lhyyFkNTIFpRU8cl3AOD9AMV9h_0GQFH8TUX_-XKd3OU_vaHfEZOID6bAXXxanB5E1YuQN_bSiK2lTaRyMvXbO1mjBiGQ_w2LI8ab-vLVidTr5hES1T4C08KiBJ8XXfwkS-T6ESZqYz7s1a4xtPqM4ugDgWbyhgCzSGefaxAORK80SP6zxV2kROdTdDiXs5kSLMgX9Udi4IR9GDLCDn3PzrOhLNg5l4KFLjONdduB4Rj9JdlhVtROduUaCPCEPuRSnf20Zbelf448Su2PacGI50SLAGsIxva0EhQ8RZ3b4iNZZKY87Zn-nLagOCwmhjoyIlwPTS2755KUWfhT7x3Sg"
-          }
+          "mode": "inherit"
         }
       }
     },
@@ -269,39 +298,6 @@
         ],
         "body": {
           "mode": "none",
-          "formUrlEncoded": [],
-          "multipartForm": [],
-          "file": []
-        },
-        "script": {},
-        "vars": {},
-        "assertions": [],
-        "tests": "",
-        "docs": "",
-        "auth": {
-          "mode": "inherit"
-        }
-      }
-    },
-    {
-      "type": "http",
-      "name": "Customers - New",
-      "filename": "Customers - New.bru",
-      "seq": 5,
-      "settings": {
-        "encodeUrl": true,
-        "timeout": 0
-      },
-      "tags": [],
-      "examples": [],
-      "request": {
-        "url": "http://localhost:8081/customers0",
-        "method": "POST",
-        "headers": [],
-        "params": [],
-        "body": {
-          "mode": "json",
-          "json": "{\n  \"login\": \"foo_bar\",\n  \"forename\": \"Foo\",\n  \"surname\": \"Bar\",\n  \"birthdate\": \"2001-02-03\"\n}",
           "formUrlEncoded": [],
           "multipartForm": [],
           "file": []
@@ -382,6 +378,71 @@
     },
     {
       "type": "http",
+      "name": "Customers - New",
+      "filename": "Customers - New.bru",
+      "seq": 5,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "examples": [],
+      "request": {
+        "url": "http://localhost:8081/customers0",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"login\": \"foo_bar\",\n  \"forename\": \"Foo\",\n  \"surname\": \"Bar\",\n  \"birthdate\": \"2001-02-03\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Keycloak - Get JWK set",
+      "filename": "Keycloak - Get JWK set.bru",
+      "seq": 16,
+      "settings": {
+        "encodeUrl": true,
+        "timeout": 0
+      },
+      "tags": [],
+      "examples": [],
+      "request": {
+        "url": "http://localhost:8084/realms/banking/protocol/openid-connect/certs",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "http",
       "name": "Keycloak - Get token",
       "filename": "Keycloak - Get token.bru",
       "seq": 15,
@@ -401,100 +462,25 @@
           "formUrlEncoded": [
             {
               "name": "client_id",
-              "value": "banking_service",
+              "value": "svc-converter",
               "enabled": true
             },
             {
               "name": "client_secret",
-              "value": "zaHH0GJMccZtdY64fa0gPe3nlEflD9vs",
+              "value": "prI7abaJAPOPGboSpnyfb96QSHTwIyIV",
               "enabled": true
             },
             {
               "name": "grant_type",
               "value": "client_credentials",
               "enabled": true
-            }
-          ],
-          "multipartForm": [],
-          "file": []
-        },
-        "script": {},
-        "vars": {},
-        "assertions": [],
-        "tests": "",
-        "docs": "",
-        "auth": {
-          "mode": "inherit"
-        }
-      }
-    },
-    {
-      "type": "http",
-      "name": "Keycloak - Validate token",
-      "filename": "Keycloak - Validate token.bru",
-      "seq": 16,
-      "settings": {
-        "encodeUrl": true,
-        "timeout": 0
-      },
-      "tags": [],
-      "examples": [],
-      "request": {
-        "url": "http://localhost:8084/realms/banking/protocol/openid-connect/token",
-        "method": "POST",
-        "headers": [],
-        "params": [],
-        "body": {
-          "mode": "formUrlEncoded",
-          "formUrlEncoded": [
-            {
-              "name": "client_id",
-              "value": "banking_service",
-              "enabled": true
             },
             {
-              "name": "client_secret",
-              "value": "zaHH0GJMccZtdY64fa0gPe3nlEflD9vs",
-              "enabled": true
-            },
-            {
-              "name": "grant_type",
-              "value": "client_credentials",
+              "name": "scope",
+              "value": "rates-user",
               "enabled": true
             }
           ],
-          "multipartForm": [],
-          "file": []
-        },
-        "script": {},
-        "vars": {},
-        "assertions": [],
-        "tests": "",
-        "docs": "",
-        "auth": {
-          "mode": "inherit"
-        }
-      }
-    },
-    {
-      "type": "http",
-      "name": "Actuator",
-      "filename": "Actuator.bru",
-      "seq": 14,
-      "settings": {
-        "encodeUrl": true,
-        "timeout": 0
-      },
-      "tags": [],
-      "examples": [],
-      "request": {
-        "url": "http://localhost:8080/actuator",
-        "method": "GET",
-        "headers": [],
-        "params": [],
-        "body": {
-          "mode": "none",
-          "formUrlEncoded": [],
           "multipartForm": [],
           "file": []
         },
@@ -608,8 +594,8 @@
       "node_modules",
       ".git"
     ],
-    "size": 0.0031423568725585938,
-    "filesCount": 9,
+    "size": 0.004073143005371094,
+    "filesCount": 17,
     "presets": {
       "requestType": "http",
       "requestUrl": ""

@@ -8,13 +8,13 @@ import org.vl4ds4m.banking.converter.openapi.server.api.ConvertApi;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-@Configuration
+@Configuration("httpSecurityConfig")
 public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                .requestMatchers(ConvertApi.PATH_CONVERT_CURRENCY).authenticated() // TODO has role CONVERTER_USER or ADMIN
+                .requestMatchers(ConvertApi.PATH_CONVERT_CURRENCY).hasRole("converter-user")
                 .anyRequest().denyAll());
 
         http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer

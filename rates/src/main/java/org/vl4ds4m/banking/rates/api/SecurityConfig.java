@@ -8,6 +8,7 @@ import org.springframework.grpc.server.security.GrpcSecurity;
 import org.vl4ds4m.banking.rates.grpc.RatesGrpc;
 
 import static org.springframework.security.config.Customizer.withDefaults;
+import static org.vl4ds4m.banking.common.config.SecurityConfig.role;
 
 @Configuration
 public class SecurityConfig {
@@ -18,8 +19,9 @@ public class SecurityConfig {
     @GlobalServerInterceptor
     public AuthenticationProcessInterceptor authenticationProcessInterceptor(GrpcSecurity grpc) throws Exception {
         grpc.authorizeRequests(authorizeRequests -> authorizeRequests
-                .methods(RATES_PREFIX + "GetRates").authenticated()
-                .allRequests().denyAll());
+                .methods(RATES_PREFIX + "GetRates").hasAuthority(role("rates-user"))
+                .methods(RATES_PREFIX + "*").denyAll()
+                .allRequests().permitAll());
 
         grpc.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer
                 .jwt(withDefaults()));
