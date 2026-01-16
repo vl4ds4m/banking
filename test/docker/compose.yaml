@@ -6,7 +6,10 @@ services:
       - postgres-data:/var/lib/postgresql
     ports:
       - 5432:5432
-    env_file: ./env/postgres.env
+    configs:
+      - source: postgres-init-config
+        target: /docker-entrypoint-initdb.d/banking-init.sh
+    env_file: env/postgres.env
   mongo:
     image: mongo:8.0.12
     volumes:
@@ -23,14 +26,19 @@ services:
       - 9094:9094
     env_file: ./env/kafka.env
   keycloak:
+    depends_on:
+      - postgres
     image: quay.io/keycloak/keycloak:26.5.0
-    command: ["start-dev", "--import-realm"]
+    command:
+      - "start-dev"
+      - "--import-realm"
     ports:
       - 8084:8080
     secrets:
+      - source: keycloak-config
+        target: /opt/keycloak/conf/keycloak.conf
       - source: keycloak-realm
         target: /opt/keycloak/data/import/realm.json
-    env_file: ./env/keycloak.env
   rates:
     depends_on:
       - keycloak
@@ -95,8 +103,12 @@ volumes:
   postgres-data: {}
   mongo-data: {}
 secrets:
+  keycloak-config:
+    file: ./config/keycloak.conf
   keycloak-realm:
     file: ./config/realm.json
 configs:
+  postgres-init-config:
+    file: ./config/postgres-init.sh
   rates-source-config:
     file: ./config/rates-src.yaml
