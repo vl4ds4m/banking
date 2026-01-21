@@ -5,10 +5,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.grpc.server.GlobalServerInterceptor;
 import org.springframework.grpc.server.security.AuthenticationProcessInterceptor;
 import org.springframework.grpc.server.security.GrpcSecurity;
+import org.vl4ds4m.banking.common.security.SecurityRole;
 import org.vl4ds4m.banking.converter.grpc.ConverterGrpc;
 
 import static org.springframework.security.config.Customizer.withDefaults;
-import static org.vl4ds4m.banking.common.config.SecurityConfig.role;
 
 @Configuration("grpcSecurityConfig")
 public class SecurityConfig {
@@ -19,7 +19,7 @@ public class SecurityConfig {
     @GlobalServerInterceptor
     public AuthenticationProcessInterceptor authenticationProcessInterceptor(GrpcSecurity grpc) throws Exception {
         grpc.authorizeRequests(authorizeRequests -> authorizeRequests
-                .methods(CONVERTER_PREFIX + "Convert").hasAuthority(role("converter-user"))
+                .methods(CONVERTER_PREFIX + "Convert").hasAuthority(SecurityRole.CONVERTER_USER.toAuthority())
                 .methods(CONVERTER_PREFIX + "*").denyAll()
                 .allRequests().permitAll());
 

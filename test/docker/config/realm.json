@@ -48,9 +48,27 @@
   "roles": {
     "realm": [
       {
+        "id": "7985aefc-8436-41c2-ba71-7090a086097d",
+        "name": "converter-user",
+        "description": "User of ConverterService API",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "557acb97-43d3-4baf-a531-acc46edaa4e0",
+        "attributes": {}
+      },
+      {
         "id": "1748bad8-543d-4833-b145-6bdcd9e177ab",
         "name": "uma_authorization",
         "description": "${role_uma_authorization}",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "557acb97-43d3-4baf-a531-acc46edaa4e0",
+        "attributes": {}
+      },
+      {
+        "id": "21d7fb89-cf91-4e90-b035-418216d0fa6e",
+        "name": "accounts-operator",
+        "description": "Top up and withdraw accounts",
         "composite": false,
         "clientRole": false,
         "containerId": "557acb97-43d3-4baf-a531-acc46edaa4e0",
@@ -78,9 +96,34 @@
         "attributes": {}
       },
       {
+        "id": "ff28a9f8-697f-4762-9e7f-d5a11bf4f188",
+        "name": "admin",
+        "description": "Administrator",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "converter-user",
+            "accounts-operator",
+            "rates-user"
+          ]
+        },
+        "clientRole": false,
+        "containerId": "557acb97-43d3-4baf-a531-acc46edaa4e0",
+        "attributes": {}
+      },
+      {
         "id": "63e1a490-4c7b-4a18-82e8-474b021f902f",
         "name": "offline_access",
         "description": "${role_offline-access}",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "557acb97-43d3-4baf-a531-acc46edaa4e0",
+        "attributes": {}
+      },
+      {
+        "id": "43ea852f-658a-4917-b44e-99af1478a51c",
+        "name": "rates-user",
+        "description": "User of RatesService API",
         "composite": false,
         "clientRole": false,
         "containerId": "557acb97-43d3-4baf-a531-acc46edaa4e0",
@@ -471,6 +514,7 @@
       "disableableCredentialTypes": [],
       "requiredActions": [],
       "realmRoles": [
+        "converter-user",
         "default-roles-banking"
       ],
       "notBefore": 0,
@@ -487,7 +531,8 @@
       "disableableCredentialTypes": [],
       "requiredActions": [],
       "realmRoles": [
-        "default-roles-banking"
+        "default-roles-banking",
+        "rates-user"
       ],
       "notBefore": 0,
       "groups": []
@@ -872,7 +917,6 @@
       "optionalClientScopes": [
         "address",
         "phone",
-        "converter-user",
         "organization",
         "offline_access",
         "microprofile-jwt"
@@ -935,25 +979,11 @@
         "phone",
         "organization",
         "offline_access",
-        "rates-user",
         "microprofile-jwt"
       ]
     }
   ],
   "clientScopes": [
-    {
-      "id": "f3044ca8-e22f-4664-ae37-dc42fb3f5b63",
-      "name": "banking-admin",
-      "description": "",
-      "protocol": "openid-connect",
-      "attributes": {
-        "include.in.token.scope": "true",
-        "display.on.consent.screen": "true",
-        "gui.order": "",
-        "consent.screen.text": "",
-        "include.in.openid.provider.metadata": "true"
-      }
-    },
     {
       "id": "a2c1768b-923c-43e5-a5e3-60f4a13eecc7",
       "name": "role_list",
@@ -1050,8 +1080,8 @@
           "protocolMapper": "oidc-allowed-origins-mapper",
           "consentRequired": false,
           "config": {
-            "introspection.token.claim": "true",
-            "access.token.claim": "true"
+            "access.token.claim": "true",
+            "introspection.token.claim": "true"
           }
         }
       ]
@@ -1084,19 +1114,6 @@
           }
         }
       ]
-    },
-    {
-      "id": "2b950fe9-6827-48d3-9c23-b7c5e2ba9f4d",
-      "name": "rates-user",
-      "description": "",
-      "protocol": "openid-connect",
-      "attributes": {
-        "include.in.token.scope": "true",
-        "display.on.consent.screen": "true",
-        "gui.order": "",
-        "consent.screen.text": "",
-        "include.in.openid.provider.metadata": "true"
-      }
     },
     {
       "id": "ec27fa7a-270d-4cff-960b-59e1fc40a51d",
@@ -1369,8 +1386,8 @@
           "consentRequired": false,
           "config": {
             "id.token.claim": "true",
-            "introspection.token.claim": "true",
             "access.token.claim": "true",
+            "introspection.token.claim": "true",
             "userinfo.token.claim": "true"
           }
         }
@@ -1553,19 +1570,6 @@
       ]
     },
     {
-      "id": "f50a1142-df0c-451d-86a7-85ea3d62c983",
-      "name": "converter-user",
-      "description": "",
-      "protocol": "openid-connect",
-      "attributes": {
-        "include.in.token.scope": "true",
-        "display.on.consent.screen": "true",
-        "gui.order": "",
-        "consent.screen.text": "",
-        "include.in.openid.provider.metadata": "true"
-      }
-    },
-    {
       "id": "70810304-e373-4eda-a437-3a8c64f69db2",
       "name": "offline_access",
       "description": "OpenID Connect built-in scope: offline_access",
@@ -1681,10 +1685,7 @@
     "address",
     "phone",
     "microprofile-jwt",
-    "organization",
-    "converter-user",
-    "rates-user",
-    "banking-admin"
+    "organization"
   ],
   "browserSecurityHeaders": {
     "contentSecurityPolicyReportOnly": "",
@@ -1747,14 +1748,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-address-mapper",
-            "oidc-full-name-mapper",
-            "saml-user-attribute-mapper",
-            "oidc-usermodel-attribute-mapper",
+            "saml-role-list-mapper",
             "oidc-sha256-pairwise-sub-mapper",
+            "saml-user-attribute-mapper",
             "saml-user-property-mapper",
             "oidc-usermodel-property-mapper",
-            "saml-role-list-mapper"
+            "oidc-full-name-mapper",
+            "oidc-usermodel-attribute-mapper",
+            "oidc-address-mapper"
           ]
         }
       },
@@ -1766,14 +1767,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "saml-user-attribute-mapper",
-            "saml-role-list-mapper",
-            "saml-user-property-mapper",
-            "oidc-full-name-mapper",
             "oidc-sha256-pairwise-sub-mapper",
             "oidc-usermodel-attribute-mapper",
-            "oidc-address-mapper",
-            "oidc-usermodel-property-mapper"
+            "saml-user-property-mapper",
+            "oidc-full-name-mapper",
+            "saml-user-attribute-mapper",
+            "saml-role-list-mapper",
+            "oidc-usermodel-property-mapper",
+            "oidc-address-mapper"
           ]
         }
       },
