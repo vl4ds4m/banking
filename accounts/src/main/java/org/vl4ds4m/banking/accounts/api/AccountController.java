@@ -3,6 +3,7 @@ package org.vl4ds4m.banking.accounts.api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.vl4ds4m.banking.accounts.auth.AccountsAuthorizationManager;
 import org.vl4ds4m.banking.accounts.openapi.server.api.AccountsApi;
 import org.vl4ds4m.banking.accounts.openapi.server.model.*;
 import org.vl4ds4m.banking.accounts.service.AccountService;
@@ -18,6 +19,8 @@ public class AccountController implements AccountsApi {
 
     private final AccountService accountService;
 
+    private final AccountsAuthorizationManager authorizationManager;
+
     @Override
     public ResponseEntity<CreateAccountResponse> createAccount(CreateAccountRequest createAccountRequest) {
         long accountNumber = accountService.createAccount(
@@ -30,13 +33,18 @@ public class AccountController implements AccountsApi {
 
     @Override
     public ResponseEntity<AccountResponse> getAccountByCustomer(String login, Currency currency) {
+        authorizationManager.authorizeCustomer(login);
+
         var account = accountService.getAccount(login, To.currency(currency));
+
         var response = new AccountResponse(account.number(), account.money().amount());
         return ResponseEntity.ok(response);
     }
 
     @Override
     public ResponseEntity<AccountInfo> getAccountInfo(Long accountNumber) {
+        authorizationManager.authorizeAccountOwner(accountNumber);
+
         var account = accountService.getAccount(accountNumber);
         var customerLogin = accountService.getAccountOwnerLogin(accountNumber);
 
@@ -54,6 +62,8 @@ public class AccountController implements AccountsApi {
             UUID idempotencyKey,
             TopUpAccountRequest topUpAccountRequest
     ) {
+        authorizationManager.authorizeAccountOwner(accountNumber);
+
         var account = accountService.topUpAccount(
                 accountNumber,
                 To.moneyOrReject(
@@ -73,6 +83,8 @@ public class AccountController implements AccountsApi {
             UUID idempotencyKey,
             WithdrawAccountRequest withdrawAccountRequest
     ) {
+        authorizationManager.authorizeAccountOwner(accountNumber);
+
         var account = accountService.withdrawMoneyToAccount(
                 accountNumber,
                 To.moneyOrReject(
@@ -84,4 +96,5 @@ public class AccountController implements AccountsApi {
                 account.money().amount());
         return ResponseEntity.ok(response);
     }
+
 }

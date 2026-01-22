@@ -1,13 +1,20 @@
 import http.client
+import sys
 
 conn = http.client.HTTPConnection("localhost:8081")
-headers = { 'content-type': "application/json" }
+auth = "REPLACE_ACCESS_TOKEN"
+headers = { 'content-type': "application/json", 'authorization': f"Bearer {auth}" }
 
 def request(method, path, body):
+    print(method, path, end=" | ")
     conn.request(method, path, body.encode('utf-8'), headers)
     res = conn.getresponse()
     data = res.read().decode("utf-8").strip()
-    print(data if data else "ok")
+    status = res.status
+    print(status, data if data else "")
+    if status >= 400:
+        print("Error request, exit")
+        sys.exit(0)
 
 # Create customer: ivanovp
 payload = "{\n  \"login\": \"ivanovp\",\n  \"forename\": \"Пётр\",\n  \"surname\": \"Иванов\",\n  \"birthdate\": \"1985-10-06\"\n}"
@@ -85,3 +92,5 @@ headers['Idempotency-Key'] = '787cd067-8a8a-4ad8-81f6-825c9fcfb454'
 request("PUT", "/accounts/1000000007/top-up", payload)
 
 del headers['Idempotency-Key']
+
+print("Done")

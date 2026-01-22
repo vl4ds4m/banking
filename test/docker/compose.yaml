@@ -55,7 +55,6 @@ services:
   converter:
     depends_on:
       - keycloak
-      - rates
     build:
       args:
         - JAR_FILE=./build/converter.jar
@@ -65,8 +64,8 @@ services:
     env_file: ./env/converter.env
   accounts:
     depends_on:
-      - converter
       - postgres
+      - keycloak
       - redis
       - kafka
     build:
@@ -76,9 +75,13 @@ services:
       - 8081:8080
     env_file: ./env/accounts.env
   webui:
+    depends_on:
+      - keycloak
     build:
       args:
         - JAR_FILE=./build/web-ui.jar
+    command:
+      - "--spring.security.oauth2.client.provider.keycloak.authorization-uri=http://localhost:8084/realms/banking/protocol/openid-connect/auth"
     ports:
       - 8085:8080
     env_file: ./env/web-ui.env

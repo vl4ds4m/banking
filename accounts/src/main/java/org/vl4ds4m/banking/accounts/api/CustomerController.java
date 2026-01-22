@@ -4,6 +4,7 @@ import com.giffing.bucket4j.spring.boot.starter.context.RateLimiting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.vl4ds4m.banking.accounts.auth.AccountsAuthorizationManager;
 import org.vl4ds4m.banking.accounts.openapi.server.api.CustomersApi;
 import org.vl4ds4m.banking.accounts.openapi.server.model.*;
 import org.vl4ds4m.banking.accounts.service.CustomerService;
@@ -18,6 +19,8 @@ import java.util.Optional;
 public class CustomerController implements CustomersApi {
 
     private final CustomerService customerService;
+
+    private final AccountsAuthorizationManager authorizationManager;
 
     @Override
     public ResponseEntity<List<CustomerNames>> getCustomers() {
@@ -44,6 +47,8 @@ public class CustomerController implements CustomersApi {
 
     @Override
     public ResponseEntity<CustomerInfo> getCustomerInfo(String login) {
+        authorizationManager.authorizeCustomer(login);
+
         var customer = Optional.of(customerService.getCustomer(login))
                 .map(c -> new Customer(
                         c.login(),
@@ -58,6 +63,7 @@ public class CustomerController implements CustomersApi {
                         To.restCurrency(a.currency()),
                         a.money().amount()))
                 .toList();
+
         var response = new CustomerInfo(customer, accounts);
         return ResponseEntity.ok(response);
     }
@@ -68,10 +74,14 @@ public class CustomerController implements CustomersApi {
         ratePerMethod = true)
     @Override
     public ResponseEntity<BalanceResponse> getCustomerBalance(String customerLogin, Currency currency) {
+        authorizationManager.authorizeCustomer(customerLogin);
+
         var money = customerService.getCustomerBalance(
                 customerLogin,
                 To.currency(currency));
+
         var response = new BalanceResponse(currency, money.amount());
         return ResponseEntity.ok(response);
     }
+
 }

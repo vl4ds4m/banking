@@ -1,6 +1,32 @@
 spring:
   application.name: web-ui
+
+  security:
+    oauth2:
+      client:
+        registration:
+          webui-client-reg:
+            provider: keycloak
+            client-id: ${auth.client-id}
+            client-secret: ${auth.client-secret}
+            authorization-grant-type: authorization_code
+            scope:
+              - openid
+            redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
+        provider:
+          keycloak:
+            authorization-uri: ${auth.issuer-uri}/auth
+            token-uri: ${auth.issuer-uri}/token
+            jwk-set-uri: ${auth.issuer-uri}/certs
+
   mvc.problemdetails.enabled: true
+
+auth:
+  server-uri: ${KEYCLOAK_URI}
+  realm: ${KEYCLOAK_REALM}
+  issuer-uri: ${auth.server-uri}/realms/${auth.realm}/protocol/openid-connect
+  client-id: ${KEYCLOAK_CLIENT_ID}
+  client-secret: ${KEYCLOAK_CLIENT_SECRET}
 
 client.accounts:
   host: ${ACCOUNTS_HOST}

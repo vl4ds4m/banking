@@ -1,14 +1,11 @@
-package org.vl4ds4m.banking.accounts.api;
+package org.vl4ds4m.banking.webui.api.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.vl4ds4m.banking.accounts.openapi.server.api.AccountsApi;
-import org.vl4ds4m.banking.accounts.openapi.server.api.CustomersApi;
-import org.vl4ds4m.banking.accounts.openapi.server.api.TransferApi;
-import org.vl4ds4m.banking.common.security.JwtGrantedAuthoritiesCompositeConverter;
+import org.vl4ds4m.banking.common.security.OidcUserConverter;
 import org.vl4ds4m.banking.common.security.SecurityRole;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -22,14 +19,15 @@ public class SecurityConfig {
             requestCustomers(authorizeHttpRequests);
             requestAccounts(authorizeHttpRequests);
             requestTransfer(authorizeHttpRequests);
+
+            requestOther(authorizeHttpRequests);
+
             authorizeHttpRequests.anyRequest().denyAll();
         });
 
         http.csrf(csrf -> csrf.disable()); // TODO enable and configure
 
-        http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer
-                .jwt(JwtGrantedAuthoritiesCompositeConverter::apply));
-
+        http.oauth2Login(login -> login.userInfoEndpoint(OidcUserConverter::apply));
         http.oauth2Client(withDefaults());
 
         return http.build();
@@ -40,13 +38,12 @@ public class SecurityConfig {
     ) {
         registry
                 .requestMatchers(
-                        CustomersApi.PATH_CREATE_CUSTOMER,
-                        CustomersApi.PATH_GET_CUSTOMERS)
+                        "/customers",
+                        "/customers/new")
                 .hasRole(SecurityRole.ADMIN.toString())
 
                 .requestMatchers(
-                        CustomersApi.PATH_GET_CUSTOMER_INFO,
-                        CustomersApi.PATH_GET_CUSTOMER_BALANCE)
+                        "/customers/{login}/info")
                 .authenticated();
     }
 
@@ -55,14 +52,13 @@ public class SecurityConfig {
     ) {
         registry
                 .requestMatchers(
-                        AccountsApi.PATH_TOP_UP_ACCOUNT,
-                        AccountsApi.PATH_WITHDRAW_ACCOUNT)
+                        "/accounts/{number}/top-up",
+                        "/accounts/{number}/withdraw")
                 .hasRole(SecurityRole.ACCOUNTS_OPERATOR.toString())
 
                 .requestMatchers(
-                        AccountsApi.PATH_CREATE_ACCOUNT,
-                        AccountsApi.PATH_GET_ACCOUNT_INFO,
-                        AccountsApi.PATH_GET_ACCOUNT_BY_CUSTOMER)
+                        "/accounts/new",
+                        "/accounts/{number}/transfer")
                 .authenticated();
     }
 
@@ -70,8 +66,19 @@ public class SecurityConfig {
             AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry registry
     ) {
         registry
-                .requestMatchers(TransferApi.PATH_TRANSFER)
-                .authenticated();
+                .requestMatchers("/transfer")
+                .hasRole(SecurityRole.ADMIN.toString());
+    }
+
+    private static void requestOther(
+            AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry registry
+    ) {
+        registry
+                .requestMatchers(
+                        "/error",
+                        "/css/**",
+                        "/" + FaviconResolver.FILENAME + "*")
+                .permitAll();
     }
 
 }

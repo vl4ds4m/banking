@@ -3,6 +3,7 @@ package org.vl4ds4m.banking.accounts.api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.vl4ds4m.banking.accounts.auth.AccountsAuthorizationManager;
 import org.vl4ds4m.banking.accounts.openapi.server.api.TransferApi;
 import org.vl4ds4m.banking.accounts.openapi.server.model.TransferRequest;
 import org.vl4ds4m.banking.accounts.openapi.server.model.TransferResponse;
@@ -19,8 +20,12 @@ public class TransferController implements TransferApi {
 
     private final TransferService service;
 
+    private final AccountsAuthorizationManager authorizationManager;
+
     @Override
     public ResponseEntity<TransferResponse> transfer(UUID idempotencyKey, TransferRequest transferRequest) {
+        authorizationManager.authorizeAccountOwner(transferRequest.getSenderAccountNumber());
+
         var result = service.transferMoney(
                 transferRequest.getSenderAccountNumber(),
                 transferRequest.getReceiverAccountNumber(),
@@ -33,4 +38,5 @@ public class TransferController implements TransferApi {
                 result.totalReceiverMoney().amount());
         return ResponseEntity.ok(response);
     }
+
 }
