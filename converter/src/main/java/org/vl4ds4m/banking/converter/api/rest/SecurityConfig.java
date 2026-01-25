@@ -4,10 +4,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.vl4ds4m.banking.common.security.JwtGrantedAuthoritiesCompositeConverter;
 import org.vl4ds4m.banking.common.security.SecurityRole;
 import org.vl4ds4m.banking.converter.openapi.server.api.ConvertApi;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration("httpSecurityConfig")
 public class SecurityConfig {
@@ -20,7 +19,7 @@ public class SecurityConfig {
                 .anyRequest().denyAll());
 
         http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer
-                .jwt(withDefaults()));
+                .jwt(JwtGrantedAuthoritiesCompositeConverter::apply));
 
         return http.build();
     }

@@ -2,7 +2,6 @@ package org.vl4ds4m.banking.common.security;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -18,12 +17,24 @@ public final class JwtGrantedAuthoritiesCompositeConverter implements Converter<
 
     private final JwtRolesConverter rolesConverter = new JwtRolesConverter();
 
-    public static void apply(OAuth2ResourceServerConfigurer<HttpSecurity>.JwtConfigurer jwt) {
+    public static void apply(
+            org.springframework.security.config.annotation.web.configurers.oauth2.server.resource
+                    .OAuth2ResourceServerConfigurer<HttpSecurity>.JwtConfigurer jwt
+    ) {
+        jwt.jwtAuthenticationConverter(createConverter());
+    }
+
+    public static void apply(
+            org.springframework.grpc.server.security.OAuth2ResourceServerConfigurer.JwtConfigurer jwt
+    ) {
+        jwt.jwtAuthenticationConverter(createConverter());
+    }
+
+    private static JwtAuthenticationConverter createConverter() {
         var converter = new JwtAuthenticationConverter();
         var authoritiesConverter = new JwtGrantedAuthoritiesCompositeConverter();
         converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
-
-        jwt.jwtAuthenticationConverter(converter);
+        return converter;
     }
 
     @Override
