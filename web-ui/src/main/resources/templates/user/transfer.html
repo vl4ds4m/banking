@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" type="text/css" media="all" href="../../static/css/common.css" th:href="@{/css/common.css}" />
+  <link rel="stylesheet" type="text/css" media="all" href="../../static/css/customer-info.css" th:href="@{/css/customer-info.css}" />
+  <title>Banking CMS - Перевод</title>
+</head>
+<body>
+<div th:replace="~{fragments :: head-frag-user}"></div>
+<div class="body">
+  <div class="content" th:object="${accountInfo}">
+    <a href="" th:href="@{/customers/info}">Вернуться к списку счетов</a>
+    <div class="content-block">
+      <h2>Текущий баланс</h2>
+      <p th:text="|*{amount} *{currency}|">123.45 RUB</p>
+    </div>
+    <form class="content-block" action="" method="post"
+          th:action="@{/transfer/{number}(number=${accountNumber})}">
+      <h2>Перевод денег на другой счет</h2>
+      <div th:replace="~{fragments :: success-frag ('Успешно')}"></div>
+      <div th:replace="~{fragments :: problem-frag}"></div>
+      <p>
+        <label for="input-receiver-login">Логин получателя:</label>
+        <input id="input-receiver-login" name="receiverLogin" required th:value="${receiverLogin}">
+        <label for="input-receiver-currency">Валюта счета получателя:</label>
+        <select id="input-receiver-currency" name="receiverCurrency">
+          <option value="RUB" th:each="currency : ${currencies}"
+                  th:value="${currency}"
+                  th:text="${currency}"
+                  th:selected="${currency == receiverCurrency}">RUB</option>
+        </select>
+      </p>
+      <p>
+        <label for="input-amount">Сумма перевода</label>
+        <input id="input-amount" name="transferAmount" type="number" required step="0.01" min="0.01"
+               th:max="*{amount}" th:value="${transferAmount}" />
+      </p>
+      <p><button>Перевести</button></p>
+    </form>
+  </div>
+</div>
+</body>
+</html>

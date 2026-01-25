@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" type="text/css" media="all" href="../../static/css/common.css" th:href="@{/css/common.css}" />
+  <link rel="stylesheet" type="text/css" media="all" href="../../static/css/customer-info.css" th:href="@{/css/customer-info.css}" />
+  <title>Banking CMS - Основные данные</title>
+</head>
+<body>
+<div th:replace="~{fragments :: head-frag-user}"></div>
+<div class="body">
+  <div class="content">
+    <div class="content-block">
+      <h2>Персональные данные</h2>
+      <div class="personal-data">
+        <p>Логин: <span th:text="${customer.login}">some_user_123</span></p>
+        <p>Имя: <span th:text="${customer.forename}">Foo</span></p>
+        <p>Фамилия: <span th:text="${customer.surname}">Bar</span></p>
+        <p>Дата рождения: <span th:text="${{customer.birthdate}}">1979-05-18</span></p>
+      </div>
+    </div>
+    <div class="content-block">
+      <h2>Счета</h2>
+      <div class="list no-link-style">
+        <div class="account" th:each="account : ${accounts}">
+          <p><b th:text="'# ' + ${account.number}"># 188434545</b></p>
+          <div class="amount">
+            <p th:text="|${account.currency} ${account.amount}|">RUB 17653.34</p>
+            <a href="./transfer.html"
+               th:href="@{/transfer/{number}(number=${account.number})}">
+              <button>Перевести</button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <form class="content-block" action="" method="post" th:action="@{/accounts/new}">
+      <h2>Новый счет</h2>
+      <div th:replace="~{fragments :: problem-frag}"></div>
+      <input id="input-login" name="login" type="hidden" th:value="${customer.login}" />
+      <div>
+        <label for="input-currency">Валюта</label>
+        <select id="input-currency" name="currency">
+          <option value="">Выбрать</option>
+          <option value="RUB"
+                  th:each="currency : ${currencies}"
+                  th:value="${currency}"
+                  th:text="${currency}">RUB</option>
+        </select>
+      </div>
+      <p><button>Добавить</button></p>
+    </form>
+  </div>
+</div>
+</body>
+</html>

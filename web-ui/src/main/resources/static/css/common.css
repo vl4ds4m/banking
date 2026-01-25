@@ -58,6 +58,14 @@ h2 {
   justify-content: space-between;
 }
 
+.head-user {
+  display: flex;
+}
+
+.head-user > :first-child {
+  padding-right: 0.5em;
+}
+
 .body {
   flex: 1;
   display: flex;

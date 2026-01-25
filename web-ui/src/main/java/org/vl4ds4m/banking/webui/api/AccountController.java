@@ -1,5 +1,6 @@
 package org.vl4ds4m.banking.webui.api;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +16,8 @@ import org.vl4ds4m.banking.webui.service.TransferService;
 
 import java.math.BigDecimal;
 
+import static org.vl4ds4m.banking.webui.api.ControllersAdvice.getRefererPathRedirect;
+
 @Controller
 @RequestMapping("/accounts")
 @RequiredArgsConstructor
@@ -28,10 +31,10 @@ public class AccountController {
     public String newAccount(
             @RequestParam String login,
             @RequestParam String currency,
+            HttpServletRequest servletRequest,
             RedirectAttributes redirectAttrs
     ) {
-        var redirect = "redirect:/customers/{login}/info";
-        redirectAttrs.addAttribute("login", login);
+        String redirect = getRefererPathRedirect(servletRequest);
 
         if (currency.isBlank()) {
             ControllersAdvice.setProblemAttr(redirectAttrs, "Необходимо выбрать валюту");

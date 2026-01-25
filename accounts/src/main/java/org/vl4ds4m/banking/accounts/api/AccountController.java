@@ -23,6 +23,8 @@ public class AccountController implements AccountsApi {
 
     @Override
     public ResponseEntity<CreateAccountResponse> createAccount(CreateAccountRequest createAccountRequest) {
+        authorizationManager.authorizeCustomer(createAccountRequest.getCustomerLogin());
+
         long accountNumber = accountService.createAccount(
                 createAccountRequest.getCustomerLogin(),
                 To.currency(createAccountRequest.getCurrency()));
@@ -32,12 +34,10 @@ public class AccountController implements AccountsApi {
     }
 
     @Override
-    public ResponseEntity<AccountResponse> getAccountByCustomer(String login, Currency currency) {
-        authorizationManager.authorizeCustomer(login);
-
+    public ResponseEntity<AccountNumberResponse> getAccountNumberByCustomer(String login, Currency currency) {
         var account = accountService.getAccount(login, To.currency(currency));
 
-        var response = new AccountResponse(account.number(), account.money().amount());
+        var response = new AccountNumberResponse(account.number());
         return ResponseEntity.ok(response);
     }
 
@@ -62,8 +62,6 @@ public class AccountController implements AccountsApi {
             UUID idempotencyKey,
             TopUpAccountRequest topUpAccountRequest
     ) {
-        authorizationManager.authorizeAccountOwner(accountNumber);
-
         var account = accountService.topUpAccount(
                 accountNumber,
                 To.moneyOrReject(
@@ -83,8 +81,6 @@ public class AccountController implements AccountsApi {
             UUID idempotencyKey,
             WithdrawAccountRequest withdrawAccountRequest
     ) {
-        authorizationManager.authorizeAccountOwner(accountNumber);
-
         var account = accountService.withdrawMoneyToAccount(
                 accountNumber,
                 To.moneyOrReject(

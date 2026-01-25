@@ -245,9 +245,9 @@ paths:
     get:
       tags:
         - accounts
-      operationId: getAccountByCustomer
-      summary: Get account by customer data.
-      description: Get account by customer login and currency.
+      operationId: getAccountNumberByCustomer
+      summary: Get account number by customer data.
+      description: Get account number by customer login and currency.
       parameters:
         - name: login
           description: Customer login.
@@ -263,20 +263,17 @@ paths:
             $ref: '#/components/schemas/Currency'
       responses:
         '200':
-          description: Account number and amount of money.
+          description: Account number.
           content:
             application/json:
               schema:
-                title: AccountResponse
+                title: AccountNumberResponse
                 type: object
                 properties:
                   number:
                     $ref: '#/components/schemas/AccountNumber'
-                  amount:
-                    $ref: '#/components/schemas/CurrencyAmount'
                 required:
                   - number
-                  - amount
         '400':
           $ref: '#/components/responses/ErrorMessage'
   /accounts/{accountNumber}:

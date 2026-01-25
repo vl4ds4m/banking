@@ -5,9 +5,24 @@
   <title>Banking CMS</title>
 </head>
 <body>
-<div class="head" th:fragment="head-frag">
-  <h1>Управление счетами</h1>
-  <h2>Администратор</h2>
+<div class="head"
+     th:fragment="head-frag"
+     th:replace="~{ ::head-frag-template ('Управление счетами (администратор)')}">
+</div>
+<div class="head"
+     th:fragment="head-frag-user"
+     th:replace="~{ ::head-frag-template ('Управление счетами')}">
+</div>
+<div class="head" th:fragment="head-frag-template (headtitle)">
+  <h1 th:text="${headtitle}">Название страницы</h1>
+  <div class="head-user">
+    <h2 th:text="${user}">Логин</h2>
+    <h2>
+      <a href="" th:href="@{/logout}">
+        <button>Выйти</button>
+      </a>
+    </h2>
+  </div>
 </div>
 <div class="body">
   <div class="menu no-link-style" th:fragment="menu-frag">

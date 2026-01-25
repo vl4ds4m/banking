@@ -62,7 +62,7 @@ public class SecurityConfig {
                 .requestMatchers(
                         AccountsApi.PATH_CREATE_ACCOUNT,
                         AccountsApi.PATH_GET_ACCOUNT_INFO,
-                        AccountsApi.PATH_GET_ACCOUNT_BY_CUSTOMER)
+                        AccountsApi.PATH_GET_ACCOUNT_NUMBER_BY_CUSTOMER)
                 .authenticated();
     }
 

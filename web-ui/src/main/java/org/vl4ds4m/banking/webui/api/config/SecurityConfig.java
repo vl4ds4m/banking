@@ -39,11 +39,12 @@ public class SecurityConfig {
         registry
                 .requestMatchers(
                         "/customers",
-                        "/customers/new")
+                        "/customers/new",
+                        "/customers/{login}/info")
                 .hasRole(SecurityRole.ADMIN.toString())
 
                 .requestMatchers(
-                        "/customers/{login}/info")
+                        "/customers/info")
                 .authenticated();
     }
 
@@ -57,8 +58,11 @@ public class SecurityConfig {
                 .hasRole(SecurityRole.ACCOUNTS_OPERATOR.toString())
 
                 .requestMatchers(
-                        "/accounts/new",
                         "/accounts/{number}/transfer")
+                .hasRole(SecurityRole.ADMIN.toString())
+
+                .requestMatchers(
+                        "/accounts/new")
                 .authenticated();
     }
 
@@ -67,7 +71,10 @@ public class SecurityConfig {
     ) {
         registry
                 .requestMatchers("/transfer")
-                .hasRole(SecurityRole.ADMIN.toString());
+                .hasRole(SecurityRole.ADMIN.toString())
+
+                .requestMatchers("/transfer/{number}")
+                .authenticated();
     }
 
     private static void requestOther(

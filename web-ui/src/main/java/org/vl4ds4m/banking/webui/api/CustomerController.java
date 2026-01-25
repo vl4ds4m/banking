@@ -18,6 +18,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.vl4ds4m.banking.webui.api.ControllersAdvice.userLogin;
+
 @Controller
 @RequestMapping("/customers")
 @RequiredArgsConstructor
@@ -29,6 +31,16 @@ public class CustomerController {
     public Customer customer(Customer customer, String login) {
         customer.setLogin(login);
         return customer;
+    }
+
+    @GetMapping("/info")
+    public String info(Model model) {
+        String login = userLogin(model);
+        CustomerInfo info = customerService.getCustomer(login);
+        model.addAttribute("customer", info.getCustomer());
+        model.addAttribute("accounts", info.getAccounts());
+        model.addAttribute("currencies", remainingCurrencies(info.getAccounts()));
+        return "user/info";
     }
 
     @GetMapping
