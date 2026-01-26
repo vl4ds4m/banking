@@ -1,9 +1,13 @@
 package org.vl4ds4m.banking.webui.api.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
+import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.vl4ds4m.banking.common.security.OidcUserConverter;
 import org.vl4ds4m.banking.common.security.SecurityRole;
@@ -11,7 +15,10 @@ import org.vl4ds4m.banking.common.security.SecurityRole;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final ClientRegistrationRepository clientRegistrationRepository;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
@@ -20,17 +27,26 @@ public class SecurityConfig {
             requestAccounts(authorizeHttpRequests);
             requestTransfer(authorizeHttpRequests);
 
-            requestOther(authorizeHttpRequests);
+            requestBaseEndpoints(authorizeHttpRequests);
+            requestStaticResources(authorizeHttpRequests);
 
             authorizeHttpRequests.anyRequest().denyAll();
         });
 
         http.csrf(csrf -> csrf.disable()); // TODO enable and configure
 
-        http.oauth2Login(login -> login.userInfoEndpoint(OidcUserConverter::apply));
+        http.oauth2Login(login -> login
+                .userInfoEndpoint(OidcUserConverter::apply));
+        http.logout(this::logoutSuccessHandler);
         http.oauth2Client(withDefaults());
 
         return http.build();
+    }
+
+    private void logoutSuccessHandler(LogoutConfigurer<HttpSecurity> logout) {
+        var handler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
+        handler.setPostLogoutRedirectUri("{baseUrl}");
+        logout.logoutSuccessHandler(handler);
     }
 
     private static void requestCustomers(
@@ -77,14 +93,24 @@ public class SecurityConfig {
                 .authenticated();
     }
 
-    private static void requestOther(
+    private static void requestBaseEndpoints(
+            AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry registry
+    ) {
+        registry
+                .requestMatchers("/")
+                .authenticated()
+
+                .requestMatchers("/error")
+                .permitAll();
+    }
+
+    private static void requestStaticResources(
             AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry registry
     ) {
         registry
                 .requestMatchers(
-                        "/error",
-                        "/css/**",
-                        "/" + FaviconResolver.FILENAME + "*")
+                        "/favicon.ico",
+                        "/css/**")
                 .permitAll();
     }
 

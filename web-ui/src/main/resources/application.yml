@@ -12,21 +12,19 @@ spring:
             authorization-grant-type: authorization_code
             scope:
               - openid
-            redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
+            #redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
         provider:
           keycloak:
-            authorization-uri: ${auth.issuer-uri}/auth
-            token-uri: ${auth.issuer-uri}/token
-            jwk-set-uri: ${auth.issuer-uri}/certs
-
-  mvc.problemdetails.enabled: true
+            issuer-uri: ${auth.issuer-uri}
+            #authorization-uri: ${auth.openid-uri}/auth
+            #token-uri: ${auth.openid-uri}/token
+            #jwk-set-uri: ${auth.openid-uri}/certs
 
 auth:
-  server-uri: ${KEYCLOAK_URI}
-  realm: ${KEYCLOAK_REALM}
-  issuer-uri: ${auth.server-uri}/realms/${auth.realm}/protocol/openid-connect
+  issuer-uri: ${KEYCLOAK_URI}
   client-id: ${KEYCLOAK_CLIENT_ID}
   client-secret: ${KEYCLOAK_CLIENT_SECRET}
+  openid-uri: ${auth.issuer-uri}/protocol/openid-connect
 
 client.accounts:
   host: ${ACCOUNTS_HOST}
