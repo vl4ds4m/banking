@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.accounts.api;
+package org.vl4ds4m.banking.accounts.api.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

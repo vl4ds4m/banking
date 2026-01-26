@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.accounts;
+package org.vl4ds4m.banking.accounts.api.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -16,4 +16,5 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(idempotencyInterceptor);
     }
+
 }
