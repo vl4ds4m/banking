@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.vl4ds4m.banking.accounts.openapi.server.api.AccountsApi;
 import org.vl4ds4m.banking.accounts.openapi.server.api.CustomersApi;
@@ -18,6 +19,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
+        http.sessionManagement(sessionManagement -> sessionManagement
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
         http.authorizeHttpRequests(authorizeHttpRequests -> {
             requestCustomers(authorizeHttpRequests);
             requestAccounts(authorizeHttpRequests);
