@@ -722,8 +722,8 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "K8YlhRDZwvjLxwiG77g9t0rcEIAerjzT",
       "redirectUris": [
-        "http://webui:8080/*",
-        "http://localhost:8085/*"
+        "http://banking.local/*",
+        "http://localhost:8185/*"
       ],
       "webOrigins": [
         "+"
