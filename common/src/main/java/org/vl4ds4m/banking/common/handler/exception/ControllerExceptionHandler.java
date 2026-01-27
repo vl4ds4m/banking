@@ -6,6 +6,8 @@ import io.lettuce.core.RedisException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2AuthorizationException;
@@ -55,10 +57,11 @@ public class ControllerExceptionHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
-    public ErrorMessageResponse handleServiceError(ServiceException e) {
+    public ResponseEntity<ErrorMessageResponse> handleServiceError(ServiceException e) {
         exceptionLogger.logServiceError(e);
-        return buildResponse(e.getMessage());
+        HttpStatusCode code = ServiceException.asHttpStatus(e);
+        ErrorMessageResponse response = buildResponse(e.getMessage());
+        return ResponseEntity.status(code).body(response);
     }
 
     @ExceptionHandler

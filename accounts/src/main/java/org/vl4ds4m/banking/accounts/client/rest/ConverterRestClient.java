@@ -28,7 +28,7 @@ public class ConverterRestClient implements ConverterClientImpl {
         try {
             response = api.convertCurrency(apiFrom, apiTo, amount);
         } catch (RestClientException e) {
-            throw new ServiceException("converter", e.getMostSpecificCause());
+            throw new ServiceException("converter", e);
         }
 
         var converted = response.getConvertedAmount();

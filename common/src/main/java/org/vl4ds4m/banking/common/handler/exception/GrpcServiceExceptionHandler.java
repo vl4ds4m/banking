@@ -47,7 +47,7 @@ public class GrpcServiceExceptionHandler implements GrpcExceptionHandler {
 
     private StatusException handleServiceError(ServiceException e) {
         exceptionLogger.logServiceError(e);
-        return Status.UNAVAILABLE
+        return ServiceException.asGrpcStatus(e)
                 .withDescription(e.getMessage())
                 .asException();
     }
