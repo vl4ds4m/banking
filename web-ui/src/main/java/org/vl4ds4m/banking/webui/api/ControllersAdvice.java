@@ -1,6 +1,7 @@
 package org.vl4ds4m.banking.webui.api;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -65,14 +66,14 @@ public class ControllersAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ModelAttribute
-    public void successFlag(Boolean success, Model model) {
+    public void successFlag(@Nullable Boolean success, Model model) {
         if (success == Boolean.TRUE) {
             setSuccessAttr(model);
         }
     }
 
     @ModelAttribute
-    public void problemMessage(String problem, Model model) {
+    public void problemMessage(@Nullable String problem, Model model) {
         if (problem != null) {
             setProblemAttr(model, problem);
         }

@@ -6,7 +6,9 @@ import org.vl4ds4m.banking.common.Common;
 
 @SpringBootApplication(scanBasePackageClasses = {App.class, Common.class})
 public class App {
-    public static void main(String[] args) {
+
+    static void main(String[] args) {
         SpringApplication.run(App.class, args);
     }
+
 }

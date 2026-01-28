@@ -22,7 +22,7 @@ public class ProgressiveBackOff implements BackOff {
 
     private class ProgressiveBackOffExecution implements BackOffExecution {
 
-        Duration time;
+        Duration time = initial;
 
         int attempt = 1;
 

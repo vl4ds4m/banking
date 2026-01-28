@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.vl4ds4m.banking.accounts.dao.AccountDao;
 import org.vl4ds4m.banking.accounts.entity.Account;
 import org.vl4ds4m.banking.accounts.entity.TransferResult;
-import org.vl4ds4m.banking.accounts.service.expection.EntityNotFoundException;
+import org.vl4ds4m.banking.accounts.service.exception.EntityNotFoundException;
 import org.vl4ds4m.banking.accounts.service.transaction.TransactionService;
 import org.vl4ds4m.banking.common.entity.Money;
 import org.vl4ds4m.banking.common.entity.Transaction;
@@ -50,10 +50,6 @@ public class TransferService {
             throw new InvalidQueryException("Sender " + To.string(Account.class, senderNumber) +
                     " doesn't have enough money for transfer operation");
         }
-
-        // TODO
-        // BigDecimal feeRate = adminService.getFee();
-        // BigDecimal transferredAmount = amount.subtract(amount.multiply(feeRate));
 
         var converted = converterService.convert(sender.currency(), receiver.currency(), money);
 

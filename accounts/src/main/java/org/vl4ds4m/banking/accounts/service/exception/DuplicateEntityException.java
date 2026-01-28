@@ -1,4 +1,4 @@
-package org.vl4ds4m.banking.accounts.service.expection;
+package org.vl4ds4m.banking.accounts.service.exception;
 
 import org.vl4ds4m.banking.common.exception.InvalidQueryException;
 import org.vl4ds4m.banking.common.util.To;
