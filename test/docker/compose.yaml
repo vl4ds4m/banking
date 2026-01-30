@@ -11,9 +11,11 @@ services:
         target: /docker-entrypoint-initdb.d/banking-init.sh
     env_file: ./env/postgres.env
   liquibase-accounts:
+    image: vl4ds4m/liquibase-postgres:5.0.1
+    profiles:
+      - migration
     depends_on:
       - postgres
-    image: vl4ds4m/liquibase-postgres:5.0.1
     command:
       - "update"
     configs:
@@ -40,9 +42,9 @@ services:
       - 9094:9094
     env_file: ./env/kafka.env
   keycloak:
+    image: quay.io/keycloak/keycloak:26.5.0
     depends_on:
       - postgres
-    image: quay.io/keycloak/keycloak:26.5.0
     command:
       - "start-dev"
       - "--import-realm"
@@ -68,11 +70,13 @@ services:
         aliases:
           - "banking.local"
   rates:
+    build:
+      context: ../..
+      dockerfile: ./test/docker/build/Dockerfile
+      args:
+        - JAR_FILE=./rates/target/rates.jar
     depends_on:
       - keycloak
-    build:
-      args:
-        - JAR_FILE=./build/rates.jar
     ports:
       - 8083:8080
       - 9093:9090
@@ -81,43 +85,51 @@ services:
         target: /rates-info.yaml
     env_file: ./env/rates.env
   converter:
+    build:
+      context: ../..
+      dockerfile: ./test/docker/build/Dockerfile
+      args:
+        - JAR_FILE=./converter/target/converter.jar
     depends_on:
       - keycloak
-    build:
-      args:
-        - JAR_FILE=./build/converter.jar
     ports:
       - 8082:8080
       - 9092:9090
     env_file: ./env/converter.env
   accounts:
+    build:
+      context: ../..
+      dockerfile: ./test/docker/build/Dockerfile
+      args:
+        - JAR_FILE=./accounts/target/accounts.jar
     depends_on:
       - postgres
       - keycloak
       - redis
       - kafka
-    build:
-      args:
-        - JAR_FILE=./build/accounts.jar
     ports:
       - 8081:8080
     env_file: ./env/accounts.env
   webui:
+    build:
+      context: ../..
+      dockerfile: ./test/docker/build/Dockerfile
+      args:
+        - JAR_FILE=./web-ui/target/web-ui.jar
     depends_on:
       - keycloak
-    build:
-      args:
-        - JAR_FILE=./build/web-ui.jar
     ports:
       - 8085:8080
     env_file: ./env/web-ui.env
   transactions:
+    build:
+      context: ../..
+      dockerfile: ./test/docker/build/Dockerfile
+      args:
+        - JAR_FILE=./transactions/target/transactions.jar
     depends_on:
       - mongo
       - kafka
-    build:
-      args:
-        - JAR_FILE=./build/transactions.jar
     ports:
       - 8086:8080
     env_file: ./env/transactions.env
