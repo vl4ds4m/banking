@@ -48,7 +48,7 @@ services:
       - "--import-realm"
     ports:
       - 8084:8080
-    secrets:
+    configs:
       - source: keycloak-config
         target: /opt/keycloak/conf/keycloak.conf
       - source: keycloak-realm
@@ -131,11 +131,6 @@ services:
 volumes:
   postgres-data: {}
   mongo-data: {}
-secrets:
-  keycloak-config:
-    file: ./config/keycloak.conf
-  keycloak-realm:
-    file: ./config/realm.json
 configs:
   postgres-init-config:
     file: ./config/postgres-init.sh
@@ -145,6 +140,10 @@ configs:
     file: ./config/liquibase-accounts/changelog-def.yaml
   liquibase-accounts-changelog-data-config:
     file: ./config/liquibase-accounts/changelog-data.yaml
+  keycloak-config:
+    file: ./config/keycloak.conf
+  keycloak-realm:
+    file: ./config/keycloak-realm.json
   proxy-config:
     file: ./config/proxy.conf
   rates-source-config:
