@@ -1,7 +1,7 @@
 name: banking
 services:
   postgres:
-    image: postgres:18
+    image: postgres:18.1
     volumes:
       - postgres-data:/var/lib/postgresql
     ports:
@@ -9,7 +9,21 @@ services:
     configs:
       - source: postgres-init-config
         target: /docker-entrypoint-initdb.d/banking-init.sh
-    env_file: env/postgres.env
+    env_file: ./env/postgres.env
+  liquibase-accounts:
+    depends_on:
+      - postgres
+    image: vl4ds4m/liquibase-postgres:5.0.1
+    command:
+      - "update"
+    configs:
+      - source: liquibase-accounts-changelog-root-config
+        target: /liquibase/changelog-root.yaml
+      - source: liquibase-accounts-changelog-def-config
+        target: /liquibase/changelog-def.yaml
+      - source: liquibase-accounts-changelog-data-config
+        target: /liquibase/changelog-data.yaml
+    env_file: ./env/liquibase-accounts.env
   mongo:
     image: mongo:8.0.12
     volumes:
@@ -17,7 +31,7 @@ services:
     ports:
       - 27017:27017
   redis:
-    image: redis:8
+    image: redis:8.4.0
     ports:
       - 6379:6379
   kafka:
@@ -125,6 +139,12 @@ secrets:
 configs:
   postgres-init-config:
     file: ./config/postgres-init.sh
+  liquibase-accounts-changelog-root-config:
+    file: ./config/liquibase-accounts/changelog-root.yaml
+  liquibase-accounts-changelog-def-config:
+    file: ./config/liquibase-accounts/changelog-def.yaml
+  liquibase-accounts-changelog-data-config:
+    file: ./config/liquibase-accounts/changelog-data.yaml
   proxy-config:
     file: ./config/proxy.conf
   rates-source-config:

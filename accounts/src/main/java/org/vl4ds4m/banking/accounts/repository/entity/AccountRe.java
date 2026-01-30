@@ -15,10 +15,8 @@ import static org.vl4ds4m.banking.accounts.repository.entity.AccountRe.TABLE_NAM
 @Entity
 @Table(name = TABLE_NAME,
     uniqueConstraints = {
-        @UniqueConstraint(columnNames = AccountRe.ColumnName.NUMBER,
-            name = TABLE_NAME + "_natkey"),
-        @UniqueConstraint(columnNames = {CUSTOMER_ID, CURRENCY},
-            name = TABLE_NAME + "_uniqkey" + "-" + CUSTOMER_ID + "-" + CURRENCY)})
+        @UniqueConstraint(columnNames = AccountRe.ColumnName.NUMBER),
+        @UniqueConstraint(columnNames = {CUSTOMER_ID, CURRENCY})})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,7 +26,7 @@ public class AccountRe {
     static final String TABLE_NAME = "accounts";
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = ID)
     @EqualsAndHashCode.Include
     private Long id;
@@ -62,5 +60,7 @@ public class AccountRe {
         static final String CURRENCY = "currency";
 
         static final String AMOUNT = "amount";
+
     }
+
 }
