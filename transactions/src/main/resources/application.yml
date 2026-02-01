@@ -14,3 +14,12 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
       properties:
         "[spring.json.trusted.packages]": "org.vl4ds4m.banking.common.entity.kafka"
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt.jwk-set-uri: ${auth.server-uri}/realms/${auth.realm}/protocol/openid-connect/certs
+
+auth:
+  server-uri: ${KEYCLOAK_URI}
+  realm: ${KEYCLOAK_REALM}

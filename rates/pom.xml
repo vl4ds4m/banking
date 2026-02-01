@@ -49,6 +49,7 @@
             <groupId>org.springframework.grpc</groupId>
             <artifactId>spring-grpc-server-spring-boot-starter</artifactId>
         </dependency>
+        <!-- https://github.com/spring-projects/spring-boot/issues/49030 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-security-oauth2-client</artifactId>

@@ -23,12 +23,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http.authorizeHttpRequests(authorizeHttpRequests -> {
+            authorizeHttpRequests
+                    .requestMatchers("/").authenticated()
+                    .requestMatchers("/css/**").permitAll();
+
             requestCustomers(authorizeHttpRequests);
             requestAccounts(authorizeHttpRequests);
             requestTransfer(authorizeHttpRequests);
-
-            requestBaseEndpoints(authorizeHttpRequests);
-            requestStaticResources(authorizeHttpRequests);
 
             authorizeHttpRequests.anyRequest().denyAll();
         });
@@ -91,27 +92,6 @@ public class SecurityConfig {
 
                 .requestMatchers("/transfer/{number}")
                 .authenticated();
-    }
-
-    private static void requestBaseEndpoints(
-            AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry registry
-    ) {
-        registry
-                .requestMatchers("/")
-                .authenticated()
-
-                .requestMatchers("/error")
-                .permitAll();
-    }
-
-    private static void requestStaticResources(
-            AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry registry
-    ) {
-        registry
-                .requestMatchers(
-                        "/favicon.ico",
-                        "/css/**")
-                .permitAll();
     }
 
 }
