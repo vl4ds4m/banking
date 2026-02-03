@@ -1,0 +1,26 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: {{ include "banking-gateway.fullname" . }}
+  labels:
+    {{- include "banking-gateway.labels" . | nindent 4 }}
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: {{ include "banking-gateway.fullname" . }}
+  labels:
+    {{- include "banking-gateway.labels" . | nindent 4 }}
+spec:
+  gatewayClassName: {{ include "banking-gateway.fullname" . }}
+  {{- with .Values.gateway.clusterIP }}
+  addresses:
+    - type: IPAddress
+      value: {{ . }}
+  {{- end }}
+  {{- with .Values.gateway.listeners }}
+  listeners:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}

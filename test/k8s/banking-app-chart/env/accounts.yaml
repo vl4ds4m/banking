@@ -1,0 +1,29 @@
+env:
+  - name: KEYCLOAK_URI
+    value: "http://keycloak:8080"
+  - name: KEYCLOAK_REALM
+    value: "banking"
+  - name: KEYCLOAK_CLIENT_ID
+    value: "svc-accounts"
+  - name: KEYCLOAK_CLIENT_SECRET
+    value: "GFiK70MLPrbKziwnaqOoIhddiO164mUc"
+  - name: CONVERTER_HOST
+    value: "converter"
+  - name: CONVERTER_PORT
+    value: "9090"
+  - name: REDIS_HOST
+    value: "redis"
+  - name: REDIS_PORT
+    value: "6379"
+  - name: DB_HOST
+    value: "postgres"
+  - name: DB_PORT
+    value: "5432"
+  - name: DB_NAME
+    value: "accounts_db"
+  - name: DB_USER
+    value: "accounts_usr"
+  - name: DB_PASSWORD
+    value: "aCc0unt5"
+  - name: KAFKA_BOOTSTRAP_SERVERS
+    value: "kafka:9092"

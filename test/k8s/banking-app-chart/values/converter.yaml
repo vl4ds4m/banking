@@ -1,0 +1,14 @@
+replicaCount: 1
+
+image:
+  repository: vl4ds4m/banking-converter
+  tag: latest
+
+fullnameOverride: "converter"
+
+service:
+  ports:
+    - name: http
+      number: 8080
+    - name: grpc
+      number: 9090

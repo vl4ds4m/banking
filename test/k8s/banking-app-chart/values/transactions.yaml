@@ -1,0 +1,7 @@
+replicaCount: 1
+
+image:
+  repository: vl4ds4m/banking-transactions
+  tag: latest
+
+fullnameOverride: "transactions"

@@ -1,0 +1,11 @@
+env:
+  - name: KEYCLOAK_URI
+    value: "http://auth.banking.local/realms/banking"
+  - name: KEYCLOAK_CLIENT_ID
+    value: "app-webui"
+  - name: KEYCLOAK_CLIENT_SECRET
+    value: "K8YlhRDZwvjLxwiG77g9t0rcEIAerjzT"
+  - name: ACCOUNTS_HOST
+    value: "accounts"
+  - name: ACCOUNTS_PORT
+    value: "8080"

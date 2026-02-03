@@ -1,0 +1,25 @@
+replicaCount: 1
+
+image:
+  repository: vl4ds4m/banking-rates
+  tag: latest
+
+fullnameOverride: "rates"
+
+service:
+  ports:
+    - name: http
+      number: 8080
+    - name: grpc
+      number: 9090
+
+volumes:
+  - name: config
+    configMap:
+      name: rates
+
+volumeMounts:
+  - name: config
+    mountPath: /rates-info.yaml
+    subPath: rates-src.yaml
+    readOnly: true

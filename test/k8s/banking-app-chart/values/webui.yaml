@@ -1,0 +1,12 @@
+replicaCount: 1
+
+image:
+  repository: vl4ds4m/banking-webui
+  tag: latest
+
+fullnameOverride: "webui"
+
+httpRoute:
+  enabled: true
+  hostnames:
+    - "banking.local"

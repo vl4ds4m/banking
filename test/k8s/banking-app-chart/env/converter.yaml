@@ -1,0 +1,13 @@
+env:
+  - name: KEYCLOAK_URI
+    value: "http://keycloak:8080"
+  - name: KEYCLOAK_REALM
+    value: "banking"
+  - name: KEYCLOAK_CLIENT_ID
+    value: "svc-converter"
+  - name: KEYCLOAK_CLIENT_SECRET
+    value: "prI7abaJAPOPGboSpnyfb96QSHTwIyIV"
+  - name: RATES_HOST
+    value: "rates"
+  - name: RATES_PORT
+    value: "9090"

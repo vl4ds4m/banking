@@ -1,0 +1,13 @@
+env:
+  - name: DB_HOST
+    value: "mongo"
+  - name: DB_PORT
+    value: "27017"
+  - name: DB_NAME
+    value: "banking_tx"
+  - name: KAFKA_BOOTSTRAP_SERVERS
+    value: "kafka:9092"
+  - name: KEYCLOAK_URI
+    value: "http://keycloak:8080"
+  - name: KEYCLOAK_REALM
+    value: "banking"

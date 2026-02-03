@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: def.yaml
+  - include:
+      file: data.yaml
