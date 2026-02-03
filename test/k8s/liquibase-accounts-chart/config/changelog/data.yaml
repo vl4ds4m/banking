@@ -1,0 +1,159 @@
+databaseChangeLog:
+- changeSet:
+    id: 1769758949164-1
+    author: liquibase
+    changes:
+    - insert:
+        tableName: customers
+        columns:
+        - column:
+            name: login
+            value: "ivanovp"
+        - column:
+            name: forename
+            value: "Пётр"
+        - column:
+            name: surname
+            value: "Иванов"
+        - column:
+            name: birthdate
+            value: "1985-10-06"
+    - insert:
+        tableName: customers
+        columns:
+        - column:
+            name: login
+            value: "jsmithy"
+        - column:
+            name: forename
+            value: "John"
+        - column:
+            name: surname
+            value: "Smith"
+        - column:
+            name: birthdate
+            value: "1969-03-26"
+    - insert:
+        tableName: customers
+        columns:
+        - column:
+            name: login
+            value: "tt_goat"
+        - column:
+            name: forename
+            value: "Ma"
+        - column:
+            name: surname
+            value: "Long"
+        - column:
+            name: birthdate
+            value: "1988-10-20"
+- changeSet:
+    id: 1769758949164-2
+    author: liquibase
+    changes:
+    - insert:
+        tableName: accounts
+        columns:
+        - column:
+            name: number
+            value: "1000000001"
+        - column:
+            name: customer_id
+            value: "1"
+        - column:
+            name: currency
+            value: "RUB"
+        - column:
+            name: amount
+            value: "4567.89"
+    - insert:
+        tableName: accounts
+        columns:
+        - column:
+            name: number
+            value: "1000000002"
+        - column:
+            name: customer_id
+            value: "1"
+        - column:
+            name: currency
+            value: "USD"
+        - column:
+            name: amount
+            value: "150"
+    - insert:
+        tableName: accounts
+        columns:
+        - column:
+            name: number
+            value: "1000000003"
+        - column:
+            name: customer_id
+            value: "2"
+        - column:
+            name: currency
+            value: "USD"
+        - column:
+            name: amount
+            value: "234.56"
+    - insert:
+        tableName: accounts
+        columns:
+        - column:
+            name: number
+            value: "1000000004"
+        - column:
+            name: customer_id
+            value: "2"
+        - column:
+            name: currency
+            value: "EUR"
+        - column:
+            name: amount
+            value: "136"
+    - insert:
+        tableName: accounts
+        columns:
+        - column:
+            name: number
+            value: "1000000005"
+        - column:
+            name: customer_id
+            value: "2"
+        - column:
+            name: currency
+            value: "GBP"
+        - column:
+            name: amount
+            value: "94"
+    - insert:
+        tableName: accounts
+        columns:
+        - column:
+            name: number
+            value: "1000000006"
+        - column:
+            name: customer_id
+            value: "3"
+        - column:
+            name: currency
+            value: "CNY"
+        - column:
+            name: amount
+            value: "789.01"
+    - insert:
+        tableName: accounts
+        columns:
+        - column:
+            name: number
+            value: "1000000007"
+        - column:
+            name: customer_id
+            value: "3"
+        - column:
+            name: currency
+            value: "USD"
+        - column:
+            name: amount
+            value: "127"

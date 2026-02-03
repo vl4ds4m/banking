@@ -1,0 +1,21 @@
+--- # Configuration file
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{ include "keycloak.fullname" . }}-conf'
+  labels:
+    {{- include "keycloak.labels" . | nindent 4 }}
+data:
+  keycloak.conf: |
+    {{- .Files.Get "config/keycloak.conf" | nindent 4 }}
+
+--- # Realm file
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{ include "keycloak.fullname" . }}-realm'
+  labels:
+    {{- include "keycloak.labels" . | nindent 4 }}
+data:
+  realm.json: |
+    {{- .Files.Get "config/keycloak-realm.json" | nindent 4 }}

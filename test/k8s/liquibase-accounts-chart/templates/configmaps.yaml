@@ -1,0 +1,24 @@
+--- # Changelog files
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "liquibase-accounts.fullname" . }}-changelog
+  labels:
+    {{- include "liquibase-accounts.labels" . | nindent 4 }}
+data:
+  {{- range $path, $_ := .Files.Glob "config/changelog/*" }}
+  {{ base $path }}: |
+    {{- $.Files.Get $path | nindent 4 }}
+  {{- end }}
+...
+--- # Properties file
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "liquibase-accounts.fullname" . }}-properties
+  labels:
+    {{- include "liquibase-accounts.labels" . | nindent 4 }}
+data:
+  liquibase.properties: |
+    {{- .Files.Get "config/liquibase.properties" | nindent 4 }}
+...

@@ -1,0 +1,110 @@
+databaseChangeLog:
+- changeSet:
+    id: 1769715545387-1
+    author: liquibase
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: accounts_pkey
+            name: id
+            type: BIGINT
+            autoIncrement: true
+        - column:
+            constraints:
+              nullable: false
+            name: amount
+            type: numeric(38, 2)
+        - column:
+            constraints:
+              nullable: false
+            name: currency
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: number
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: customer_id
+            type: BIGINT
+        tableName: accounts
+- changeSet:
+    id: 1769715545387-2
+    author: liquibase
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: customers_pkey
+            name: id
+            type: BIGINT
+            autoIncrement: true
+        - column:
+            constraints:
+              nullable: false
+            name: birthdate
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: forename
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: login
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: surname
+            type: VARCHAR(255)
+        tableName: customers
+- changeSet:
+    id: 1769715545387-3
+    author: liquibase
+    changes:
+    - addUniqueConstraint:
+        columnNames: number
+        constraintName: accounts_natkey
+        tableName: accounts
+- changeSet:
+    id: 1769715545387-4
+    author: liquibase
+    changes:
+    - addUniqueConstraint:
+        columnNames: customer_id, currency
+        constraintName: accounts_uniqkey-customer_id-currency
+        tableName: accounts
+- changeSet:
+    id: 1769715545387-5
+    author: liquibase
+    changes:
+    - addUniqueConstraint:
+        columnNames: login
+        constraintName: customers_natkey
+        tableName: customers
+- changeSet:
+    id: 1769715545387-6
+    author: liquibase
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: customer_id
+        baseTableName: accounts
+        constraintName: accounts_fkey-customer_id
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: customers
+        validate: true

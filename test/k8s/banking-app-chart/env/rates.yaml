@@ -1,0 +1,5 @@
+env:
+  - name: KEYCLOAK_URI
+    value: "http://keycloak:8080"
+  - name: KEYCLOAK_REALM
+    value: "banking"
